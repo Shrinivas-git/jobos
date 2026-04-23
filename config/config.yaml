@@ -1,0 +1,20 @@
+matching:
+  internal_pool_first: true
+  k_threshold: 10
+  p_threshold: 0.30
+  batch_size: 3
+  max_batches: 10
+  rerank_on_rejection: true
+
+sourcing:
+  fallback_order:
+    - naukri
+    - unipile_linkedin
+  email_intake_address: "jd-intake@jobos.internal"
+  resume_intake_address: "resumes@jobos.internal"
+  poll_interval_minutes: 5
+
+notifications:
+  manager_notify_on_pool_ready: true
+  hod_notify_on_pool_ready: true
+  rank_change_threshold: 3

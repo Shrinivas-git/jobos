@@ -1,0 +1,20 @@
+{
+  "defaultModel": "gemini-2.5-pro",
+  "mcpServers": {
+    "filesystem": {
+      "command": "node",
+      "args": ["C:\\Users\\Shrinivas Sondur\\AppData\\Roaming\\npm\\node_modules\\@modelcontextprotocol\\server-filesystem\\dist\\index.js", "C:\\staging\\jobos"],
+      "trust": false
+    },
+    "memory": {
+      "command": "node",
+      "args": ["C:\\Users\\Shrinivas Sondur\\AppData\\Roaming\\npm\\node_modules\\@modelcontextprotocol\\server-memory\\dist\\index.js"],
+      "trust": false
+    },
+    "sequential-thinking": {
+      "command": "node",
+      "args": ["C:\\Users\\Shrinivas Sondur\\AppData\\Roaming\\npm\\node_modules\\@modelcontextprotocol\\server-sequential-thinking\\dist\\index.js"],
+      "trust": false
+    }
+  }
+}

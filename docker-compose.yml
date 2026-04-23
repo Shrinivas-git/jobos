@@ -1,0 +1,139 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+
+  qdrant:
+    image: qdrant/qdrant:v1.7.0
+    container_name: qdrant
+    restart: always
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  postgres-keycloak:
+    image: postgres:15
+    container_name: postgres-keycloak
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_keycloak_data:/var/lib/postgresql/data
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: keycloak
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres-keycloak:5432/${POSTGRES_DB}
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-keycloak
+
+  api:
+    build: ./api
+    container_name: api
+    volumes:
+      - ./api:/app
+      - ./data:/data
+      - ./config:/app/config
+    env_file: .env
+    depends_on:
+      - mongodb
+      - redis
+      - qdrant
+    ports:
+      - "8000:8000"
+
+  worker:
+    build: ./api
+    container_name: worker
+    command: celery -A main.celery worker --loglevel=info
+    volumes:
+      - ./api:/app
+      - ./data:/data
+      - ./config:/app/config
+    env_file: .env
+    depends_on:
+      - redis
+      - mongodb
+
+  scheduler:
+    build: ./api
+    container_name: scheduler
+    command: celery -A main.celery beat --loglevel=info
+    volumes:
+      - ./api:/app
+      - ./config:/app/config
+    env_file: .env
+    depends_on:
+      - redis
+
+  flower:
+    image: mher/flower:1.2
+    container_name: flower
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "5173:5173"
+
+  email-watcher:
+    build: ./email-watcher
+    container_name: email-watcher
+    env_file: .env
+    volumes:
+      - ./data:/data
+
+  naukri-sourcer:
+    build: ./naukri-sourcer
+    env_file: .env
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+      - frontend
+
+volumes:
+  mongodb_data:
+  qdrant_data:
+  postgres_keycloak_data:

@@ -1,0 +1,20 @@
+{
+  "title": "Senior Nurse",
+  "level": "Senior",
+  "client_email": "hr@apollo.com",
+  "responsibilities": "Patient care, medication administration, vital monitoring",
+  "kpis": "Patient satisfaction score above 90%, zero medication errors",
+  "skills": [
+    "ICU care",
+    "Patient monitoring",
+    "Emergency response"
+  ],
+  "experience_range": "3-5 years",
+  "compensation_range": "8-12 LPA",
+  "work_structure": "on-site",
+  "location": "Bangalore",
+  "hiring_timeline": "15 days",
+  "urgency": "high",
+  "num_positions": 2,
+  "obfuscate": false
+}

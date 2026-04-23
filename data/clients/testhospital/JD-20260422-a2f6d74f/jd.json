@@ -1,0 +1,21 @@
+{
+  "title": "Senior Python Developer",
+  "level": "Senior",
+  "client_email": "hr@testhospital.com",
+  "responsibilities": "Build REST APIs, Design database schemas, Code reviews",
+  "kpis": "API response time under 200ms, 95% test coverage",
+  "skills": [
+    "Python",
+    "FastAPI",
+    "MongoDB",
+    "Docker"
+  ],
+  "experience_range": "3-5 years",
+  "compensation_range": "15-20 LPA",
+  "work_structure": "hybrid",
+  "location": "Bangalore",
+  "hiring_timeline": "30 days",
+  "urgency": "normal",
+  "num_positions": 1,
+  "obfuscate": false
+}
