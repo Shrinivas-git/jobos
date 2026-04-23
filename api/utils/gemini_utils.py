@@ -3,8 +3,18 @@ import json
 import logging
 import google.generativeai as genai
 from typing import List, Optional
+from sentence_transformers import SentenceTransformer
 
 logger = logging.getLogger(__name__)
+
+# Initialize local embedding model
+try:
+    # This will download the model on first run/build
+    embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+    logger.info("Local embedding model (all-MiniLM-L6-v2) loaded successfully.")
+except Exception as e:
+    logger.error(f"Failed to load local embedding model: {e}")
+    embedding_model = None
 
 # Configure Gemini API
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -17,7 +27,7 @@ def extract_jd_data(raw_text: str) -> dict:
     """
     Uses Gemini 2.5 Pro to extract structured fields from raw JD text.
     """
-    model = genai.GenerativeModel('gemini-1.5-pro') # google-generativeai usually refers to 1.5 pro as 'gemini-1.5-pro'
+    model = genai.GenerativeModel('gemini-2.5-pro')
     
     prompt = f"""
     You are a high-precision recruitment AI. Extract structured data from the following raw Job Description (JD) text.
@@ -47,7 +57,6 @@ def extract_jd_data(raw_text: str) -> dict:
     
     try:
         response = model.generate_content(prompt)
-        # Handle potential markdown blocks in response
         text = response.text.strip()
         if text.startswith("```json"):
             text = text[7:-3].strip()
@@ -57,7 +66,6 @@ def extract_jd_data(raw_text: str) -> dict:
         return json.loads(text)
     except Exception as e:
         logger.error(f"Error extracting JD data with Gemini: {e}")
-        # Return a minimal dict if extraction fails
         return {
             "title": "Extraction Failed",
             "level": "Unknown",
@@ -77,7 +85,7 @@ def generate_jd_formats(structured_data: dict) -> dict:
     """
     Uses Gemini to generate Internal, Short, and Candidate Markdown formats.
     """
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-2.5-flash')
     
     prompt = f"""
     Based on the following structured Job Description data, generate three distinct Markdown formats.
@@ -111,26 +119,25 @@ def generate_jd_formats(structured_data: dict) -> dict:
 
 def generate_embedding(text: str) -> List[float]:
     """
-    Generates a 768-dimensional dense vector using Gemini text-embedding-004.
+    Generates a 384-dimensional dense vector using local sentence-transformers (all-MiniLM-L6-v2).
     """
     try:
-        result = genai.embed_content(
-            model="models/text-embedding-004",
-            content=text,
-            task_type="retrieval_document",
-            title="Job Description"
-        )
-        return result['embedding']
+        if embedding_model is None:
+            raise Exception("Embedding model not initialized.")
+        
+        # Explicitly encode to numpy then convert to list
+        embedding = embedding_model.encode(text)
+        return embedding.tolist()
     except Exception as e:
-        logger.error(f"Error generating embedding with Gemini: {e}")
-        # Fallback to zero vector if failed (not ideal but prevents crash)
-        return [0.0] * 768
+        logger.error(f"Error generating local embedding: {e}")
+        # Fallback to zero vector if failed
+        return [0.0] * 384
 
 def extract_resume_metadata(raw_text: str) -> dict:
     """
-    Uses Gemini 1.5 Pro to extract structured metadata from a resume with a regex fallback.
+    Uses Gemini 2.5 Pro to extract structured metadata from a resume with a regex fallback.
     """
-    model = genai.GenerativeModel('gemini-1.5-pro')
+    model = genai.GenerativeModel('gemini-2.5-pro')
     
     prompt = f"""
     You are a high-fidelity resume parsing engine. Extract structured data from the resume text provided below.
@@ -161,7 +168,6 @@ def extract_resume_metadata(raw_text: str) -> dict:
     JSON Output:
     """
     
-    # Pre-define defaults for fallback
     import re
     email_match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', raw_text)
     phone_match = re.search(r'(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}', raw_text)
@@ -179,7 +185,6 @@ def extract_resume_metadata(raw_text: str) -> dict:
         response = model.generate_content(prompt)
         text = response.text.strip()
         
-        # Robust JSON cleaning
         if "```json" in text:
             text = text.split("```json")[1].split("```")[0].strip()
         elif "```" in text:
@@ -187,12 +192,10 @@ def extract_resume_metadata(raw_text: str) -> dict:
             
         ai_data = json.loads(text)
         
-        # Merge AI data with regex fallback if AI missed something
         for key in extracted_data:
             if ai_data.get(key) and ai_data[key] not in ["Unknown", "Not specified", "null", None]:
                 extracted_data[key] = ai_data[key]
         
-        # Final cleanup for experience_years
         exp = extracted_data.get("experience_years", 0)
         if isinstance(exp, str):
             digits = re.findall(r'\d+', exp)

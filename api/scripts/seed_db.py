@@ -43,17 +43,32 @@ def init_mongodb():
         "placements": [("candidate_id", ASCENDING), ("jd_id", ASCENDING)]
     }
 
-    for coll_name, indexes in collections.items():
+    for coll_name, index_list in collections.items():
         if coll_name not in db.list_collection_names():
             db.create_collection(coll_name)
             print(f" - Created collection: {coll_name}")
-        
-        for index in indexes:
-            db[coll_name].create_index([index], unique=True if index[0] in ["email", "slug", "jd_id", "keycloak_id"] else False)
+
+        # Determine if we want a compound unique index for this collection
+        unique_collections = ["candidate_pools", "pipeline_stages", "placements", "assessment_results", "offers"]
+
+        if coll_name in unique_collections:
+            # Create a compound unique index for all fields in index_list
+            try:
+                db[coll_name].create_index(index_list, unique=True)
+                print(f" - Created compound unique index for {coll_name}: {index_list}")
+            except Exception as e:
+                print(f"   ! Could not create compound index for {coll_name}: {e}")
+        else:
+            # Traditional single-field indexes
+            for index in index_list:
+                try:
+                    db[coll_name].create_index([index], unique=True if index[0] in ["email", "slug", "jd_id", "keycloak_id"] else False)
+                except Exception as ie:
+                    print(f"   ! Index {index[0]} in {coll_name} might already exist or conflict: {ie}")
         
     print("MongoDB initialization complete.\n")
 
-def init_qdrant():
+def init_qdrant(force=False):
     print(f"Initializing Qdrant collections at {QDRANT_HOST}:{QDRANT_PORT}...")
     client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
 
@@ -68,19 +83,20 @@ def init_qdrant():
         except Exception:
             pass
 
-        if not exists:
+        if force or not exists:
             client.recreate_collection(
                 collection_name=coll_name,
-                vectors_config=VectorParams(size=768, distance=Distance.COSINE),
+                vectors_config=VectorParams(size=384, distance=Distance.COSINE),
             )
-            print(f" - Created collection: {coll_name} (768 dim, Cosine)")
+            print(f" - {'Force recreated' if force else 'Created'} collection: {coll_name} (384 dim, Cosine)")
 
     print("Qdrant initialization complete.\n")
 
 if __name__ == "__main__":
     try:
         init_mongodb()
-        init_qdrant()
+        # Pass True to force recreate and fix the dimension mismatch
+        init_qdrant(force=True)
         print("Database bootstrap successful!")
     except Exception as e:
         print(f"Error during bootstrap: {e}")

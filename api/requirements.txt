@@ -15,3 +15,5 @@ python-slugify==8.0.4
 email-validator>=2.0.0
 pdfplumber==0.10.3
 python-docx==1.1.0
+sentence-transformers==3.0.1
+torch --index-url https://download.pytorch.org/whl/cpu

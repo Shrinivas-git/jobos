@@ -23,7 +23,7 @@ def init_qdrant():
         if COLLECTION_NAME not in collections:
             client.create_collection(
                 collection_name=COLLECTION_NAME,
-                vectors_config=models.VectorParams(size=768, distance=models.Distance.COSINE),
+                vectors_config=models.VectorParams(size=384, distance=models.Distance.COSINE),
             )
             logger.info(f"Created Qdrant collection: {COLLECTION_NAME}")
             
@@ -31,7 +31,7 @@ def init_qdrant():
         if RESUME_COLLECTION not in collections:
             client.create_collection(
                 collection_name=RESUME_COLLECTION,
-                vectors_config=models.VectorParams(size=768, distance=models.Distance.COSINE),
+                vectors_config=models.VectorParams(size=384, distance=models.Distance.COSINE),
             )
             logger.info(f"Created Qdrant collection: {RESUME_COLLECTION}")
             

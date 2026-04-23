@@ -1,0 +1,22 @@
+{
+  "title": "Java Developer",
+  "level": "Senior",
+  "client_email": "shrinivassondur03@gmail.com",
+  "responsibilities": "High-level design, Spring Security, Performance Tuning.",
+  "kpis": "",
+  "skills": [
+    "Java",
+    "Spring Boot",
+    "Microservices",
+    "Keycloak",
+    "PostgreSQL."
+  ],
+  "experience_range": "4-8",
+  "compensation_range": "",
+  "work_structure": "In-office",
+  "location": "",
+  "hiring_timeline": "",
+  "urgency": "Critical",
+  "num_positions": 1,
+  "obfuscate": false
+}

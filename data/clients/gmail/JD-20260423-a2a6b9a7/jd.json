@@ -1,0 +1,21 @@
+{
+  "title": "Python Developer",
+  "level": "L1",
+  "client_email": "shrinivassondur03@gmail.com",
+  "responsibilities": "High-level design",
+  "kpis": "",
+  "skills": [
+    "Django",
+    "Flask",
+    "SQL",
+    "Software Development LifeCycle"
+  ],
+  "experience_range": "1-3",
+  "compensation_range": "6-10",
+  "work_structure": "In-office",
+  "location": "",
+  "hiring_timeline": "",
+  "urgency": "Medium",
+  "num_positions": 4,
+  "obfuscate": false
+}
