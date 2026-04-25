@@ -1,41 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import keycloak from '../keycloak';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ClipboardList, CheckCircle, XCircle, ChevronDown, ChevronUp, Users,
 } from 'lucide-react';
-
-interface JD {
-  jd_id: string;
-  title: string;
-  status: string;
-  created_at: string;
-}
-
-interface MatchResult {
-  jd_id: string;
-  candidate_id: string;
-  match_score: number;
-  composite_score?: number;
-  fitment_score?: number;
-  reasoning?: string;
-  strengths?: string[];
-  gaps?: string[];
-  recommendation?: string;
-  rank: number;
-  status: string;
-  source: string;
-}
-
-interface CandidateLookup {
-  [key: string]: string;
-}
-
-interface PipelineStats {
-  total: number;
-  shortlisted: number;
-  rejected: number;
-  pending: number;
-}
+import { API, getAuthHeaders, JD, MatchResult, CandidateLookup } from '../utils/api';
+import { recommendationBadge } from '../utils/badges';
 
 interface LocalAction {
   action: 'shortlist' | 'reject';
@@ -44,7 +12,6 @@ interface LocalAction {
 
 const BATCH_SIZE = 3;
 const MAX_BATCHES = 3;
-const API = 'http://localhost:8000';
 
 const REJECTION_REASONS = [
   'Skills gap',
@@ -56,16 +23,12 @@ const REJECTION_REASONS = [
   'Other',
 ];
 
-function getAuthHeaders() {
-  return { Authorization: `Bearer ${keycloak.token}` };
-}
-
 const statusPill = (status: string) => {
   const map: Record<string, string> = {
-    pool_ready: 'bg-emerald-500/20 text-emerald-400',
+    pool_ready:    'bg-emerald-500/20 text-emerald-400',
     matching_done: 'bg-blue-500/20 text-blue-400',
-    open: 'bg-yellow-500/20 text-yellow-400',
-    closed: 'bg-slate-500/20 text-slate-400',
+    open:          'bg-yellow-500/20 text-yellow-400',
+    closed:        'bg-slate-500/20 text-slate-400',
   };
   const cls = map[status] ?? 'bg-slate-500/20 text-slate-400';
   return (
@@ -75,19 +38,11 @@ const statusPill = (status: string) => {
   );
 };
 
-const recommendationBadge = (rec?: string) => {
-  if (!rec) return null;
-  const map: Record<string, { label: string; cls: string }> = {
-    shortlist: { label: 'Shortlist', cls: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' },
-    hold: { label: 'Hold', cls: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-    reject: { label: 'Reject', cls: 'bg-red-500/20 text-red-400 border-red-500/30' },
-  };
-  const style = map[rec] ?? { label: rec, cls: 'bg-slate-500/20 text-slate-400 border-slate-500/30' };
-  return (
-    <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${style.cls}`}>
-      {style.label}
-    </span>
-  );
+const getCardClass = (actioned: boolean, actionState: LocalAction | null): string => {
+  if (!actioned) return 'bg-slate-800/40 border-slate-700/50';
+  return actionState?.action === 'shortlist'
+    ? 'bg-emerald-900/10 border-emerald-500/20'
+    : 'bg-red-900/10 border-red-500/20 opacity-75';
 };
 
 const RecruiterDashboard: React.FC = () => {
@@ -95,7 +50,6 @@ const RecruiterDashboard: React.FC = () => {
   const [selectedJdId, setSelectedJdId] = useState<string>('');
   const [results, setResults] = useState<MatchResult[]>([]);
   const [candidateNames, setCandidateNames] = useState<CandidateLookup>({});
-  const [stats, setStats] = useState<PipelineStats | null>(null);
   const [localActions, setLocalActions] = useState<Record<string, LocalAction>>({});
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [rejectingId, setRejectingId] = useState<string | null>(null);
@@ -103,6 +57,9 @@ const RecruiterDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Prevents stale results from a superseded JD click arriving after a newer one.
+  const pendingJdRef = useRef<string>('');
 
   useEffect(() => {
     const init = async () => {
@@ -127,34 +84,33 @@ const RecruiterDashboard: React.FC = () => {
   }, []);
 
   const loadJd = async (jdId: string) => {
+    pendingJdRef.current = jdId;
     setSelectedJdId(jdId);
     setResults([]);
     setLocalActions({});
-    setStats(null);
     setExpandedIds(new Set());
     setRejectingId(null);
     setError(null);
     try {
-      const [resRes, statsRes] = await Promise.all([
-        fetch(`${API}/matching/results/${jdId}`, { headers: getAuthHeaders() }),
-        fetch(`${API}/matching/pipeline-stats/${jdId}`, { headers: getAuthHeaders() }),
-      ]);
-      if (!resRes.ok) throw new Error(`results HTTP ${resRes.status}`);
-      if (!statsRes.ok) throw new Error(`stats HTTP ${statsRes.status}`);
-      setResults(await resRes.json());
-      setStats(await statsRes.json());
+      const res = await fetch(`${API}/matching/results/${jdId}`, { headers: getAuthHeaders() });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (pendingJdRef.current !== jdId) return;
+      setResults(await res.json());
     } catch (e: any) {
+      if (pendingJdRef.current !== jdId) return;
       setError('Failed to load JD data: ' + e.message);
     }
   };
 
-  const refreshStats = async () => {
-    if (!selectedJdId) return;
-    try {
-      const res = await fetch(`${API}/matching/pipeline-stats/${selectedJdId}`, { headers: getAuthHeaders() });
-      if (res.ok) setStats(await res.json());
-    } catch {}
-  };
+  const computedStats = useMemo(() => {
+    const shortlisted = results.filter(r =>
+      localActions[r.candidate_id]?.action === 'shortlist' || r.status === 'shortlisted'
+    ).length;
+    const rejected = results.filter(r =>
+      localActions[r.candidate_id]?.action === 'reject' || r.status === 'rejected'
+    ).length;
+    return { total: results.length, shortlisted, rejected, pending: results.length - shortlisted - rejected };
+  }, [results, localActions]);
 
   const isActioned = (r: MatchResult) =>
     !!localActions[r.candidate_id] || r.status === 'shortlisted' || r.status === 'rejected';
@@ -166,8 +122,6 @@ const RecruiterDashboard: React.FC = () => {
     return null;
   };
 
-  // Returns index of the first batch that still has unactioned candidates.
-  // Returns MAX_BATCHES when all batches complete.
   const computeActiveBatch = (): number => {
     for (let b = 0; b < MAX_BATCHES; b++) {
       const batch = results.slice(b * BATCH_SIZE, (b + 1) * BATCH_SIZE);
@@ -180,25 +134,24 @@ const RecruiterDashboard: React.FC = () => {
   const activeBatchIndex = computeActiveBatch();
   const totalBatches = Math.min(MAX_BATCHES, Math.ceil(results.length / BATCH_SIZE));
   const poolExhausted = results.length > 0 && activeBatchIndex >= totalBatches;
-
-  const currentBatch = results.slice(
-    activeBatchIndex * BATCH_SIZE,
-    (activeBatchIndex + 1) * BATCH_SIZE,
-  );
+  const currentBatch = results.slice(activeBatchIndex * BATCH_SIZE, (activeBatchIndex + 1) * BATCH_SIZE);
   const allCurrentActioned = currentBatch.length > 0 && currentBatch.every(r => isActioned(r));
 
-  const handleShortlist = async (candidateId: string) => {
+  const submitAction = async (
+    candidateId: string,
+    body: { action: 'shortlist' | 'reject'; reason?: string },
+    onSuccess: () => void,
+  ) => {
     setActionLoading(candidateId);
     setError(null);
     try {
       const res = await fetch(`${API}/matching/action/${selectedJdId}/${candidateId}`, {
         method: 'POST',
         headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'shortlist' }),
+        body: JSON.stringify(body),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setLocalActions(prev => ({ ...prev, [candidateId]: { action: 'shortlist' } }));
-      await refreshStats();
+      onSuccess();
     } catch (e: any) {
       setError('Action failed: ' + e.message);
     } finally {
@@ -206,26 +159,18 @@ const RecruiterDashboard: React.FC = () => {
     }
   };
 
-  const handleRejectConfirm = async (candidateId: string) => {
+  const handleShortlist = (candidateId: string) =>
+    submitAction(candidateId, { action: 'shortlist' }, () => {
+      setLocalActions(prev => ({ ...prev, [candidateId]: { action: 'shortlist' } }));
+    });
+
+  const handleRejectConfirm = (candidateId: string) => {
     if (!rejectReason) return;
-    setActionLoading(candidateId);
-    setError(null);
-    try {
-      const res = await fetch(`${API}/matching/action/${selectedJdId}/${candidateId}`, {
-        method: 'POST',
-        headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'reject', reason: rejectReason }),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    submitAction(candidateId, { action: 'reject', reason: rejectReason }, () => {
       setLocalActions(prev => ({ ...prev, [candidateId]: { action: 'reject', reason: rejectReason } }));
       setRejectingId(null);
       setRejectReason('');
-      await refreshStats();
-    } catch (e: any) {
-      setError('Action failed: ' + e.message);
-    } finally {
-      setActionLoading(null);
-    }
+    });
   };
 
   const toggleExpand = (id: string) => {
@@ -249,15 +194,8 @@ const RecruiterDashboard: React.FC = () => {
     return (
       <div
         key={result.candidate_id}
-        className={`rounded-2xl border overflow-hidden transition-all ${
-          actioned
-            ? actionState?.action === 'shortlist'
-              ? 'bg-emerald-900/10 border-emerald-500/20'
-              : 'bg-red-900/10 border-red-500/20 opacity-75'
-            : 'bg-slate-800/40 border-slate-700/50'
-        }`}
+        className={`rounded-2xl border overflow-hidden transition-all ${getCardClass(actioned, actionState)}`}
       >
-        {/* Card header */}
         <div className="px-5 py-4 space-y-3">
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-center space-x-3 min-w-0">
@@ -277,7 +215,6 @@ const RecruiterDashboard: React.FC = () => {
 
           {recommendationBadge(result.recommendation)}
 
-          {/* Strengths — top 3 */}
           {result.strengths && result.strengths.length > 0 && (
             <div>
               <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-1">Strengths</p>
@@ -292,7 +229,6 @@ const RecruiterDashboard: React.FC = () => {
             </div>
           )}
 
-          {/* Gaps — top 2 */}
           {result.gaps && result.gaps.length > 0 && (
             <div>
               <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest mb-1">Gaps</p>
@@ -307,7 +243,6 @@ const RecruiterDashboard: React.FC = () => {
             </div>
           )}
 
-          {/* Reasoning — expandable */}
           {result.reasoning && (
             <>
               <button
@@ -326,7 +261,6 @@ const RecruiterDashboard: React.FC = () => {
           )}
         </div>
 
-        {/* Action bar */}
         <div className="border-t border-slate-700/30 px-5 py-3">
           {actioned ? (
             <div className={`flex items-center space-x-2 text-xs font-bold ${
@@ -391,7 +325,6 @@ const RecruiterDashboard: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div className="flex items-center space-x-3">
         <div className="bg-blue-600/20 p-2 rounded-xl border border-blue-500/30">
           <ClipboardList size={20} className="text-blue-400" />
@@ -409,7 +342,7 @@ const RecruiterDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Section 1 — Assigned JDs */}
+      {/* Assigned JDs */}
       <section>
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Assigned Job Descriptions</p>
         {loading ? (
@@ -432,10 +365,10 @@ const RecruiterDashboard: React.FC = () => {
                 <p className="text-[11px] text-slate-400 mt-0.5 truncate">{jd.jd_id}</p>
                 <div className="mt-3 flex items-center justify-between">
                   {statusPill(jd.status)}
-                  {selectedJdId === jd.jd_id && stats != null && (
+                  {selectedJdId === jd.jd_id && results.length > 0 && (
                     <span className="flex items-center space-x-1 text-[10px] text-slate-400">
                       <Users size={10} />
-                      <span>{stats.total} in pool</span>
+                      <span>{results.length} in pool</span>
                     </span>
                   )}
                 </div>
@@ -445,7 +378,7 @@ const RecruiterDashboard: React.FC = () => {
         )}
       </section>
 
-      {/* Section 2 — Batch Review */}
+      {/* Batch Review */}
       {selectedJdId && (
         <section>
           <div className="flex items-center justify-between mb-4">
@@ -479,7 +412,7 @@ const RecruiterDashboard: React.FC = () => {
               <p className="text-white font-bold text-lg">Pool Exhausted</p>
               <p className="text-slate-400 text-sm mt-1">
                 All {totalBatches} batch{totalBatches !== 1 ? 'es' : ''} reviewed.{' '}
-                {stats?.shortlisted ?? 0} candidate{(stats?.shortlisted ?? 0) !== 1 ? 's' : ''} shortlisted.
+                {computedStats.shortlisted} candidate{computedStats.shortlisted !== 1 ? 's' : ''} shortlisted.
               </p>
             </div>
           ) : (
@@ -497,16 +430,16 @@ const RecruiterDashboard: React.FC = () => {
         </section>
       )}
 
-      {/* Section 3 — Pipeline Stats */}
-      {selectedJdId && stats && (
+      {/* Pipeline Stats */}
+      {selectedJdId && results.length > 0 && (
         <section>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Pipeline Status</p>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: 'Total Matched', value: stats.total, cls: 'text-slate-300' },
-              { label: 'Shortlisted', value: stats.shortlisted, cls: 'text-emerald-400' },
-              { label: 'Rejected', value: stats.rejected, cls: 'text-red-400' },
-              { label: 'Pending Review', value: stats.pending, cls: 'text-yellow-400' },
+              { label: 'Total Matched',  value: computedStats.total,       cls: 'text-slate-300' },
+              { label: 'Shortlisted',    value: computedStats.shortlisted,  cls: 'text-emerald-400' },
+              { label: 'Rejected',       value: computedStats.rejected,     cls: 'text-red-400' },
+              { label: 'Pending Review', value: computedStats.pending,      cls: 'text-yellow-400' },
             ].map(({ label, value, cls }) => (
               <div key={label} className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5 text-center">
                 <p className={`text-3xl font-bold ${cls}`}>{value}</p>

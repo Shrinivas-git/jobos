@@ -1,54 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import keycloak from '../keycloak';
 import { Zap, ChevronDown, ChevronUp, CheckCircle, XCircle, Clock, AlertTriangle, RefreshCw } from 'lucide-react';
-
-interface JD {
-  jd_id: string;
-  title: string;
-  status: string;
-  created_at: string;
-}
-
-interface MatchResult {
-  jd_id: string;
-  candidate_id: string;
-  match_score: number;
-  composite_score?: number;
-  completeness_score?: number;
-  fitment_score?: number;
-  reasoning?: string;
-  strengths?: string[];
-  gaps?: string[];
-  recommendation?: string;
-  rank: number;
-  status: string;
-  source: string;
-}
-
-interface CandidateLookup {
-  [candidate_id: string]: string; // candidate_id -> name
-}
-
-const API = 'http://localhost:8000';
-
-function getAuthHeaders() {
-  return { Authorization: `Bearer ${keycloak.token}` };
-}
-
-const recommendationBadge = (rec?: string) => {
-  if (!rec) return null;
-  const map: Record<string, { label: string; cls: string }> = {
-    shortlist: { label: 'Shortlist', cls: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' },
-    hold: { label: 'Hold', cls: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-    reject: { label: 'Reject', cls: 'bg-red-500/20 text-red-400 border-red-500/30' },
-  };
-  const style = map[rec] ?? { label: rec, cls: 'bg-slate-500/20 text-slate-400 border-slate-500/30' };
-  return (
-    <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${style.cls}`}>
-      {style.label}
-    </span>
-  );
-};
+import { API, getAuthHeaders, JD, MatchResult, CandidateLookup } from '../utils/api';
+import { recommendationBadge } from '../utils/badges';
 
 const statusIcon = (status: string) => {
   if (status === 'pass_2_complete') return <CheckCircle size={14} className="text-emerald-400" />;

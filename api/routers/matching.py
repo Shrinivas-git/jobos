@@ -4,6 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel
 from auth import check_role
 from tasks.matching_tasks import run_matching
+from utils.client_utils import get_db
 
 router = APIRouter(prefix="/matching", tags=["matching"])
 
@@ -44,7 +45,6 @@ async def trigger_pass2(jd_id: str, user: dict = Depends(check_role(["recruiter"
 @router.get("/results/{jd_id}", response_model=List[MatchingResultResponse])
 async def get_matching_results(jd_id: str, user: dict = Depends(check_role(["recruiter", "manager", "admin"]))):
     """Retrieves current matching results for a JD."""
-    from utils.client_utils import get_db
     db = get_db()
     results = list(db.candidate_pools.find({"jd_id": jd_id}, {"_id": 0}).sort("rank", 1))
     return results
@@ -66,7 +66,6 @@ async def record_candidate_action(
         raise HTTPException(status_code=400, detail="action must be 'shortlist' or 'reject'")
     if body.action == "reject" and not body.reason:
         raise HTTPException(status_code=400, detail="Rejection requires a reason")
-    from utils.client_utils import get_db
     db = get_db()
     db.candidate_pools.update_one(
         {"jd_id": jd_id, "candidate_id": candidate_id},
@@ -86,7 +85,6 @@ async def get_pipeline_stats(
     jd_id: str,
     user: dict = Depends(check_role(["recruiter", "manager", "admin"])),
 ):
-    from utils.client_utils import get_db
     db = get_db()
     docs = list(db.candidate_pools.find({"jd_id": jd_id}, {"status": 1}))
     total = len(docs)

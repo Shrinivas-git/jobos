@@ -1,33 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 import keycloak from '../keycloak';
 import { Users, Globe, Activity, Clock, CheckCircle2, UserCheck } from 'lucide-react';
 import RecruiterDashboard from './RecruiterDashboard';
 
 const KNOWN_ROLES = ['admin', 'manager', 'recruiter', 'hod', 'candidate', 'account_manager', 'senior_recruiter', 'junior_recruiter', 'intern'];
 
+const primaryRole = (roles: string[]): string => {
+  if (roles.includes('admin')) return 'admin';
+  if (roles.includes('manager') || roles.includes('hod')) return 'manager';
+  if (roles.includes('recruiter')) return 'recruiter';
+  if (roles.includes('candidate')) return 'candidate';
+  return 'unknown';
+};
+
 const Dashboard: React.FC = () => {
-  const [data, setData] = useState<any>(null);
   const roles = keycloak.tokenParsed?.realm_access?.roles || [];
   const filteredRoles = roles.filter(r => KNOWN_ROLES.includes(r));
+  const role = primaryRole(roles);
 
-  const isAdmin    = roles.includes('admin');
-  const isManager  = roles.includes('manager') || roles.includes('hod');
-  const isRecruiter = roles.includes('recruiter') && !isAdmin && !isManager;
-  const isCandidate = roles.includes('candidate') && !isAdmin && !isManager && !isRecruiter;
+  if (role === 'recruiter') return <RecruiterDashboard />;
 
-  useEffect(() => {
-    if (isCandidate) return;
-    axios.get('http://localhost:8000/auth/me', {
-      headers: { Authorization: `Bearer ${keycloak.token}` },
-    })
-      .then(response => setData(response.data))
-      .catch(err => console.error('Error fetching auth data', err));
-  }, []);
-
-  if (isRecruiter) return <RecruiterDashboard />;
-
-  if (isCandidate) {
+  if (role === 'candidate') {
     const username = keycloak.tokenParsed?.preferred_username || 'Candidate';
     const email    = keycloak.tokenParsed?.email || '';
     return (
@@ -59,7 +52,7 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  // admin / manager / hod — full ops dashboard
+  // admin / manager / hod
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="relative overflow-hidden bg-[#1e293b] border border-slate-700/50 rounded-3xl p-10 shadow-xl">
