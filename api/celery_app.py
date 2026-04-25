@@ -5,7 +5,7 @@ celery = Celery(
     "jobos",
     broker=os.getenv("REDIS_URL", "redis://redis:6379/0"),
     backend=os.getenv("REDIS_URL", "redis://redis:6379/0"),
-    include=['tasks.jd_tasks', 'tasks.resume_tasks', 'tasks.matching_tasks']
+    include=['tasks.jd_tasks', 'tasks.resume_tasks', 'tasks.matching_tasks', 'tasks.notification_tasks']
 )
 
 # Optional: Configuration overrides

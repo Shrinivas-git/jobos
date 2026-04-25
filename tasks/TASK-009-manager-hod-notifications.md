@@ -1,5 +1,5 @@
 # TASK-009: Manager & HOD Notifications
-**Status:** TODO
+**Status:** DONE
 **Priority:** Medium
 **Phase:** Phase 1 — JD Intake, Resume Pool & Semantic Matching
 **Sprint:** 3
@@ -8,10 +8,10 @@
 Develop the notification system to alert Managers and HODs when a candidate pool is ready for review. Notifications should include a stack-ranked digest and fitment summaries.
 
 ## Deliverables
-- [ ] Notification engine for in-app and email alerts.
-- [ ] Email digest template with stack-ranked candidate list.
-- [ ] Logic to trigger notifications once K/P thresholds are met.
-- [ ] UI for Manager/HOD to view the digest and allocate JDs.
+- [x] Notification engine for in-app and email alerts.
+- [x] Email digest template with stack-ranked candidate list.
+- [x] Logic to trigger notifications once K/P thresholds are met.
+- [x] UI for Manager/HOD to view the digest and allocate JDs.
 
 ## PRD References
 - Section 6.5 (Manager & HOD Notification)

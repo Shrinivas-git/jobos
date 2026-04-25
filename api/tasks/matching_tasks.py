@@ -209,4 +209,8 @@ def run_pass_2(jd_id: str):
         )
 
     logger.info(f"Pass 2 reasoning complete for {jd_id}. Evaluated {evaluated_count} candidates.")
+
+    from tasks.notification_tasks import notify_pool_ready
+    notify_pool_ready.delay(jd_id)
+
     return {"jd_id": jd_id, "evaluated_count": evaluated_count, "status": "complete"}
