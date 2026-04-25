@@ -1,16 +1,47 @@
 from fastapi import APIRouter, Depends, HTTPException
+from typing import List, Optional
+from datetime import datetime
+from pydantic import BaseModel
 from auth import check_role
 from tasks.matching_tasks import run_matching
 
 router = APIRouter(prefix="/matching", tags=["matching"])
 
+class MatchingResultResponse(BaseModel):
+    jd_id: str
+    candidate_id: str
+    match_score: float # Cosine similarity
+    fitment_score: Optional[float] = None # Pass 2 reasoning score
+    composite_score: Optional[float] = None
+    completeness_score: Optional[float] = None
+    reasoning: Optional[str] = None
+    strengths: Optional[List[str]] = None
+    gaps: Optional[List[str]] = None
+    recommendation: Optional[str] = None
+    rank: int
+    status: str
+    source: str
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        populate_by_name = True
+        arbitrary_types_allowed = True
+
 @router.post("/run/{jd_id}")
 async def trigger_matching(jd_id: str, user: dict = Depends(check_role(["recruiter", "manager", "admin"]))):
-    """Triggers the semantic matching process for a specific JD."""
+    """Triggers the full matching process (Pass 1 & Pass 2) for a specific JD."""
     run_matching.delay(jd_id)
     return {"message": f"Matching process triggered for {jd_id}", "jd_id": jd_id}
 
-@router.get("/results/{jd_id}")
+@router.post("/pass2/{jd_id}")
+async def trigger_pass2(jd_id: str, user: dict = Depends(check_role(["recruiter", "manager", "admin"]))):
+    """Triggers only the Pass 2 (Intelligence Layer) for existing Pass 1 results."""
+    from tasks.matching_tasks import run_pass_2
+    run_pass_2.delay(jd_id)
+    return {"message": f"Pass 2 reasoning triggered for {jd_id}", "jd_id": jd_id}
+
+@router.get("/results/{jd_id}", response_model=List[MatchingResultResponse])
 async def get_matching_results(jd_id: str, user: dict = Depends(check_role(["recruiter", "manager", "admin"]))):
     """Retrieves current matching results for a JD."""
     from utils.client_utils import get_db

@@ -5,8 +5,22 @@ from celery_app import celery
 from utils.client_utils import get_db
 from utils.qdrant_utils import get_jd_vector, search_resumes_by_vector
 from utils.config_utils import get_matching_thresholds
+from utils.gemini_utils import evaluate_candidate_fitment
+from utils.storage_utils import save_candidate_match_results
 
 logger = logging.getLogger(__name__)
+
+def calculate_completeness_score(candidate: dict) -> float:
+    """
+    Simple logic to calculate profile completeness (0-100).
+    """
+    fields = ["name", "email", "phone", "skills", "experience_years", "location"]
+    filled = 0
+    for field in fields:
+        val = candidate.get(field)
+        if val and val not in ["Unknown", "Not specified", "null", []]:
+            filled += 1
+    return (filled / len(fields)) * 100
 
 @celery.task(name="tasks.matching_tasks.run_matching")
 def run_matching(jd_id: str):
@@ -90,9 +104,109 @@ def run_matching(jd_id: str):
 @celery.task(name="tasks.matching_tasks.run_pass_2")
 def run_pass_2(jd_id: str):
     """
-    Pass 2: Intelligence Layer (Stub)
-    Deep reasoning on candidates using Gemini 2.5 Pro.
-    To be implemented in TASK-008.
+    Pass 2: Intelligence Layer
+    Deep reasoning on candidates using Groq (llama-3.3-70b-versatile).
     """
-    logger.info(f"Pass 2 reasoning (STUB) triggered for JD: {jd_id}")
-    return {"jd_id": jd_id, "status": "stub_executed"}
+    logger.info(f"Starting Pass 2 reasoning for JD: {jd_id}")
+    db = get_db()
+    
+    # 1. Fetch JD data
+    jd = db.job_descriptions.find_one({"jd_id": jd_id})
+    if not jd:
+        logger.error(f"JD {jd_id} not found")
+        return {"error": "JD not found"}
+    
+    structured_jd = jd.get("structured_data")
+    if not structured_jd:
+        logger.error(f"Structured JD data missing for {jd_id}")
+        return {"error": "Structured JD data missing"}
+
+    # Fetch client slug for folder structure
+    client = db.clients.find_one({"_id": jd.get("client_id")})
+    if not client:
+        # Fallback to finding by name if ObjectId mismatch
+        client = db.clients.find_one({"slug": jd.get("client_slug", "unknown")})
+    
+    client_slug = client.get("slug", "unknown") if client else "unknown"
+
+    # 2. Fetch candidates from Pass 1
+    # We take top 20 from Pass 1 to process
+    pass_1_matches = list(db.candidate_pools.find({"jd_id": jd_id}).sort("rank", 1).limit(20))
+    
+    if not pass_1_matches:
+        logger.warning(f"No Pass 1 matches found for {jd_id}")
+        return {"status": "no_candidates"}
+
+    # 3. Iterate and evaluate
+    evaluated_count = 0
+    for match in pass_1_matches:
+        candidate_id = match["candidate_id"]
+        logger.info(f"Evaluating candidate {candidate_id} for JD {jd_id}...")
+        
+        # Fetch full candidate record
+        candidate = db.candidates.find_one({"candidate_id": candidate_id})
+        if not candidate or not candidate.get("resume_text"):
+            logger.warning(f"Resume text missing for candidate {candidate_id}")
+            continue
+            
+        # Call Gemini reasoning
+        evaluation = evaluate_candidate_fitment(structured_jd, candidate["resume_text"])
+        
+        # Calculate completeness
+        completeness = calculate_completeness_score(candidate)
+        
+        # Composite score calculation (Section 6.1)
+        # Weighting: 70% Gemini, 20% Cosine (Pass 1), 10% Completeness
+        fitment_score = float(evaluation.get("fitment_score", 0))
+        cosine_score = float(match.get("match_score", 0)) * 100 # Normalize to 0-100
+        
+        composite_score = (fitment_score * 0.7) + (cosine_score * 0.2) + (completeness * 0.1)
+        
+        match_update = {
+            "fitment_score": fitment_score,
+            "completeness_score": completeness,
+            "composite_score": composite_score,
+            "reasoning": evaluation.get("reasoning"),
+            "strengths": evaluation.get("strengths"),
+            "gaps": evaluation.get("gaps"),
+            "recommendation": evaluation.get("recommendation"),
+            "status": "pass_2_complete",
+            "updated_at": datetime.now()
+        }
+        
+        # Update MongoDB
+        db.candidate_pools.update_one(
+            {"jd_id": jd_id, "candidate_id": candidate_id},
+            {"$set": match_update}
+        )
+        
+        # Write to filesystem (match_score.json and pointer.json)
+        pointer_data = {
+            "candidate_id": candidate_id,
+            "vector_id": str(candidate.get("vector_id", "")),
+            "file_path": candidate.get("file_paths", [""])[0] if candidate.get("file_paths") else ""
+        }
+        
+        save_candidate_match_results(
+            client_slug, 
+            jd_id, 
+            candidate_id, 
+            match_update, 
+            pointer_data
+        )
+        
+        evaluated_count += 1
+        
+    # 4. Final Re-ranking based on composite_score
+    all_matches = list(db.candidate_pools.find({"jd_id": jd_id}))
+    # Sort by composite_score descending
+    all_matches.sort(key=lambda x: x.get("composite_score", 0), reverse=True)
+    
+    for idx, match in enumerate(all_matches):
+        db.candidate_pools.update_one(
+            {"jd_id": jd_id, "candidate_id": match["candidate_id"]},
+            {"$set": {"rank": idx + 1}}
+        )
+
+    logger.info(f"Pass 2 reasoning complete for {jd_id}. Evaluated {evaluated_count} candidates.")
+    return {"jd_id": jd_id, "evaluated_count": evaluated_count, "status": "complete"}

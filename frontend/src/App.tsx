@@ -8,6 +8,7 @@ import Candidates from './pages/Candidates';
 import Documents from './pages/Documents';
 import CRM from './pages/CRM';
 import Analytics from './pages/Analytics';
+import Matching from './pages/Matching';
 
 const App: React.FC = () => {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
@@ -57,6 +58,7 @@ const App: React.FC = () => {
           <Route path="/documents" element={<Documents />} />
           <Route path="/crm" element={<CRM />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/matching" element={<Matching />} />
           <Route path="*" element={<div className="text-white p-8">Page Not Found</div>} />
         </Routes>
       </Layout>

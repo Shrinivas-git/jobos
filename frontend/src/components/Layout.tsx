@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import keycloak from '../keycloak';
-import { LogOut, User, LayoutDashboard, Briefcase, Users, FileText, BarChart3, MessageSquare, Bell, ShieldCheck } from 'lucide-react';
+import { LogOut, User, LayoutDashboard, Briefcase, Users, FileText, BarChart3, MessageSquare, Bell, ShieldCheck, Zap } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -18,6 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { label: 'Candidate Pool', icon: <Users size={18} />, path: '/candidates', roles: ['recruiter', 'manager', 'admin'] },
     { label: 'Document Vault', icon: <FileText size={18} />, path: '/documents', roles: ['recruiter', 'manager', 'hod', 'admin'] },
     { label: 'Communications', icon: <MessageSquare size={18} />, path: '/crm', roles: ['recruiter', 'manager', 'admin'] },
+    { label: 'Matching Engine', icon: <Zap size={18} />, path: '/matching', roles: ['recruiter', 'manager', 'admin'] },
     { label: 'Analytics', icon: <BarChart3 size={18} />, path: '/analytics', roles: ['manager', 'admin', 'hod'] },
   ];
 

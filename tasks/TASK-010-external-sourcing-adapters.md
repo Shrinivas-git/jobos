@@ -1,5 +1,5 @@
 # TASK-010: External Sourcing Adapters
-**Status:** TODO
+**Status:** DONE
 **Priority:** Medium
 **Phase:** Phase 2 — External Sourcing & Obfuscated Posting
 **Sprint:** 4
