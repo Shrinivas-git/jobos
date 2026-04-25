@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import keycloak from '../keycloak';
-import { Upload, FileText, CheckCircle2, AlertCircle, Loader2, List, Plus, Type, Shield, ShieldOff, Globe, Clock, Briefcase } from 'lucide-react';
+import { API, getAuthHeaders } from '../utils/api';
+import { Upload, FileText, CheckCircle2, AlertCircle, Loader2, List, Plus, Type, Shield, ShieldOff, Globe, Clock } from 'lucide-react';
 
 const Jobs: React.FC = () => {
   const [mode, setMode] = useState<'upload' | 'form'>('upload');
@@ -20,7 +20,8 @@ const Jobs: React.FC = () => {
   const [responsibilities, setResponsibilities] = useState('');
   const [kpis, setKpis] = useState('');
   const [skills, setSkills] = useState('');
-  const [expRange, setExpRange] = useState('');
+  const [relevantExperience, setRelevantExperience] = useState(0);
+  const [totalExperience, setTotalExperience] = useState(0);
   const [compRange, setCompRange] = useState('');
   const [workStructure, setWorkStructure] = useState('In-office');
   const [location, setLocation] = useState('');
@@ -28,11 +29,14 @@ const Jobs: React.FC = () => {
   const [urgency, setUrgency] = useState('Medium');
   const [numPositions, setNumPositions] = useState(1);
   const [obfuscate, setObfuscate] = useState(false);
+  const [genderPreference, setGenderPreference] = useState('Any');
+  const [collegePreference, setCollegePreference] = useState('');
+  const [collegeExclusion, setCollegeExclusion] = useState('');
 
   const fetchJDs = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/jd/', {
-        headers: { Authorization: `Bearer ${keycloak.token}` }
+      const response = await axios.get(`${API}/jd/`, {
+        headers: getAuthHeaders()
       });
       setJds(response.data);
     } catch (err) {
@@ -54,7 +58,8 @@ const Jobs: React.FC = () => {
     setResponsibilities('');
     setKpis('');
     setSkills('');
-    setExpRange('');
+    setRelevantExperience(0);
+    setTotalExperience(0);
     setCompRange('');
     setWorkStructure('In-office');
     setLocation('');
@@ -62,6 +67,9 @@ const Jobs: React.FC = () => {
     setUrgency('Medium');
     setNumPositions(1);
     setObfuscate(false);
+    setGenderPreference('Any');
+    setCollegePreference('');
+    setCollegeExclusion('');
   };
 
   const handleUploadSubmit = async (e: React.FormEvent) => {
@@ -77,10 +85,10 @@ const Jobs: React.FC = () => {
     formData.append('file', file);
 
     try {
-      await axios.post('http://localhost:8000/jd/upload', formData, {
+      await axios.post(`${API}/jd/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${keycloak.token}`
+          ...getAuthHeaders(),
         }
       });
       setStatus({ type: 'success', message: 'Job Description uploaded successfully!' });
@@ -105,21 +113,25 @@ const Jobs: React.FC = () => {
       responsibilities,
       kpis,
       skills: skills.split(',').map(s => s.trim()).filter(s => s),
-      experience_range: expRange,
+      relevant_experience: relevantExperience,
+      total_experience: totalExperience,
       compensation_range: compRange,
       work_structure: workStructure,
       location,
       hiring_timeline: timeline,
       urgency,
       num_positions: numPositions,
-      obfuscate
+      obfuscate,
+      gender_preference: genderPreference,
+      college_preference: collegePreference,
+      college_exclusion: collegeExclusion
     };
 
     try {
-      await axios.post('http://localhost:8000/jd/create', payload, {
+      await axios.post(`${API}/jd/create`, payload, {
         headers: {
-          'Authorization': `Bearer ${keycloak.token}`,
-          'Content-Type': 'application/json'
+          ...getAuthHeaders(),
+          'Content-Type': 'application/json',
         }
       });
       setStatus({ type: 'success', message: 'Structured JD created successfully!' });
@@ -217,16 +229,78 @@ const Jobs: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Experience</label>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Relevant Experience (Years)</label>
                     <input
-                      type="text"
-                      value={expRange}
-                      onChange={(e) => setExpRange(e.target.value)}
-                      placeholder="5-8 years"
+                      type="number"
+                      value={relevantExperience}
+                      onChange={(e) => setRelevantExperience(parseInt(e.target.value) || 0)}
+                      placeholder="Years of relevant domain experience required"
+                      min="0"
                       className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
                       required
                     />
                   </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Total Experience (Years)</label>
+                    <input
+                      type="number"
+                      value={totalExperience}
+                      onChange={(e) => setTotalExperience(parseInt(e.target.value) || 0)}
+                      placeholder="Total years of work experience required"
+                      min="0"
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Location</label>
+                    <input
+                      type="text"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      placeholder="Bangalore, IN"
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Gender Preference</label>
+                  <select
+                    value={genderPreference}
+                    onChange={(e) => setGenderPreference(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                  >
+                    <option value="Any">Any</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Preferred Colleges</label>
+                  <input
+                    type="text"
+                    value={collegePreference}
+                    onChange={(e) => setCollegePreference(e.target.value)}
+                    placeholder="e.g. IIT, NIT, BITS, VTU — leave blank for any"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Restricted Colleges</label>
+                  <input
+                    type="text"
+                    value={collegeExclusion}
+                    onChange={(e) => setCollegeExclusion(e.target.value)}
+                    placeholder="e.g. Students from XYZ College should not apply"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                  />
                 </div>
 
                 <div>

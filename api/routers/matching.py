@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from typing import List, Optional
+from typing import List, Literal, Optional
 from datetime import datetime
 from pydantic import BaseModel
 from auth import check_role
@@ -51,7 +51,7 @@ async def get_matching_results(jd_id: str, user: dict = Depends(check_role(["rec
 
 
 class CandidateAction(BaseModel):
-    action: str  # "shortlist" | "reject"
+    action: Literal["shortlist", "reject"]
     reason: Optional[str] = None
 
 

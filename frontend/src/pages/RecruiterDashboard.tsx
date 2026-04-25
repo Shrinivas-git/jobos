@@ -142,17 +142,20 @@ const RecruiterDashboard: React.FC = () => {
     body: { action: 'shortlist' | 'reject'; reason?: string },
     onSuccess: () => void,
   ) => {
+    const jdId = selectedJdId;
     setActionLoading(candidateId);
     setError(null);
     try {
-      const res = await fetch(`${API}/matching/action/${selectedJdId}/${candidateId}`, {
+      const res = await fetch(`${API}/matching/action/${jdId}/${candidateId}`, {
         method: 'POST',
         headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (pendingJdRef.current !== jdId) return;
       onSuccess();
     } catch (e: any) {
+      if (pendingJdRef.current !== jdId) return;
       setError('Action failed: ' + e.message);
     } finally {
       setActionLoading(null);
