@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import keycloak from '../keycloak';
-import { LogOut, User, LayoutDashboard, Briefcase, Users, FileText, BarChart3, MessageSquare, Bell, ShieldCheck, Zap } from 'lucide-react';
+import { LogOut, User, LayoutDashboard, Briefcase, Users, FileText, BarChart3, MessageSquare, ShieldCheck, Zap } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;

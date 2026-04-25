@@ -48,3 +48,49 @@ async def get_matching_results(jd_id: str, user: dict = Depends(check_role(["rec
     db = get_db()
     results = list(db.candidate_pools.find({"jd_id": jd_id}, {"_id": 0}).sort("rank", 1))
     return results
+
+
+class CandidateAction(BaseModel):
+    action: str  # "shortlist" | "reject"
+    reason: Optional[str] = None
+
+
+@router.post("/action/{jd_id}/{candidate_id}")
+async def record_candidate_action(
+    jd_id: str,
+    candidate_id: str,
+    body: CandidateAction,
+    user: dict = Depends(check_role(["recruiter", "manager", "admin"])),
+):
+    if body.action not in ("shortlist", "reject"):
+        raise HTTPException(status_code=400, detail="action must be 'shortlist' or 'reject'")
+    if body.action == "reject" and not body.reason:
+        raise HTTPException(status_code=400, detail="Rejection requires a reason")
+    from utils.client_utils import get_db
+    db = get_db()
+    db.candidate_pools.update_one(
+        {"jd_id": jd_id, "candidate_id": candidate_id},
+        {"$set": {
+            "status": body.action + "ed",
+            "action_reason": body.reason,
+            "actioned_at": datetime.utcnow().isoformat(),
+            "actioned_by": user.get("sub", "unknown"),
+            "updated_at": datetime.utcnow(),
+        }},
+    )
+    return {"ok": True}
+
+
+@router.get("/pipeline-stats/{jd_id}")
+async def get_pipeline_stats(
+    jd_id: str,
+    user: dict = Depends(check_role(["recruiter", "manager", "admin"])),
+):
+    from utils.client_utils import get_db
+    db = get_db()
+    docs = list(db.candidate_pools.find({"jd_id": jd_id}, {"status": 1}))
+    total = len(docs)
+    shortlisted = sum(1 for d in docs if d.get("status") == "shortlisted")
+    rejected = sum(1 for d in docs if d.get("status") == "rejected")
+    pending = total - shortlisted - rejected
+    return {"total": total, "shortlisted": shortlisted, "rejected": rejected, "pending": pending}
