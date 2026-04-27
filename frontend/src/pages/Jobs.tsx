@@ -32,6 +32,9 @@ const Jobs: React.FC = () => {
   const [genderPreference, setGenderPreference] = useState('Any');
   const [collegePreference, setCollegePreference] = useState('');
   const [collegeExclusion, setCollegeExclusion] = useState('');
+  const [preferredCompanyType, setPreferredCompanyType] = useState<string[]>([]);
+  const [preferredTeamSize, setPreferredTeamSize] = useState('Any');
+  const [roleType, setRoleType] = useState('Any');
 
   const fetchJDs = async () => {
     try {
@@ -70,6 +73,9 @@ const Jobs: React.FC = () => {
     setGenderPreference('Any');
     setCollegePreference('');
     setCollegeExclusion('');
+    setPreferredCompanyType([]);
+    setPreferredTeamSize('Any');
+    setRoleType('Any');
   };
 
   const handleUploadSubmit = async (e: React.FormEvent) => {
@@ -124,7 +130,10 @@ const Jobs: React.FC = () => {
       obfuscate,
       gender_preference: genderPreference,
       college_preference: collegePreference,
-      college_exclusion: collegeExclusion
+      college_exclusion: collegeExclusion,
+      preferred_company_type: preferredCompanyType,
+      preferred_team_size: preferredTeamSize,
+      role_type: roleType
     };
 
     try {
@@ -301,6 +310,58 @@ const Jobs: React.FC = () => {
                     placeholder="e.g. Students from XYZ College should not apply"
                     className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Preferred Company Type</label>
+                  <div className="space-y-2">
+                    {['Fintech', 'Edtech', 'Ecommerce', 'Healthcare', 'Product', 'Services', 'Startup', 'Large Enterprise', 'Any'].map((option) => (
+                      <label key={option} className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={preferredCompanyType.includes(option)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setPreferredCompanyType([...preferredCompanyType, option]);
+                            } else {
+                              setPreferredCompanyType(preferredCompanyType.filter(t => t !== option));
+                            }
+                          }}
+                          className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-0"
+                        />
+                        <span className="text-sm text-slate-300">{option}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Preferred Team Size</label>
+                  <select
+                    value={preferredTeamSize}
+                    onChange={(e) => setPreferredTeamSize(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                  >
+                    <option value="Any">Any</option>
+                    <option value="Small (1-15)">Small (1-15)</option>
+                    <option value="Medium (16-50)">Medium (16-50)</option>
+                    <option value="Large (51-200)">Large (51-200)</option>
+                    <option value="Enterprise (200+)">Enterprise (200+)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Role Type</label>
+                  <select
+                    value={roleType}
+                    onChange={(e) => setRoleType(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                  >
+                    <option value="Any">Any</option>
+                    <option value="Individual Contributor">Individual Contributor</option>
+                    <option value="50% IC + 50% Management">50% IC + 50% Management</option>
+                    <option value="Team Lead">Team Lead</option>
+                  </select>
                 </div>
 
                 <div>

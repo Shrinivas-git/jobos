@@ -3,7 +3,8 @@ from typing import Optional, List
 from datetime import datetime
 import json
 import os
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
+from utils.pydantic_utils import PyObjectId
 from auth import check_role
 from utils.client_utils import find_or_create_client, get_db
 from utils.jd_utils import generate_jd_id
@@ -19,16 +20,39 @@ class StructuredJD(BaseModel):
     responsibilities: str
     kpis: str
     skills: List[str]
-    experience_range: str
+    relevant_experience: int
+    total_experience: int
     compensation_range: str
     work_structure: str
     location: str
     hiring_timeline: str
     urgency: str
     num_positions: int
+    gender_preference: str = "Any"
+    college_preference: Optional[str] = ""
+    college_exclusion: Optional[str] = ""
+    preferred_company_type: Optional[List[str]] = []
+    preferred_team_size: Optional[str] = "Any"
+    role_type: Optional[str] = "Any"
     obfuscate: bool = False
 
-@router.get("/")
+class JDResponse(BaseModel):
+    jd_id: str
+    title: str
+    client_id: PyObjectId
+    filename: Optional[str] = None
+    folder_path: str
+    status: str
+    created_at: datetime
+    source: str
+    uploaded_by: Optional[str] = None
+    structured_data: Optional[dict] = None
+
+    class Config:
+        populate_by_name = True
+        arbitrary_types_allowed = True
+
+@router.get("/", response_model=List[JDResponse])
 async def get_jds(user: dict = Depends(check_role(["recruiter", "manager", "hod", "admin"]))):
     db = get_db()
     # Sort by created_at descending

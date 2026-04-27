@@ -143,6 +143,7 @@ def generate_embedding(text: str) -> List[float]:
 def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> dict:
     """
     Pass 2: Uses Groq (reason model) to perform deep reasoning on a candidate's fitment for a JD.
+    Includes contextual bonus scoring based on company type, team size, and role type alignment.
     """
     if not ai_client:
         raise RuntimeError("Groq client not initialized — GROQ_API_KEY missing.")
@@ -164,11 +165,16 @@ def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> di
                         f"Evaluate the following candidate resume against the job description above.\n\n"
                         f"CANDIDATE RESUME:\n---\n{resume_text[:12000]}\n---\n\n"
                         "Return ONLY a valid JSON object. No markdown. Be objective and critical.\n"
-                        "- fitment_score: integer 0-100\n"
+                        "- fitment_score: integer 0-100 (base fitment without contextual bonus)\n"
                         "- reasoning: one concise paragraph\n"
                         "- strengths: list of exactly 3 strings\n"
                         "- gaps: list of exactly 3 strings\n"
-                        "- recommendation: one of \"shortlist\", \"hold\", \"reject\"\n\n"
+                        "- recommendation: one of \"shortlist\", \"hold\", \"reject\"\n"
+                        "- context_bonus: integer 0-15 calculated as follows:\n"
+                        "  +5 if candidate's company_types includes any type from JD preferred_company_type\n"
+                        "  +5 if candidate's avg_team_size matches JD preferred_team_size\n"
+                        "  +5 if candidate's role_type matches JD role_type\n"
+                        "  (If JD has 'Any' or no preference for a field, do not apply that bonus)\n\n"
                         "JSON OUTPUT:"
                     )
                 }
@@ -176,7 +182,10 @@ def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> di
         )
         text = response.choices[0].message.content.strip()
         logger.info(f"Groq Pass 2 response (first 200 chars): {text[:200]}")
-        return _parse_json_response(text)
+        result = _parse_json_response(text)
+        if "context_bonus" not in result:
+            result["context_bonus"] = 0
+        return result
     except Exception as e:
         logger.error(f"Groq Pass 2 reasoning failed: {e}")
         return {
@@ -184,7 +193,8 @@ def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> di
             "reasoning": "AI evaluation failed.",
             "strengths": [],
             "gaps": [],
-            "recommendation": "hold"
+            "recommendation": "hold",
+            "context_bonus": 0
         }
 
 
@@ -255,7 +265,10 @@ def extract_resume_metadata(raw_text: str) -> dict:
         "education": [],
         "languages": [],
         "previous_companies": [],
-        "companies_switched": 0
+        "companies_switched": 0,
+        "company_types": [],
+        "avg_team_size": "Unknown",
+        "role_type": "Unknown"
     }
 
     # AI extraction — overrides regex results where the AI gives a better answer
@@ -266,6 +279,9 @@ CRITICAL INSTRUCTIONS:
 2. Do NOT include any markdown formatting, explanations, or additional text.
 3. If a field is missing, use null or "Not specified".
 4. For 'experience_years': Calculate total months of work experience from all roles, convert to years (round down). Example: 4 months = 0, 14 months = 1. Read start and end dates carefully — do NOT use the year number as the duration.
+5. For 'company_types': For each company the candidate worked at, classify it as one of: Fintech, Edtech, Ecommerce, Healthcare, Product, Services, Startup, Large Enterprise. Return a list of unique types across all companies.
+6. For 'avg_team_size': Estimate the average team size the candidate worked in across all roles. Return one of: Small (1-15), Medium (16-50), Large (51-200), Enterprise (200+), Unknown.
+7. For 'role_type': Based on the candidate's roles, classify as one of: Individual Contributor, 50% IC + 50% Management, Team Lead, Unknown.
 
 JSON SCHEMA:
 {{
@@ -284,7 +300,10 @@ JSON SCHEMA:
   "education": [{{"degree": "B.Tech", "institution": "University Name", "year": "2020"}}],
   "languages": ["English", "Hindi"],
   "previous_companies": ["Company A", "Company B"],
-  "companies_switched": 2
+  "companies_switched": 2,
+  "company_types": ["Fintech", "Product", "Startup"],
+  "avg_team_size": "Medium (16-50)",
+  "role_type": "Individual Contributor"
 }}
 
 RESUME TEXT TO PARSE:
@@ -300,7 +319,8 @@ JSON OUTPUT:"""
         ai_data = _parse_json_response(text)
 
         for key in ["name", "skills", "experience_years", "location", "notice_period", "gender", "college",
-                    "projects", "achievements", "certifications", "education", "languages", "previous_companies"]:
+                    "projects", "achievements", "certifications", "education", "languages", "previous_companies",
+                    "company_types", "avg_team_size", "role_type"]:
             val = ai_data.get(key)
             if val and val not in [None, "null", "Not specified", "Unknown", "", 0, []]:
                 extracted_data[key] = val

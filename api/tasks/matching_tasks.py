@@ -151,20 +151,22 @@ def run_pass_2(jd_id: str):
             
         # Call Gemini reasoning
         evaluation = evaluate_candidate_fitment(structured_jd, candidate["resume_text"])
-        
+
         # Calculate completeness
         completeness = calculate_completeness_score(candidate)
-        
+
         # Composite score calculation (Section 6.1)
-        # Weighting: 70% Gemini, 20% Cosine (Pass 1), 10% Completeness
+        # Weighting: 65% Gemini, 20% Cosine (Pass 1), 10% Completeness, 5% Context Bonus
         fitment_score = float(evaluation.get("fitment_score", 0))
         cosine_score = float(match.get("match_score", 0)) * 100 # Normalize to 0-100
-        
-        composite_score = (fitment_score * 0.7) + (cosine_score * 0.2) + (completeness * 0.1)
+        context_bonus = float(evaluation.get("context_bonus", 0))
+
+        composite_score = (fitment_score * 0.65) + (cosine_score * 0.2) + (completeness * 0.1) + (context_bonus * 0.05)
         
         match_update = {
             "fitment_score": fitment_score,
             "completeness_score": completeness,
+            "context_bonus": context_bonus,
             "composite_score": composite_score,
             "reasoning": evaluation.get("reasoning"),
             "strengths": evaluation.get("strengths"),
