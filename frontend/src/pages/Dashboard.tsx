@@ -100,10 +100,10 @@ const Dashboard: React.FC = () => {
               {!editMode && (
                 <button
                   onClick={handleEditClick}
-                  className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors"
-                  title="Edit profile"
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
                 >
-                  <Edit2 size={20} className="text-blue-400" />
+                  <Edit2 size={18} />
+                  Edit Profile
                 </button>
               )}
             </div>
