@@ -1,209 +1,318 @@
 import os
+import re
 import json
 import logging
-import google.generativeai as genai
-from typing import List, Optional
+from groq import Groq
+from typing import List
 from sentence_transformers import SentenceTransformer
 
 logger = logging.getLogger(__name__)
 
 # Initialize local embedding model
 try:
-    # This will download the model on first run/build
     embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
     logger.info("Local embedding model (all-MiniLM-L6-v2) loaded successfully.")
 except Exception as e:
     logger.error(f"Failed to load local embedding model: {e}")
     embedding_model = None
 
-# Configure Gemini API
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
+# Initialize Groq client
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+if GROQ_API_KEY:
+    ai_client = Groq(api_key=GROQ_API_KEY)
 else:
-    logger.warning("GEMINI_API_KEY not found in environment variables.")
+    logger.warning("GROQ_API_KEY not found in environment variables.")
+    ai_client = None
+
+FAST_MODEL = "llama-3.1-8b-instant"
+REASON_MODEL = "llama-3.3-70b-versatile"
+
+
+def _call_groq(model: str, prompt: str, max_tokens: int = 2048) -> str:
+    if not ai_client:
+        raise RuntimeError("Groq client not initialized — GROQ_API_KEY missing.")
+    response = ai_client.chat.completions.create(
+        model=model,
+        max_tokens=max_tokens,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return response.choices[0].message.content.strip()
+
+
+def _parse_json_response(text: str) -> dict:
+    if "```json" in text:
+        text = text.split("```json")[1].split("```")[0].strip()
+    elif "```" in text:
+        text = text.split("```")[1].split("```")[0].strip()
+    return json.loads(text)
+
 
 def extract_jd_data(raw_text: str) -> dict:
-    """
-    Uses Gemini 2.5 Pro to extract structured fields from raw JD text.
-    """
-    model = genai.GenerativeModel('gemini-2.5-pro')
-    
-    prompt = f"""
-    You are a high-precision recruitment AI. Extract structured data from the following raw Job Description (JD) text.
-    Return ONLY a valid JSON object. Do not include markdown formatting or explanations.
-    
-    Fields to extract:
-    - title: Job Title
-    - level: Seniority level (e.g. Junior, Senior, Lead, Manager)
-    - responsibilities: Core responsibilities of the role
-    - kpis: Key Performance Indicators if mentioned, else "Not specified"
-    - skills: List of specific technical and soft skills
-    - experience_range: Required years of experience (e.g. "3-5 years")
-    - compensation_range: Salary range if mentioned, else "Not specified"
-    - work_structure: In-office, Hybrid, or Remote
-    - location: Specific city/region
-    - hiring_timeline: e.g. "Immediate", "2 weeks", "Not specified"
-    - urgency: Low, Medium, High, or Critical
-    - num_positions: Number of open positions (integer), default to 1 if not mentioned
-    
-    Raw JD Text:
-    ---
-    {raw_text}
-    ---
-    
-    JSON Output:
-    """
-    
+    """Uses Groq (fast model) to extract structured fields from raw JD text."""
+    prompt = f"""You are a high-precision recruitment AI. Extract structured data from the following raw Job Description (JD) text.
+Return ONLY a valid JSON object. Do not include markdown formatting or explanations.
+
+Fields to extract:
+- title: Job Title
+- level: Seniority level (e.g. Junior, Senior, Lead, Manager)
+- responsibilities: Core responsibilities of the role
+- kpis: Key Performance Indicators if mentioned, else "Not specified"
+- skills: List of specific technical and soft skills
+- relevant_experience: Years of relevant domain experience required (integer)
+- total_experience: Total years of work experience required (integer)
+- compensation_range: Salary range if mentioned, else "Not specified"
+- work_structure: In-office, Hybrid, or Remote
+- location: Specific city/region
+- hiring_timeline: e.g. "Immediate", "2 weeks", "Not specified"
+- urgency: Low, Medium, High, or Critical
+- num_positions: Number of open positions (integer), default to 1 if not mentioned
+- gender_preference: "Any", "Male", or "Female"
+- college_preference: preferred colleges or institutions (string, empty if not mentioned)
+- college_exclusion: colleges or institutions to exclude (string, empty if not mentioned)
+
+Raw JD Text:
+---
+{raw_text}
+---
+
+JSON Output:"""
+
     try:
-        response = model.generate_content(prompt)
-        text = response.text.strip()
-        if text.startswith("```json"):
-            text = text[7:-3].strip()
-        elif text.startswith("```"):
-            text = text[3:-3].strip()
-            
-        return json.loads(text)
+        text = _call_groq(FAST_MODEL, prompt)
+        logger.info(f"Groq JD extraction response (first 200 chars): {text[:200]}")
+        return _parse_json_response(text)
     except Exception as e:
-        logger.error(f"Error extracting JD data with Gemini: {e}")
+        logger.error(f"Error extracting JD data with Groq: {e}")
         return {
             "title": "Extraction Failed",
             "level": "Unknown",
             "responsibilities": raw_text[:500],
             "kpis": "Not specified",
             "skills": [],
-            "experience_range": "Not specified",
+            "relevant_experience": 0,
+            "total_experience": 0,
             "compensation_range": "Not specified",
             "work_structure": "Not specified",
             "location": "Not specified",
             "hiring_timeline": "Not specified",
             "urgency": "Medium",
-            "num_positions": 1
+            "num_positions": 1,
+            "gender_preference": "Any",
+            "college_preference": "",
+            "college_exclusion": ""
         }
 
+
 def generate_jd_formats(structured_data: dict) -> dict:
-    """
-    Uses Gemini to generate Internal, Short, and Candidate Markdown formats.
-    """
-    model = genai.GenerativeModel('gemini-2.5-flash')
-    
-    prompt = f"""
-    Based on the following structured Job Description data, generate three distinct Markdown formats.
-    Return ONLY a valid JSON object with keys: "internal", "short", "candidate".
-    
-    1. "internal": Full detail including salary, hiring timeline, and internal notes.
-    2. "short": Recruiter-facing summary (title, key skills, level, location).
-    3. "candidate": Candidate-facing description. IMPORTANT: Exclude specific salary figures (use "Competitive") and remove sensitive client identifiers if obfuscation is preferred.
-    
-    Structured Data:
-    {json.dumps(structured_data, indent=2)}
-    
-    JSON Output:
-    """
-    
+    """Uses Groq (fast model) to generate Internal, Short, and Candidate Markdown formats."""
+    prompt = f"""Based on the following structured Job Description data, generate three distinct Markdown formats.
+Return ONLY a valid JSON object with keys: "internal", "short", "candidate".
+
+1. "internal": Full detail including salary, hiring timeline, and internal notes.
+2. "short": Recruiter-facing summary (title, key skills, level, location).
+3. "candidate": Candidate-facing description. Exclude specific salary figures (use "Competitive") and remove sensitive client identifiers.
+
+Structured Data:
+{json.dumps(structured_data, indent=2)}
+
+JSON Output:"""
+
     try:
-        response = model.generate_content(prompt)
-        text = response.text.strip()
-        if text.startswith("```json"):
-            text = text[7:-3].strip()
-        elif text.startswith("```"):
-            text = text[3:-3].strip()
-        return json.loads(text)
+        text = _call_groq(FAST_MODEL, prompt)
+        return _parse_json_response(text)
     except Exception as e:
-        logger.error(f"Error generating JD formats with Gemini: {e}")
+        logger.error(f"Error generating JD formats with Groq: {e}")
         return {
             "internal": f"# {structured_data.get('title')}\nDetails extraction failed.",
             "short": f"Role: {structured_data.get('title')}",
             "candidate": f"# {structured_data.get('title')}\nExciting opportunity."
         }
 
+
 def generate_embedding(text: str) -> List[float]:
-    """
-    Generates a 384-dimensional dense vector using local sentence-transformers (all-MiniLM-L6-v2).
-    """
+    """Generates a 384-dimensional dense vector using local sentence-transformers (all-MiniLM-L6-v2)."""
     try:
         if embedding_model is None:
             raise Exception("Embedding model not initialized.")
-        
-        # Explicitly encode to numpy then convert to list
-        embedding = embedding_model.encode(text)
-        return embedding.tolist()
+        return embedding_model.encode(text).tolist()
     except Exception as e:
         logger.error(f"Error generating local embedding: {e}")
-        # Fallback to zero vector if failed
         return [0.0] * 384
+
+
+def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> dict:
+    """
+    Pass 2: Uses Groq (reason model) to perform deep reasoning on a candidate's fitment for a JD.
+    """
+    if not ai_client:
+        raise RuntimeError("Groq client not initialized — GROQ_API_KEY missing.")
+
+    jd_text = json.dumps(jd_structured_data, indent=2)
+
+    try:
+        response = ai_client.chat.completions.create(
+            model=REASON_MODEL,
+            max_tokens=1024,
+            messages=[
+                {
+                    "role": "system",
+                    "content": f"You are an expert senior technical recruiter.\n\nJOB DESCRIPTION FOR THIS EVALUATION:\n{jd_text}"
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        f"Evaluate the following candidate resume against the job description above.\n\n"
+                        f"CANDIDATE RESUME:\n---\n{resume_text[:12000]}\n---\n\n"
+                        "Return ONLY a valid JSON object. No markdown. Be objective and critical.\n"
+                        "- fitment_score: integer 0-100\n"
+                        "- reasoning: one concise paragraph\n"
+                        "- strengths: list of exactly 3 strings\n"
+                        "- gaps: list of exactly 3 strings\n"
+                        "- recommendation: one of \"shortlist\", \"hold\", \"reject\"\n\n"
+                        "JSON OUTPUT:"
+                    )
+                }
+            ]
+        )
+        text = response.choices[0].message.content.strip()
+        logger.info(f"Groq Pass 2 response (first 200 chars): {text[:200]}")
+        return _parse_json_response(text)
+    except Exception as e:
+        logger.error(f"Groq Pass 2 reasoning failed: {e}")
+        return {
+            "fitment_score": 0,
+            "reasoning": "AI evaluation failed.",
+            "strengths": [],
+            "gaps": [],
+            "recommendation": "hold"
+        }
+
 
 def extract_resume_metadata(raw_text: str) -> dict:
     """
-    Uses Gemini 2.5 Pro to extract structured metadata from a resume with a regex fallback.
+    Uses Groq (fast model) to extract structured metadata from a resume, with regex fallback.
+    Text is cleaned before both regex extraction and AI prompt construction.
     """
-    model = genai.GenerativeModel('gemini-2.5-pro')
-    
-    prompt = f"""
-    You are a high-fidelity resume parsing engine. Extract structured data from the resume text provided below.
-    
-    CRITICAL: Return ONLY a valid JSON object. No other text.
-    
-    JSON Schema:
-    {{
-      "name": "Full Name",
-      "email": "email@example.com or null",
-      "phone": "phone number or null",
-      "skills": ["Skill1", "Skill2", ...],
-      "experience_years": integer,
-      "location": "City, Country or null"
-    }}
-    
-    Instructions:
-    - name: Look for the largest text at the top or prominent name in the header.
-    - email: Extract the primary email.
-    - skills: List all technical and professional skills found.
-    - experience_years: Calculate total years of professional experience as an integer.
-    
-    Resume Text:
-    ---
-    {raw_text[:10000]}
-    ---
-    
-    JSON Output:
-    """
-    
-    import re
+    # Clean text first — before building the AI prompt or running regex
+    raw_text = raw_text.replace('\x00', '').replace('\xa0', ' ')
+
+    # Regex fallback — runs unconditionally; AI results override where better
+    lines = [l.strip() for l in raw_text.split('\n') if l.strip()]
+    regex_name = "Unknown"
+    if lines:
+        first_line = lines[0]
+        first_words = first_line.split()
+        if 1 <= len(first_words) <= 3 and not re.search(r'[\d@:]', first_line):
+            regex_name = first_line
+        else:
+            for line in lines[:8]:
+                words = line.split()
+                if 1 <= len(words) <= 4 and not re.search(r'[\d@:]', line):
+                    if not any(w.lower() in ['resume', 'profile', 'curriculum', 'page', 'email', 'phone', 'contact'] for w in words):
+                        regex_name = line
+                        break
+
     email_match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', raw_text)
     phone_match = re.search(r'(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}', raw_text)
-    
+    exp_match = re.search(r'\b([0-9]|[1-4][0-9]|50)(\.\d)?\s*(years|yrs|yr)\b', raw_text)
+    regex_exp = int(float(exp_match.group(1))) if exp_match else 0
+
+    skills_found = []
+    skills_section = re.search(
+        r'(?i)(skills|technologies|tools|expertise|technical skills)[:\n]+(.*?)(?=\n\n|\n[A-Z][a-z]+:|$)',
+        raw_text, re.DOTALL
+    )
+    if skills_section:
+        content = skills_section.group(2).replace('\n', ',').replace('•', ',').replace('|', ',')
+        skills_found = [
+            s.strip() for s in content.split(',')
+            if 2 <= len(s.strip()) <= 20
+            and '&' not in s
+            and len(s.strip().split()) <= 2
+        ]
+    if len(skills_found) < 3:
+        common_skills = [
+            'Python', 'Java', 'React', 'Angular', 'Node', 'AWS', 'Docker', 'Kubernetes',
+            'SQL', 'NoSQL', 'MongoDB', 'JavaScript', 'TypeScript', 'C++', 'C#', 'PHP', 'Go', 'Rust'
+        ]
+        for s in common_skills:
+            if re.search(rf'\b{s}\b', raw_text, re.IGNORECASE) and s not in skills_found:
+                skills_found.append(s)
+
     extracted_data = {
-        "name": "Unknown",
+        "name": regex_name,
         "email": email_match.group(0) if email_match else None,
         "phone": phone_match.group(0) if phone_match else None,
-        "skills": [],
-        "experience_years": 0,
-        "location": "Not specified"
+        "skills": skills_found[:15],
+        "experience_years": regex_exp,
+        "location": "Not specified",
+        "notice_period": "Not specified",
+        "gender": "Not specified",
+        "college": "Not specified",
+        "projects": [],
+        "achievements": [],
+        "certifications": [],
+        "education": [],
+        "languages": [],
+        "previous_companies": [],
+        "companies_switched": 0
     }
 
+    # AI extraction — overrides regex results where the AI gives a better answer
+    prompt = f"""You are a high-fidelity resume parsing engine. Extract specific information from the resume text provided.
+
+CRITICAL INSTRUCTIONS:
+1. Return ONLY a valid JSON object.
+2. Do NOT include any markdown formatting, explanations, or additional text.
+3. If a field is missing, use null or "Not specified".
+4. For 'experience_years': Calculate total months of work experience from all roles, convert to years (round down). Example: 4 months = 0, 14 months = 1. Read start and end dates carefully — do NOT use the year number as the duration.
+
+JSON SCHEMA:
+{{
+  "name": "Candidate's Full Name",
+  "email": "email@example.com",
+  "phone": "+1-123-456-7890",
+  "skills": ["Skill 1", "Skill 2", "Skill 3"],
+  "experience_years": 5,
+  "location": "City, State/Country",
+  "notice_period": "Immediate/15days/30days/60days/90days",
+  "gender": "Male/Female/Other",
+  "college": "University Name",
+  "projects": [{{"title": "Project Name", "role": "Candidate Role", "responsibilities": "2-3 bullet points"}}],
+  "achievements": ["Award or recognition string"],
+  "certifications": ["Certification Name — Issuing Body"],
+  "education": [{{"degree": "B.Tech", "institution": "University Name", "year": "2020"}}],
+  "languages": ["English", "Hindi"],
+  "previous_companies": ["Company A", "Company B"],
+  "companies_switched": 2
+}}
+
+RESUME TEXT TO PARSE:
+---
+{raw_text[:10000]}
+---
+
+JSON OUTPUT:"""
+
     try:
-        response = model.generate_content(prompt)
-        text = response.text.strip()
-        
-        if "```json" in text:
-            text = text.split("```json")[1].split("```")[0].strip()
-        elif "```" in text:
-            text = text.split("```")[1].split("```")[0].strip()
-            
-        ai_data = json.loads(text)
-        
-        for key in extracted_data:
-            if ai_data.get(key) and ai_data[key] not in ["Unknown", "Not specified", "null", None]:
-                extracted_data[key] = ai_data[key]
-        
-        exp = extracted_data.get("experience_years", 0)
-        if isinstance(exp, str):
-            digits = re.findall(r'\d+', exp)
-            extracted_data["experience_years"] = int(digits[0]) if digits else 0
-        else:
-            extracted_data["experience_years"] = int(exp) if exp else 0
-            
+        text = _call_groq(FAST_MODEL, prompt)
+        logger.info(f"Groq resume extraction response (first 200 chars): {text[:200]}")
+        ai_data = _parse_json_response(text)
+
+        for key in ["name", "skills", "experience_years", "location", "notice_period", "gender", "college",
+                    "projects", "achievements", "certifications", "education", "languages", "previous_companies"]:
+            val = ai_data.get(key)
+            if val and val not in [None, "null", "Not specified", "Unknown", "", 0, []]:
+                extracted_data[key] = val
+        if ai_data.get("email") and not extracted_data["email"]:
+            extracted_data["email"] = ai_data["email"]
+        if ai_data.get("phone") and not extracted_data["phone"]:
+            extracted_data["phone"] = ai_data["phone"]
+        if ai_data.get("companies_switched") is not None:
+            extracted_data["companies_switched"] = ai_data["companies_switched"]
+
     except Exception as e:
-        logger.error(f"Gemini parsing failed, using regex fallback: {e}")
-        
+        logger.error(f"Groq resume parsing failed, using regex fallback: {e}")
+        logger.error(f"Groq raw response: {locals().get('text', '(call failed before response)')}")
+
     return extracted_data
