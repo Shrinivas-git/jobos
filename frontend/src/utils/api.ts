@@ -108,3 +108,23 @@ export async function getMyProfile(): Promise<CandidateProfile | null> {
     return null;
   }
 }
+
+export async function updateMyProfile(data: {
+  skills?: string[];
+  experience_years?: number;
+  notice_period?: string;
+  location?: string;
+  languages?: string[];
+}): Promise<CandidateProfile | null> {
+  try {
+    const res = await fetch(`${API}/candidates/me`, {
+      method: 'PUT',
+      headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}

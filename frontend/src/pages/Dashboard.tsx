@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import keycloak from '../keycloak';
-import { Users, Globe, Activity, Clock, CheckCircle2, UserCheck } from 'lucide-react';
+import { Users, Globe, Activity, Clock, CheckCircle2, UserCheck, Edit2, Save, X } from 'lucide-react';
 import RecruiterDashboard from './RecruiterDashboard';
-import { getMyProfile, CandidateProfile } from '../utils/api';
+import { getMyProfile, updateMyProfile, CandidateProfile } from '../utils/api';
 
 const KNOWN_ROLES = ['admin', 'manager', 'recruiter', 'hod', 'candidate', 'account_manager', 'senior_recruiter', 'junior_recruiter', 'intern'];
 
@@ -17,6 +17,15 @@ const primaryRole = (roles: string[]): string => {
 const Dashboard: React.FC = () => {
   const [profile, setProfile] = useState<CandidateProfile | null>(null);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState({
+    skills: [] as string[],
+    experience_years: 0,
+    notice_period: '',
+    location: '',
+    languages: [] as string[]
+  });
 
   const roles = keycloak.tokenParsed?.realm_access?.roles || [];
   const filteredRoles = roles.filter(r => KNOWN_ROLES.includes(r));
@@ -27,10 +36,46 @@ const Dashboard: React.FC = () => {
       setLoading(true);
       getMyProfile().then(data => {
         setProfile(data);
+        if (data) {
+          setFormData({
+            skills: data.skills || [],
+            experience_years: data.experience_years || 0,
+            notice_period: data.notice_period || '',
+            location: data.location || '',
+            languages: data.languages || []
+          });
+        }
         setLoading(false);
       });
     }
   }, [role]);
+
+  const handleEditClick = () => {
+    if (profile) {
+      setFormData({
+        skills: profile.skills || [],
+        experience_years: profile.experience_years || 0,
+        notice_period: profile.notice_period || '',
+        location: profile.location || '',
+        languages: profile.languages || []
+      });
+    }
+    setEditMode(true);
+  };
+
+  const handleCancel = () => {
+    setEditMode(false);
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    const updated = await updateMyProfile(formData);
+    setSaving(false);
+    if (updated) {
+      setProfile(updated);
+      setEditMode(false);
+    }
+  };
 
   if (role === 'recruiter') return <RecruiterDashboard />;
 
@@ -40,14 +85,28 @@ const Dashboard: React.FC = () => {
     const skills = profile?.skills || [];
     const experience = profile?.experience_years;
     const education = profile?.education || [];
+    const noticeOptions = ['Immediate', '15 days', '30 days', '60 days', '90 days'];
 
     return (
       <div className="space-y-6 animate-in fade-in duration-500">
         <div className="relative overflow-hidden bg-[#1e293b] border border-slate-700/50 rounded-3xl p-10 shadow-xl">
           <div className="relative z-10">
-            <p className="text-blue-400 text-xs font-black uppercase tracking-[0.2em] mb-3">Candidate Portal</p>
-            <h1 className="text-4xl font-extrabold text-white tracking-tight">{username}</h1>
-            {email && <p className="text-slate-400 text-sm mt-1">{email}</p>}
+            <div className="flex items-start justify-between mb-6">
+              <div>
+                <p className="text-blue-400 text-xs font-black uppercase tracking-[0.2em] mb-3">Candidate Portal</p>
+                <h1 className="text-4xl font-extrabold text-white tracking-tight">{username}</h1>
+                {email && <p className="text-slate-400 text-sm mt-1">{email}</p>}
+              </div>
+              {!editMode && (
+                <button
+                  onClick={handleEditClick}
+                  className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors"
+                  title="Edit profile"
+                >
+                  <Edit2 size={20} className="text-blue-400" />
+                </button>
+              )}
+            </div>
             <div className="mt-4">
               <span className="px-3 py-1 bg-blue-500/10 text-blue-300 text-[10px] rounded-lg border border-blue-500/20 font-black uppercase tracking-wider">
                 Candidate
@@ -67,39 +126,143 @@ const Dashboard: React.FC = () => {
 
         {!loading && profile && (
           <div className="space-y-6">
-            {experience !== null && experience !== undefined && (
-              <div className="bg-[#1e293b] border border-slate-700/50 rounded-3xl p-8 shadow-sm">
-                <h3 className="text-white font-bold mb-3">Experience</h3>
-                <p className="text-slate-400">{experience} years</p>
-              </div>
-            )}
+            {editMode ? (
+              <div className="space-y-6 bg-[#1e293b] border border-slate-700/50 rounded-3xl p-8 shadow-sm">
+                <div>
+                  <label className="block text-white font-bold mb-2">Experience (years)</label>
+                  <input
+                    type="number"
+                    value={formData.experience_years}
+                    onChange={(e) => setFormData({...formData, experience_years: parseFloat(e.target.value) || 0})}
+                    className="w-full bg-slate-900 text-white px-3 py-2 rounded-lg border border-slate-700 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
 
-            {skills.length > 0 && (
-              <div className="bg-[#1e293b] border border-slate-700/50 rounded-3xl p-8 shadow-sm">
-                <h3 className="text-white font-bold mb-4">Skills</h3>
-                <div className="flex flex-wrap gap-2">
-                  {skills.map((skill, idx) => (
-                    <span key={idx} className="px-3 py-1 bg-blue-500/10 text-blue-300 text-xs rounded-lg border border-blue-500/20 font-medium">
-                      {skill}
-                    </span>
-                  ))}
+                <div>
+                  <label className="block text-white font-bold mb-2">Skills (comma-separated)</label>
+                  <textarea
+                    value={formData.skills.join(', ')}
+                    onChange={(e) => setFormData({...formData, skills: e.target.value.split(',').map(s => s.trim()).filter(s => s)})}
+                    className="w-full bg-slate-900 text-white px-3 py-2 rounded-lg border border-slate-700 focus:border-blue-500 focus:outline-none h-20"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-white font-bold mb-2">Notice Period</label>
+                  <select
+                    value={formData.notice_period}
+                    onChange={(e) => setFormData({...formData, notice_period: e.target.value})}
+                    className="w-full bg-slate-900 text-white px-3 py-2 rounded-lg border border-slate-700 focus:border-blue-500 focus:outline-none"
+                  >
+                    <option value="">Select notice period</option>
+                    {noticeOptions.map(opt => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-white font-bold mb-2">Location</label>
+                  <input
+                    type="text"
+                    value={formData.location}
+                    onChange={(e) => setFormData({...formData, location: e.target.value})}
+                    className="w-full bg-slate-900 text-white px-3 py-2 rounded-lg border border-slate-700 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-white font-bold mb-2">Languages (comma-separated)</label>
+                  <textarea
+                    value={formData.languages.join(', ')}
+                    onChange={(e) => setFormData({...formData, languages: e.target.value.split(',').map(s => s.trim()).filter(s => s)})}
+                    className="w-full bg-slate-900 text-white px-3 py-2 rounded-lg border border-slate-700 focus:border-blue-500 focus:outline-none h-20"
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium disabled:opacity-50"
+                  >
+                    <Save size={18} />
+                    {saving ? 'Saving...' : 'Save'}
+                  </button>
+                  <button
+                    onClick={handleCancel}
+                    disabled={saving}
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium disabled:opacity-50"
+                  >
+                    <X size={18} />
+                    Cancel
+                  </button>
                 </div>
               </div>
-            )}
+            ) : (
+              <>
+                {(experience || formData.experience_years) && (
+                  <div className="bg-[#1e293b] border border-slate-700/50 rounded-3xl p-8 shadow-sm">
+                    <h3 className="text-white font-bold mb-3">Experience</h3>
+                    <p className="text-slate-400">{experience || formData.experience_years} years</p>
+                  </div>
+                )}
 
-            {education.length > 0 && (
-              <div className="bg-[#1e293b] border border-slate-700/50 rounded-3xl p-8 shadow-sm">
-                <h3 className="text-white font-bold mb-4">Education</h3>
-                <div className="space-y-3">
-                  {education.map((edu: any, idx: number) => (
-                    <div key={idx} className="text-slate-300 text-sm">
-                      <p className="font-semibold text-white">{edu.degree || 'Degree'}</p>
-                      {edu.institution && <p className="text-slate-400">{edu.institution}</p>}
-                      {edu.field && <p className="text-slate-400">Field: {edu.field}</p>}
+                {(skills.length > 0 || formData.skills.length > 0) && (
+                  <div className="bg-[#1e293b] border border-slate-700/50 rounded-3xl p-8 shadow-sm">
+                    <h3 className="text-white font-bold mb-4">Skills</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {(skills.length > 0 ? skills : formData.skills).map((skill, idx) => (
+                        <span key={idx} className="px-3 py-1 bg-blue-500/10 text-blue-300 text-xs rounded-lg border border-blue-500/20 font-medium">
+                          {skill}
+                        </span>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
+                )}
+
+                {(profile?.notice_period || formData.notice_period) && (
+                  <div className="bg-[#1e293b] border border-slate-700/50 rounded-3xl p-8 shadow-sm">
+                    <h3 className="text-white font-bold mb-3">Notice Period</h3>
+                    <p className="text-slate-400">{profile?.notice_period || formData.notice_period}</p>
+                  </div>
+                )}
+
+                {(profile?.location || formData.location) && (
+                  <div className="bg-[#1e293b] border border-slate-700/50 rounded-3xl p-8 shadow-sm">
+                    <h3 className="text-white font-bold mb-3">Location</h3>
+                    <p className="text-slate-400">{profile?.location || formData.location}</p>
+                  </div>
+                )}
+
+                {((profile?.languages && profile.languages.length > 0) || formData.languages.length > 0) && (
+                  <div className="bg-[#1e293b] border border-slate-700/50 rounded-3xl p-8 shadow-sm">
+                    <h3 className="text-white font-bold mb-4">Languages</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {((profile?.languages && profile.languages.length > 0) ? profile.languages : formData.languages).map((lang, idx) => (
+                        <span key={idx} className="px-3 py-1 bg-indigo-500/10 text-indigo-300 text-xs rounded-lg border border-indigo-500/20 font-medium">
+                          {lang}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {education.length > 0 && (
+                  <div className="bg-[#1e293b] border border-slate-700/50 rounded-3xl p-8 shadow-sm">
+                    <h3 className="text-white font-bold mb-4">Education</h3>
+                    <div className="space-y-3">
+                      {education.map((edu: any, idx: number) => (
+                        <div key={idx} className="text-slate-300 text-sm">
+                          <p className="font-semibold text-white">{edu.degree || 'Degree'}</p>
+                          {edu.institution && <p className="text-slate-400">{edu.institution}</p>}
+                          {edu.field && <p className="text-slate-400">Field: {edu.field}</p>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}

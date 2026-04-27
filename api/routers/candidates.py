@@ -39,6 +39,13 @@ class CandidateResponse(BaseModel):
         populate_by_name = True
         arbitrary_types_allowed = True
 
+class CandidateUpdateRequest(BaseModel):
+    skills: Optional[List[str]] = None
+    experience_years: Optional[float] = None
+    notice_period: Optional[str] = None
+    location: Optional[str] = None
+    languages: Optional[List[str]] = None
+
 @router.get("/", response_model=List[CandidateResponse])
 async def get_candidates(user: dict = Depends(check_role(["recruiter", "manager", "admin"]))):
     db = get_db()
@@ -57,6 +64,43 @@ async def get_my_profile(user: dict = Depends(check_role(["candidate"]))):
         raise HTTPException(status_code=404, detail="Candidate profile not found")
 
     return candidate
+
+@router.put("/me", response_model=CandidateResponse)
+async def update_my_profile(
+    update_data: CandidateUpdateRequest,
+    user: dict = Depends(check_role(["candidate"]))
+):
+    email = user.get("email", "").lower()
+    if not email:
+        raise HTTPException(status_code=400, detail="Email not found in token")
+
+    db = get_db()
+    update_payload = {
+        "updated_at": datetime.now()
+    }
+
+    if update_data.skills is not None:
+        update_payload["skills"] = update_data.skills
+    if update_data.experience_years is not None:
+        update_payload["experience_years"] = update_data.experience_years
+    if update_data.notice_period is not None:
+        update_payload["notice_period"] = update_data.notice_period
+    if update_data.location is not None:
+        update_payload["location"] = update_data.location
+    if update_data.languages is not None:
+        update_payload["languages"] = update_data.languages
+
+    result = db.candidates.find_one_and_update(
+        {"email": email},
+        {"$set": update_payload},
+        return_document=True
+    )
+
+    if not result:
+        raise HTTPException(status_code=404, detail="Candidate profile not found")
+
+    del result["_id"]
+    return result
 
 @router.post("/upload-resume")
 async def upload_resume(
