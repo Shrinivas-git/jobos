@@ -15,6 +15,7 @@ class MatchingResultResponse(BaseModel):
     fitment_score: Optional[float] = None # Pass 2 reasoning score
     composite_score: Optional[float] = None
     completeness_score: Optional[float] = None
+    context_bonus: Optional[float] = None # Contextual match bonus
     reasoning: Optional[str] = None
     strengths: Optional[List[str]] = None
     gaps: Optional[List[str]] = None
@@ -22,6 +23,9 @@ class MatchingResultResponse(BaseModel):
     rank: int
     status: str
     source: str
+    company_types: Optional[List[str]] = None # From candidate profile
+    avg_team_size: Optional[str] = None # From candidate profile
+    role_type: Optional[str] = None # From candidate profile
     created_at: datetime
     updated_at: datetime
 
@@ -44,10 +48,21 @@ async def trigger_pass2(jd_id: str, user: dict = Depends(check_role(["recruiter"
 
 @router.get("/results/{jd_id}", response_model=List[MatchingResultResponse])
 async def get_matching_results(jd_id: str, user: dict = Depends(check_role(["recruiter", "manager", "admin"]))):
-    """Retrieves current matching results for a JD."""
+    """Retrieves current matching results for a JD, enriched with candidate contextual data."""
     db = get_db()
     results = list(db.candidate_pools.find({"jd_id": jd_id}, {"_id": 0}).sort("rank", 1))
-    return results
+
+    # Enrich with candidate contextual data
+    enriched_results = []
+    for result in results:
+        candidate = db.candidates.find_one({"candidate_id": result.get("candidate_id")})
+        if candidate:
+            result["company_types"] = candidate.get("company_types", [])
+            result["avg_team_size"] = candidate.get("avg_team_size", None)
+            result["role_type"] = candidate.get("role_type", None)
+        enriched_results.append(result)
+
+    return enriched_results
 
 
 class CandidateAction(BaseModel):

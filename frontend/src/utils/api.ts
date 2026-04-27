@@ -19,6 +19,7 @@ export interface MatchResult {
   match_score: number;
   composite_score?: number;
   completeness_score?: number;
+  context_bonus?: number;
   fitment_score?: number;
   reasoning?: string;
   strengths?: string[];
@@ -27,6 +28,9 @@ export interface MatchResult {
   rank: number;
   status: string;
   source: string;
+  company_types?: string[];
+  avg_team_size?: string;
+  role_type?: string;
 }
 
 export type CandidateLookup = Record<string, string>;
