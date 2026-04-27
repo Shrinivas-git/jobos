@@ -1,19 +1,62 @@
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 import uuid
+from pydantic import BaseModel, Field
+from utils.pydantic_utils import PyObjectId
 from auth import check_role
 from utils.client_utils import get_db
 from utils.storage_utils import save_resume_file
-from tasks.resume_tasks import process_resume_task
+from utils.gemini_utils import extract_resume_metadata, generate_embedding
+from utils.qdrant_utils import upsert_resume_vector
+from utils.resume_utils import extract_text_from_file
 
 router = APIRouter(prefix="/candidates", tags=["candidates"])
 
-@router.get("/")
+class CandidateResponse(BaseModel):
+    candidate_id: str
+    name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    skills: Optional[List[str]] = None
+    experience_years: Optional[float] = None
+    location: Optional[str] = None
+    notice_period: Optional[str] = None
+    gender: Optional[str] = None
+    college: Optional[str] = None
+    projects: Optional[List[dict]] = None
+    achievements: Optional[List[str]] = None
+    certifications: Optional[List[str]] = None
+    education: Optional[List[dict]] = None
+    languages: Optional[List[str]] = None
+    status: str
+    source: str
+    file_paths: List[str]
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        populate_by_name = True
+        arbitrary_types_allowed = True
+
+@router.get("/", response_model=List[CandidateResponse])
 async def get_candidates(user: dict = Depends(check_role(["recruiter", "manager", "admin"]))):
     db = get_db()
     candidates = list(db.candidates.find({}, {"_id": 0}))
     return candidates
+
+@router.get("/me", response_model=CandidateResponse)
+async def get_my_profile(user: dict = Depends(check_role(["candidate"]))):
+    email = user.get("email", "").lower()
+    if not email:
+        raise HTTPException(status_code=400, detail="Email not found in token")
+
+    db = get_db()
+    candidate = db.candidates.find_one({"email": email}, {"_id": 0})
+    if not candidate:
+        raise HTTPException(status_code=404, detail="Candidate profile not found")
+
+    return candidate
 
 @router.post("/upload-resume")
 async def upload_resume(
@@ -21,7 +64,7 @@ async def upload_resume(
     user: dict = Depends(check_role(["recruiter", "manager", "admin"]))
 ):
     """
-    Accepts a PDF or DOCX resume, saves it, and triggers processing.
+    Accepts a PDF or DOCX resume, saves it, and processes it SYNCHRONOUSLY.
     """
     filename = file.filename
     if not filename.lower().endswith(('.pdf', '.docx')):
@@ -39,26 +82,132 @@ async def upload_resume(
         # Save file with versioning
         file_path = save_resume_file(candidate_id, filename, content)
         
-        # Create placeholder in MongoDB
+        # 1. Text Extraction
+        text = extract_text_from_file(file_path)
+        if not text:
+            raise Exception("Failed to extract text from file")
+            
+        # 2. Metadata Extraction via Gemini
+        metadata = extract_resume_metadata(text)
+        
+        # Handle unique email generation
+        email = metadata.get("email")
+        if not email or str(email).lower() in ["none", "null", "", "unknown@example.com", "not specified"]:
+            email = f"{candidate_id}@jobos.internal"
+            metadata["email"] = email
+        else:
+            email = str(email).strip().lower()
+            metadata["email"] = email
+
+        # 3. Generate Embedding
+        text_to_embed = f"""
+        Name: {metadata.get('name')}
+        Skills: {', '.join(metadata.get('skills', []))}
+        Experience: {metadata.get('experience_years')} years
+        Location: {metadata.get('location')}
+        College: {metadata.get('college')}
+        Resume Text: {text[:4000]}
+        """
+        vector = generate_embedding(text_to_embed)
+        
+        # 4. Save to MongoDB
         db = get_db()
-        db.candidates.insert_one({
+        candidate_data = {
             "candidate_id": candidate_id,
-            "status": "processing",
+            "name": metadata.get("name"),
+            "email": email,
+            "phone": metadata.get("phone"),
+            "skills": metadata.get("skills"),
+            "experience_years": metadata.get("experience_years"),
+            "location": metadata.get("location"),
+            "notice_period": metadata.get("notice_period"),
+            "gender": metadata.get("gender"),
+            "college": metadata.get("college"),
+            "projects": metadata.get("projects", []),
+            "achievements": metadata.get("achievements", []),
+            "certifications": metadata.get("certifications", []),
+            "education": metadata.get("education", []),
+            "languages": metadata.get("languages", []),
+            "previous_companies": metadata.get("previous_companies", []),
+            "companies_switched": metadata.get("companies_switched", 0),
+            "resume_text": text,
+            "status": "ready",
             "source": "web_upload",
-            "file_paths": [], # Will be updated by task
+            "file_paths": [file_path],
             "created_at": datetime.now(),
             "updated_at": datetime.now()
-        })
+        }
         
-        # Trigger async processing
-        process_resume_task.delay(candidate_id, file_path, "web_upload")
+        # Check for existing by email
+        existing = db.candidates.find_one({"email": email}) if not email.endswith("@jobos.internal") else None
+        
+        if existing:
+            candidate_id = existing["candidate_id"]
+            # Logic to preserve existing data if new extraction is "Unknown"
+            update_payload = {
+                "updated_at": datetime.now(),
+                "resume_text": text,
+                "status": "ready"
+            }
+            
+            # Fields to update only if new value is significant
+            for key in ["name", "phone", "skills", "experience_years", "location", "notice_period", "gender", "college",
+                        "projects", "achievements", "certifications", "education", "languages", "previous_companies"]:
+                new_val = candidate_data.get(key)
+                # Only overwrite if new value is better or existing is Unknown/Default
+                existing_val = existing.get(key)
+                is_existing_weak = existing_val in [None, "Unknown", "Not specified", 0, []]
+                is_new_strong = new_val not in [None, "Unknown", "Not specified", 0, []]
+                
+                if is_new_strong or is_existing_weak:
+                    update_payload[key] = new_val
+
+            # companies_switched: 0 is a valid value so needs its own guard
+            new_switched = candidate_data.get("companies_switched")
+            if new_switched is not None:
+                update_payload["companies_switched"] = new_switched
+
+            db.candidates.update_one(
+                {"candidate_id": candidate_id},
+                {
+                    "$set": update_payload,
+                    "$addToSet": {"file_paths": file_path}
+                }
+            )
+        else:
+            db.candidates.insert_one(candidate_data)
+            
+        # 5. Upsert to Qdrant
+        payload = {
+            "candidate_id": candidate_id,
+            "name": metadata.get("name"),
+            "email": email,
+            "phone": metadata.get("phone"),
+            "skills": metadata.get("skills"),
+            "experience_years": metadata.get("experience_years"),
+            "location": metadata.get("location"),
+            "notice_period": metadata.get("notice_period"),
+            "gender": metadata.get("gender"),
+            "college": metadata.get("college"),
+            "projects": metadata.get("projects", []),
+            "achievements": metadata.get("achievements", []),
+            "certifications": metadata.get("certifications", []),
+            "education": metadata.get("education", []),
+            "languages": metadata.get("languages", []),
+            "previous_companies": metadata.get("previous_companies", []),
+            "companies_switched": metadata.get("companies_switched", 0),
+            "source": "web_upload",
+            "ingested_at": datetime.now().isoformat(),
+            "file_path": file_path
+        }
+        upsert_resume_vector(candidate_id, vector, payload)
         
         return {
-            "message": "Resume uploaded and processing started",
+            "message": "Resume uploaded and processed successfully",
             "candidate_id": candidate_id,
-            "file_path": file_path
+            "metadata": metadata
         }
         
     except Exception as e:
-        print(f"Error uploading resume: {e}")
+        print(f"Error processing resume: {e}")
         raise HTTPException(status_code=500, detail=str(e))

@@ -47,6 +47,29 @@ export interface Notification {
   };
 }
 
+export interface CandidateProfile {
+  candidate_id: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  skills?: string[];
+  experience_years?: number;
+  location?: string;
+  notice_period?: string;
+  gender?: string;
+  college?: string;
+  projects?: Array<any>;
+  achievements?: string[];
+  certifications?: string[];
+  education?: Array<any>;
+  languages?: string[];
+  status: string;
+  source: string;
+  file_paths: string[];
+  created_at: string;
+  updated_at: string;
+}
+
 export async function getUnreadCount(): Promise<number> {
   try {
     const res = await fetch(`${API}/notifications/unread-count`, { headers: getAuthHeaders() });
@@ -74,4 +97,14 @@ export async function markNotificationRead(id: string): Promise<void> {
 
 export async function markAllRead(): Promise<void> {
   await fetch(`${API}/notifications/read-all`, { method: 'PUT', headers: getAuthHeaders() });
+}
+
+export async function getMyProfile(): Promise<CandidateProfile | null> {
+  try {
+    const res = await fetch(`${API}/candidates/me`, { headers: getAuthHeaders() });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
 }

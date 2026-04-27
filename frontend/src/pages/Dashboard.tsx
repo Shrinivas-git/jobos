@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import keycloak from '../keycloak';
 import { Users, Globe, Activity, Clock, CheckCircle2, UserCheck } from 'lucide-react';
 import RecruiterDashboard from './RecruiterDashboard';
+import { getMyProfile, CandidateProfile } from '../utils/api';
 
 const KNOWN_ROLES = ['admin', 'manager', 'recruiter', 'hod', 'candidate', 'account_manager', 'senior_recruiter', 'junior_recruiter', 'intern'];
 
@@ -14,15 +15,32 @@ const primaryRole = (roles: string[]): string => {
 };
 
 const Dashboard: React.FC = () => {
+  const [profile, setProfile] = useState<CandidateProfile | null>(null);
+  const [loading, setLoading] = useState(false);
+
   const roles = keycloak.tokenParsed?.realm_access?.roles || [];
   const filteredRoles = roles.filter(r => KNOWN_ROLES.includes(r));
   const role = primaryRole(roles);
 
+  useEffect(() => {
+    if (role === 'candidate') {
+      setLoading(true);
+      getMyProfile().then(data => {
+        setProfile(data);
+        setLoading(false);
+      });
+    }
+  }, [role]);
+
   if (role === 'recruiter') return <RecruiterDashboard />;
 
   if (role === 'candidate') {
-    const username = keycloak.tokenParsed?.preferred_username || 'Candidate';
-    const email    = keycloak.tokenParsed?.email || '';
+    const username = profile?.name || keycloak.tokenParsed?.preferred_username || 'Candidate';
+    const email = profile?.email || keycloak.tokenParsed?.email || '';
+    const skills = profile?.skills || [];
+    const experience = profile?.experience_years;
+    const education = profile?.education || [];
+
     return (
       <div className="space-y-6 animate-in fade-in duration-500">
         <div className="relative overflow-hidden bg-[#1e293b] border border-slate-700/50 rounded-3xl p-10 shadow-xl">
@@ -43,11 +61,52 @@ const Dashboard: React.FC = () => {
           <UserCheck size={24} className="text-emerald-400 shrink-0 mt-0.5" />
           <div>
             <p className="text-white font-bold">Your profile has been received</p>
-            <p className="text-slate-400 text-sm mt-1">
-              Our team is reviewing your profile and will match you to suitable roles. You will be notified when there is an update.
-            </p>
+            <p className="text-slate-400 text-sm mt-1">Our team will be in touch.</p>
           </div>
         </div>
+
+        {!loading && profile && (
+          <div className="space-y-6">
+            {experience !== null && experience !== undefined && (
+              <div className="bg-[#1e293b] border border-slate-700/50 rounded-3xl p-8 shadow-sm">
+                <h3 className="text-white font-bold mb-3">Experience</h3>
+                <p className="text-slate-400">{experience} years</p>
+              </div>
+            )}
+
+            {skills.length > 0 && (
+              <div className="bg-[#1e293b] border border-slate-700/50 rounded-3xl p-8 shadow-sm">
+                <h3 className="text-white font-bold mb-4">Skills</h3>
+                <div className="flex flex-wrap gap-2">
+                  {skills.map((skill, idx) => (
+                    <span key={idx} className="px-3 py-1 bg-blue-500/10 text-blue-300 text-xs rounded-lg border border-blue-500/20 font-medium">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {education.length > 0 && (
+              <div className="bg-[#1e293b] border border-slate-700/50 rounded-3xl p-8 shadow-sm">
+                <h3 className="text-white font-bold mb-4">Education</h3>
+                <div className="space-y-3">
+                  {education.map((edu: any, idx: number) => (
+                    <div key={idx} className="text-slate-300 text-sm">
+                      <p className="font-semibold text-white">{edu.degree || 'Degree'}</p>
+                      {edu.institution && <p className="text-slate-400">{edu.institution}</p>}
+                      {edu.field && <p className="text-slate-400">Field: {edu.field}</p>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {loading && (
+          <div className="text-slate-400 text-sm">Loading your profile...</div>
+        )}
       </div>
     );
   }
