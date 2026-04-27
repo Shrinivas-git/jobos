@@ -21,6 +21,7 @@ const Matching: React.FC = () => {
   const [displayCount, setDisplayCount] = useState(3);
   const [error, setError] = useState<string | null>(null);
   const [runMessage, setRunMessage] = useState<string | null>(null);
+  const [lastRunTime, setLastRunTime] = useState<Date | null>(null);
 
   // Load JDs and candidate name lookup on mount
   useEffect(() => {
@@ -53,6 +54,7 @@ const Matching: React.FC = () => {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data: MatchResult[] = await res.json();
       setResults(data);
+      if (data.length > 0) setLastRunTime(new Date());
       return data;
     } catch (e: any) {
       setError('Failed to fetch results: ' + e.message);
@@ -60,14 +62,14 @@ const Matching: React.FC = () => {
     }
   };
 
-  const handleJdChange = async (jd_id: string) => {
+  const handleJdChange = (jd_id: string) => {
     setSelectedJdId(jd_id);
     setResults([]);
+    setLastRunTime(null);
     setDisplayCount(3);
     setExpandedRows(new Set());
     setRunMessage(null);
     setError(null);
-    if (jd_id) await fetchResults(jd_id);
   };
 
   const handleRunMatching = async () => {
@@ -113,6 +115,13 @@ const Matching: React.FC = () => {
       next.has(candidate_id) ? next.delete(candidate_id) : next.add(candidate_id);
       return next;
     });
+  };
+
+  const getTimeAgo = (date: Date): string => {
+    const secs = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (secs < 60) return 'now';
+    if (secs < 3600) return `${Math.floor(secs / 60)}m ago`;
+    return `${Math.floor(secs / 3600)}h ago`;
   };
 
   const visible = results.slice(0, displayCount);
@@ -197,10 +206,15 @@ const Matching: React.FC = () => {
       {results.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-              {results.length} candidate{results.length !== 1 ? 's' : ''} matched
-              {pass2Done ? ' — Pass 2 complete' : ' — Pass 1 only (Pass 2 pending)'}
-            </p>
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                {results.length} candidate{results.length !== 1 ? 's' : ''} matched
+                {pass2Done ? ' — Pass 2 complete' : ' — Pass 1 only (Pass 2 pending)'}
+              </p>
+              {lastRunTime && (
+                <p className="text-[10px] text-slate-500 mt-1">Last run: {getTimeAgo(lastRunTime)}</p>
+              )}
+            </div>
           </div>
 
           {visible.map(result => {
