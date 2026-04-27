@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from typing import List, Optional
 from datetime import datetime
 import uuid
+import logging
+import os
 from pydantic import BaseModel, Field
 from utils.pydantic_utils import PyObjectId
 from auth import check_role
@@ -10,6 +12,11 @@ from utils.storage_utils import save_resume_file
 from utils.gemini_utils import extract_resume_metadata, generate_embedding
 from utils.qdrant_utils import upsert_resume_vector, get_resume_vector
 from utils.resume_utils import extract_text_from_file
+from tasks.resume_tasks import process_resume_task
+from tasks.matching_tasks import run_matching
+from tasks.notification_tasks import notify_pool_ready
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/candidates", tags=["candidates"])
 
@@ -45,6 +52,11 @@ class CandidateUpdateRequest(BaseModel):
     notice_period: Optional[str] = None
     location: Optional[str] = None
     languages: Optional[List[str]] = None
+
+class EmailIntakeRequest(BaseModel):
+    file_path: str
+    jd_id: Optional[str] = None
+    source_email: str
 
 @router.get("/", response_model=List[CandidateResponse])
 async def get_candidates(user: dict = Depends(check_role(["recruiter", "manager", "admin"]))):
@@ -127,6 +139,169 @@ async def update_my_profile(
 
     del result["_id"]
     return result
+
+@router.post("/email-intake")
+async def email_intake(
+    intake_data: EmailIntakeRequest,
+    user: dict = Depends(check_role(["recruiter", "manager", "admin", "system"]))
+):
+    """
+    Inbound resume intake from email watcher.
+    If jd_id provided: match against that JD only.
+    If no jd_id: match against all open JDs.
+    """
+    file_path = intake_data.file_path
+    jd_id = intake_data.jd_id
+    source_email = intake_data.source_email
+
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=400, detail=f"File not found: {file_path}")
+
+    try:
+        db = get_db()
+        date_str = datetime.now().strftime("%Y%m%d")
+        unique_id = str(uuid.uuid4())[:8]
+        candidate_id = f"CAN-{date_str}-{unique_id}"
+
+        # Extract text
+        text = extract_text_from_file(file_path)
+        if not text:
+            raise Exception("Failed to extract text from file")
+
+        # Extract metadata
+        metadata = extract_resume_metadata(text)
+
+        # Email normalization
+        email = metadata.get("email")
+        if not email or str(email).lower() in ["none", "null", "", "unknown@example.com", "not specified"]:
+            email = f"{candidate_id}@jobos.internal"
+            metadata["email"] = email
+        else:
+            email = str(email).strip().lower()
+            metadata["email"] = email
+
+        # Generate embedding
+        text_to_embed = f"""
+        Name: {metadata.get('name')}
+        Skills: {', '.join(metadata.get('skills', []))}
+        Experience: {metadata.get('experience_years')} years
+        Location: {metadata.get('location')}
+        College: {metadata.get('college')}
+        Resume Text: {text[:4000]}
+        """
+        vector = generate_embedding(text_to_embed)
+
+        # Save to MongoDB
+        candidate_data = {
+            "candidate_id": candidate_id,
+            "name": metadata.get("name"),
+            "email": email,
+            "phone": metadata.get("phone"),
+            "skills": metadata.get("skills"),
+            "experience_years": metadata.get("experience_years"),
+            "location": metadata.get("location"),
+            "notice_period": metadata.get("notice_period"),
+            "gender": metadata.get("gender"),
+            "college": metadata.get("college"),
+            "projects": metadata.get("projects", []),
+            "achievements": metadata.get("achievements", []),
+            "certifications": metadata.get("certifications", []),
+            "education": metadata.get("education", []),
+            "languages": metadata.get("languages", []),
+            "previous_companies": metadata.get("previous_companies", []),
+            "companies_switched": metadata.get("companies_switched", 0),
+            "resume_text": text,
+            "status": "ready",
+            "source": "email_intake",
+            "source_email": source_email,
+            "file_paths": [file_path],
+            "created_at": datetime.now(),
+            "updated_at": datetime.now()
+        }
+
+        # Check for existing by email
+        existing = db.candidates.find_one({"email": email}) if not email.endswith("@jobos.internal") else None
+
+        if existing:
+            candidate_id = existing["candidate_id"]
+            update_payload = {
+                "updated_at": datetime.now(),
+                "resume_text": text,
+                "status": "ready",
+                "source_email": source_email
+            }
+
+            for key in ["name", "phone", "skills", "experience_years", "location", "notice_period", "gender", "college",
+                        "projects", "achievements", "certifications", "education", "languages", "previous_companies"]:
+                new_val = candidate_data.get(key)
+                existing_val = existing.get(key)
+                is_existing_weak = existing_val in [None, "Unknown", "Not specified", 0, []]
+                is_new_strong = new_val not in [None, "Unknown", "Not specified", 0, []]
+
+                if is_new_strong or is_existing_weak:
+                    update_payload[key] = new_val
+
+            new_switched = candidate_data.get("companies_switched")
+            if new_switched is not None:
+                update_payload["companies_switched"] = new_switched
+
+            db.candidates.update_one(
+                {"candidate_id": candidate_id},
+                {
+                    "$set": update_payload,
+                    "$addToSet": {"file_paths": file_path}
+                }
+            )
+        else:
+            db.candidates.insert_one(candidate_data)
+
+        # Upsert to Qdrant
+        payload = {
+            "candidate_id": candidate_id,
+            "name": metadata.get("name"),
+            "email": email,
+            "phone": metadata.get("phone"),
+            "skills": metadata.get("skills"),
+            "experience_years": metadata.get("experience_years"),
+            "location": metadata.get("location"),
+            "notice_period": metadata.get("notice_period"),
+            "gender": metadata.get("gender"),
+            "college": metadata.get("college"),
+            "projects": metadata.get("projects", []),
+            "achievements": metadata.get("achievements", []),
+            "certifications": metadata.get("certifications", []),
+            "education": metadata.get("education", []),
+            "languages": metadata.get("languages", []),
+            "previous_companies": metadata.get("previous_companies", []),
+            "companies_switched": metadata.get("companies_switched", 0),
+            "source": "email_intake",
+            "ingested_at": datetime.now().isoformat(),
+            "file_path": file_path
+        }
+        upsert_resume_vector(candidate_id, vector, payload)
+
+        # Trigger matching
+        if jd_id:
+            # Match against specific JD
+            logger.info(f"Running matching for candidate {candidate_id} against JD {jd_id}")
+            run_matching.delay(jd_id)
+        else:
+            # Match against all open JDs
+            logger.info(f"Running matching for candidate {candidate_id} against all open JDs")
+            open_jds = db.job_descriptions.find({"status": "active"}, {"jd_id": 1})
+            for jd_doc in open_jds:
+                run_matching.delay(jd_doc["jd_id"])
+
+        return {
+            "message": "Resume intake processed successfully",
+            "candidate_id": candidate_id,
+            "source": "email_intake",
+            "jd_id": jd_id or "auto-match"
+        }
+
+    except Exception as e:
+        logger.error(f"Error processing email intake: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/upload-resume")
 async def upload_resume(

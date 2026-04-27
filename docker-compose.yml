@@ -63,6 +63,7 @@ services:
       - ./api:/app
       - ./data:/data
       - ./config:/app/config
+      - ./tests:/app/tests
     env_file: .env
     depends_on:
       - mongodb
@@ -108,15 +109,23 @@ services:
   frontend:
     build: ./frontend
     container_name: frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     ports:
       - "5173:5173"
 
   email-watcher:
-    build: ./email-watcher
+    build: ./api/email_watcher
     container_name: email-watcher
     env_file: .env
     volumes:
       - ./data:/data
+    depends_on:
+      - api
+      - mongodb
+      - redis
+    restart: always
 
   naukri-sourcer:
     build: ./naukri-sourcer
