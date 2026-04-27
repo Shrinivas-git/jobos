@@ -45,6 +45,68 @@ const getCardClass = (actioned: boolean, actionState: LocalAction | null): strin
     : 'bg-red-900/10 border-red-500/20 opacity-75';
 };
 
+interface ContextualMatch {
+  matches: string[];
+  gaps: string[];
+}
+
+const evaluateContextualMatch = (result: MatchResult, jd: JD | undefined): ContextualMatch => {
+  const matches: string[] = [];
+  const gaps: string[] = [];
+
+  if (!jd) return { matches, gaps };
+
+  const candidate = result as any;
+  const candidateCompanyTypes = candidate.company_types || [];
+  const candidateTeamSize = candidate.avg_team_size || 'Unknown';
+  const candidateRoleType = candidate.role_type || 'Unknown';
+
+  const jdCompanyTypes = (jd as any).preferred_company_type || [];
+  const jdTeamSize = (jd as any).preferred_team_size || 'Any';
+  const jdRoleType = (jd as any).role_type || 'Any';
+
+  // Company Type check
+  if (jdCompanyTypes && jdCompanyTypes.length > 0 && !jdCompanyTypes.includes('Any')) {
+    const matchingTypes = candidateCompanyTypes.filter((ct: string) => jdCompanyTypes.includes(ct));
+    if (matchingTypes.length > 0) {
+      matchingTypes.forEach((type: string) => {
+        matches.push(`Worked in ${type}`);
+      });
+    } else if (candidateCompanyTypes.length > 0) {
+      const nonMatching = jdCompanyTypes.filter((t: string) => !candidateCompanyTypes.includes(t));
+      nonMatching.forEach((type: string) => {
+        gaps.push(`No ${type} experience`);
+      });
+    } else {
+      gaps.push('Company type unknown');
+    }
+  }
+
+  // Team Size check
+  if (jdTeamSize && jdTeamSize !== 'Any') {
+    if (candidateTeamSize === jdTeamSize) {
+      matches.push(`Team size matches: ${candidateTeamSize}`);
+    } else if (candidateTeamSize !== 'Unknown') {
+      gaps.push(`Team size mismatch: candidate ${candidateTeamSize}, JD needs ${jdTeamSize}`);
+    } else {
+      gaps.push('Team size unknown');
+    }
+  }
+
+  // Role Type check
+  if (jdRoleType && jdRoleType !== 'Any') {
+    if (candidateRoleType === jdRoleType) {
+      matches.push(`Role type matches: ${candidateRoleType}`);
+    } else if (candidateRoleType !== 'Unknown') {
+      gaps.push(`Role type mismatch: was ${candidateRoleType}, JD needs ${jdRoleType}`);
+    } else {
+      gaps.push('Role type unknown');
+    }
+  }
+
+  return { matches, gaps };
+};
+
 const RecruiterDashboard: React.FC = () => {
   const [jds, setJds] = useState<JD[]>([]);
   const [selectedJdId, setSelectedJdId] = useState<string>('');
@@ -194,6 +256,22 @@ const RecruiterDashboard: React.FC = () => {
     const isRejecting = rejectingId === result.candidate_id;
     const isBusy = actionLoading === result.candidate_id;
 
+    const selectedJd = jds.find(j => j.jd_id === selectedJdId);
+    const contextualMatch = evaluateContextualMatch(result, selectedJd);
+    const contextBonus = (result as any).context_bonus || 0;
+
+    // Debug: log full result to see what fields are present
+    if (expanded) {
+      console.log('DEBUG MatchResult:', {
+        candidate_id: result.candidate_id,
+        context_bonus: (result as any).context_bonus,
+        company_types: (result as any).company_types,
+        avg_team_size: (result as any).avg_team_size,
+        role_type: (result as any).role_type,
+        all_result: result
+      });
+    }
+
     return (
       <div
         key={result.candidate_id}
@@ -261,6 +339,57 @@ const RecruiterDashboard: React.FC = () => {
                 </p>
               )}
             </>
+          )}
+
+          {expanded && (contextualMatch.matches.length > 0 || contextualMatch.gaps.length > 0) && (
+            <div className="border-t border-slate-700/50 pt-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Contextual Match</p>
+                {contextBonus > 0 && (
+                  <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                    Context Bonus: +{contextBonus}pts
+                  </span>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {/* Matches Column */}
+                <div className="bg-emerald-900/10 border border-emerald-500/20 rounded-lg p-3 space-y-2">
+                  <p className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">Matches</p>
+                  {contextualMatch.matches.length > 0 ? (
+                    <div className="space-y-1.5">
+                      {contextualMatch.matches.map((match, i) => (
+                        <div key={i} className="flex items-start space-x-1.5">
+                          <CheckCircle size={11} className="text-emerald-400 mt-0.5 shrink-0" />
+                          <span className="text-[10px] text-emerald-300">{match}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex items-start space-x-1.5">
+                      <span className="text-[10px] text-slate-500">—</span>
+                    </div>
+                  )}
+                </div>
+                {/* Gaps Column */}
+                <div className="bg-red-900/10 border border-red-500/20 rounded-lg p-3 space-y-2">
+                  <p className="text-[9px] font-bold text-red-400 uppercase tracking-widest">Gaps</p>
+                  {contextualMatch.gaps.length > 0 ? (
+                    <div className="space-y-1.5">
+                      {contextualMatch.gaps.map((gap, i) => (
+                        <div key={i} className="flex items-start space-x-1.5">
+                          <XCircle size={11} className="text-red-400 mt-0.5 shrink-0" />
+                          <span className="text-[10px] text-red-300">{gap}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex items-start space-x-1.5">
+                      <span className="text-[10px] text-slate-500">—</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           )}
         </div>
 
