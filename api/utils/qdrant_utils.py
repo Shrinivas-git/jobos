@@ -94,6 +94,22 @@ def get_jd_vector(jd_id: str):
         logger.error(f"Error retrieving JD vector: {e}")
         return None
 
+def get_resume_vector(candidate_id: str):
+    """Retrieves the vector for a specific candidate resume."""
+    try:
+        point_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, candidate_id))
+        result = client.retrieve(
+            collection_name=RESUME_COLLECTION,
+            ids=[point_id],
+            with_vectors=True
+        )
+        if result:
+            return result[0].vector
+        return None
+    except Exception as e:
+        logger.error(f"Error retrieving resume vector: {e}")
+        return None
+
 def search_resumes_by_vector(vector: list, limit: int = 100):
     """Searches for top resumes matching a vector."""
     try:
