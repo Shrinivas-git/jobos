@@ -1,20 +1,12 @@
 {
-  "fitment_score": 80.0,
-  "completeness_score": 83.33333333333334,
-  "context_bonus": 5.0,
-  "composite_score": 72.21154333333334,
-  "reasoning": "The candidate's skills and experience align with the job description, particularly in areas such as Python, React.js, FastAPI, and database management. However, the candidate's experience in fintech and payment processing is limited, which may impact their ability to handle specific job responsibilities.",
-  "strengths": [
-    "Proficient in relevant programming languages and frameworks",
-    "Experience in building web applications and RESTful API integration",
-    "Strong educational background and relevant certifications"
-  ],
-  "gaps": [
-    "Limited experience in fintech and payment processing",
-    "Lack of direct experience with MySQL and MongoDB in a large-scale application",
-    "No direct experience with security standards and regulatory requirements"
-  ],
-  "recommendation": "shortlist",
+  "fitment_score": 0.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 21.860216,
+  "reasoning": "AI evaluation failed.",
+  "strengths": [],
+  "gaps": [],
+  "recommendation": "hold",
   "status": "pass_2_complete",
-  "updated_at": "2026-04-28T09:34:03.804109"
+  "updated_at": "2026-04-28T11:29:25.473078"
 }

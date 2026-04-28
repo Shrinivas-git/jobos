@@ -1,20 +1,12 @@
 {
-  "fitment_score": 60.0,
+  "fitment_score": 0.0,
   "completeness_score": 100.0,
   "context_bonus": 0.0,
-  "composite_score": 60.0654212,
-  "reasoning": "The candidate has experience in embedded hardware design and development, which is relevant to the power electronics field. However, their expertise is more focused on digital electronics, communication, and networking, rather than power electronics converters, which is the primary requirement of the job. They also have some experience with power supply design, but it's limited to AC-DC flyback and wide-input DC-DC converters.",
-  "strengths": [
-    "Embedded hardware design and development experience",
-    "Knowledge of digital electronics and communication protocols",
-    "Experience with board bring-up, testing, and debugging"
-  ],
-  "gaps": [
-    "Limited experience with power electronics converters",
-    "No experience with GaN/SiC devices, EMI/EMC standards, and thermal management",
-    "No experience with LTSpice, MATLAB, and Simetrix simulation tools"
-  ],
+  "composite_score": 21.065421200000003,
+  "reasoning": "AI evaluation failed.",
+  "strengths": [],
+  "gaps": [],
   "recommendation": "hold",
   "status": "pass_2_complete",
-  "updated_at": "2026-04-28T10:55:02.995423"
+  "updated_at": "2026-04-28T11:31:37.776705"
 }

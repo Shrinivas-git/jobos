@@ -1,0 +1,12 @@
+{
+  "fitment_score": 0.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 13.8157656,
+  "reasoning": "AI evaluation failed.",
+  "strengths": [],
+  "gaps": [],
+  "recommendation": "hold",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T11:32:43.347138"
+}

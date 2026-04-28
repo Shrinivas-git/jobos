@@ -1,20 +1,12 @@
 {
-  "fitment_score": 90.0,
+  "fitment_score": 0.0,
   "completeness_score": 100.0,
-  "context_bonus": 5.0,
-  "composite_score": 82.462728,
-  "reasoning": "The candidate's resume demonstrates strong expertise in power electronics, particularly in DC-DC and AC-DC converter design, analysis, and validation, which aligns with the job description. The candidate's experience in working with GaN/SiC devices, EMI/EMC standards, and thermal management is also relevant to the job requirements. However, there may be some gaps in the candidate's experience with specific tools or technologies mentioned in the job description.",
-  "strengths": [
-    "Strong background in power electronics converter design",
-    "Experience with wide-bandgap semiconductors (GaN/SiC) devices",
-    "Proficiency in simulation, prototyping, and testing of power systems"
-  ],
-  "gaps": [
-    "Limited experience with LTSpice, MATLAB, and Simetrix simulation",
-    "No explicit mention of experience with high-power systems such as chargers, power supplies, and energy systems",
-    "No clear indication of experience with reliability analysis and testing"
-  ],
-  "recommendation": "shortlist",
+  "context_bonus": 0.0,
+  "composite_score": 23.712728000000002,
+  "reasoning": "AI evaluation failed.",
+  "strengths": [],
+  "gaps": [],
+  "recommendation": "hold",
   "status": "pass_2_complete",
-  "updated_at": "2026-04-28T10:55:02.071554"
+  "updated_at": "2026-04-28T11:31:37.574173"
 }

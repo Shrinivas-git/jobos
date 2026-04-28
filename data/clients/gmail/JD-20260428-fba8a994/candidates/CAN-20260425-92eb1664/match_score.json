@@ -3,18 +3,10 @@
   "completeness_score": 100.0,
   "context_bonus": 0.0,
   "composite_score": 18.1521046,
-  "reasoning": "The candidate lacks relevant experience in power electronics, with their background being in software development for Android applications, which does not align with the requirements of the Senior Power Electronics Engineer position.",
-  "strengths": [
-    "Strong background in software development",
-    "Experience with performance optimization",
-    "Leadership skills in migration and implementation of new features"
-  ],
-  "gaps": [
-    "Lack of experience in power electronics",
-    "No knowledge of power electronics converter design",
-    "No experience with tools like LTSpice, MATLAB, or Simetrix"
-  ],
-  "recommendation": "reject",
+  "reasoning": "AI evaluation failed.",
+  "strengths": [],
+  "gaps": [],
+  "recommendation": "hold",
   "status": "pass_2_complete",
-  "updated_at": "2026-04-28T10:55:04.771163"
+  "updated_at": "2026-04-28T11:31:38.188207"
 }

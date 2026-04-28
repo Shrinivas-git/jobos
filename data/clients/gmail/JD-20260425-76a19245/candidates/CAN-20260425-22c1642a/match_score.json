@@ -1,18 +1,12 @@
 {
-  "fitment_score": 90.0,
+  "fitment_score": 0.0,
   "completeness_score": 100.0,
-  "composite_score": 84.95386199999999,
-  "reasoning": "The candidate's resume demonstrates a strong fit for the DevOps Engineer role, with 5 years of experience in building, operating, and supporting highly available cloud-native platforms, and expertise in CI/CD, Kubernetes operations, Infrastructure as Code, and observability, which aligns with the job description's requirements.",
-  "strengths": [
-    "Strong expertise in cloud infrastructure and Kubernetes operations",
-    "Proven ability to reduce MTTR and improve deployment reliability through automation and SRE principles",
-    "Experience with monitoring, logging, and observability tools such as Prometheus, Grafana, and Dynatrace"
-  ],
-  "gaps": [
-    "Lack of explicit experience with Azure and AWS cloud infrastructure, although the candidate has worked with both",
-    "Limited information about the candidate's experience with FinTech, Payments, or high-throughput systems",
-    "No mention of service mesh or advanced networking experience, which is a required skill"
-  ],
-  "recommendation": "shortlist",
+  "context_bonus": 0.0,
+  "composite_score": 21.953862,
+  "reasoning": "AI evaluation failed.",
+  "strengths": [],
+  "gaps": [],
+  "recommendation": "hold",
   "status": "pass_2_complete",
-  "updated_at": 
+  "updated_at": "2026-04-28T11:29:48.534880"
+}

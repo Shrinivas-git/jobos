@@ -1,20 +1,12 @@
 {
-  "fitment_score": 60.0,
+  "fitment_score": 0.0,
   "completeness_score": 100.0,
-  "context_bonus": 5.0,
-  "composite_score": 61.7868166,
-  "reasoning": "The candidate has strong experience in building and owning backend systems, with expertise in Java, Spring Boot, and microservices. However, the job description requires proficiency in Python, Django, and other specific technologies that are not mentioned in the candidate's resume. Despite this, the candidate's experience in designing and developing scalable systems, handling production issues, and improving system robustness makes them a potentially good fit.",
-  "strengths": [
-    "Strong experience in building and owning backend systems",
-    "Expertise in system design, API design, and data modeling",
-    "Proficiency in cloud and DevOps technologies such as AWS, Docker, and Kubernetes"
-  ],
-  "gaps": [
-    "Lack of proficiency in Python, Django, and other required technologies",
-    "No experience with fintech products or payment processing systems",
-    "No mention of experience with machine learning, AI, or data science"
-  ],
+  "context_bonus": 0.0,
+  "composite_score": 22.5368166,
+  "reasoning": "AI evaluation failed.",
+  "strengths": [],
+  "gaps": [],
   "recommendation": "hold",
   "status": "pass_2_complete",
-  "updated_at": "2026-04-28T09:34:00.762021"
+  "updated_at": "2026-04-28T11:29:25.277622"
 }

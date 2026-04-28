@@ -1,20 +1,12 @@
 {
-  "fitment_score": 40.0,
+  "fitment_score": 0.0,
   "completeness_score": 100.0,
   "context_bonus": 0.0,
-  "composite_score": 45.1901196,
-  "reasoning": "The candidate has extensive experience in data engineering, but their skills and experience do not closely align with the job description for a junior backend engineer. While they have experience with Python, their expertise lies in big data, Hadoop, and Spark, rather than backend development, APIs, or fintech products.",
-  "strengths": [
-    "Strong experience in data engineering and big data technologies",
-    "Proficient in Python and cloud technologies such as AWS and GCP",
-    "Good understanding of databases and data warehousing"
-  ],
-  "gaps": [
-    "Lack of experience in backend development and API design",
-    "No clear experience with fintech products or payment processing systems",
-    "Limited knowledge of machine learning and AI foundations"
-  ],
-  "recommendation": "reject",
+  "composite_score": 19.190119600000003,
+  "reasoning": "AI evaluation failed.",
+  "strengths": [],
+  "gaps": [],
+  "recommendation": "hold",
   "status": "pass_2_complete",
-  "updated_at": "2026-04-28T09:34:09.430739"
+  "updated_at": "2026-04-28T11:29:26.398227"
 }
