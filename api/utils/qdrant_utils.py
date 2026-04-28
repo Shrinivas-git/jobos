@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 QDRANT_HOST = os.getenv("QDRANT_HOST", "qdrant")
 QDRANT_PORT = int(os.getenv("QDRANT_PORT", 6333))
 
-client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT, check_version=False)
+client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
 
 COLLECTION_NAME = "jd_vectors"
 RESUME_COLLECTION = "resume_vectors"
