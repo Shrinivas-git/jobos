@@ -1,0 +1,20 @@
+{
+  "fitment_score": 0.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 17.0031786,
+  "reasoning": "The candidate's resume does not match the job description for a Senior Power Electronics Engineer, as their experience and skills are focused on Java backend engineering, with no mention of power electronics, circuit simulation, or relevant technical skills listed in the job description.",
+  "strengths": [
+    "Strong system design skills",
+    "Experience with distributed systems and event-driven architecture",
+    "Proficient in multiple programming languages and frameworks"
+  ],
+  "gaps": [
+    "Lack of experience in power electronics",
+    "No knowledge of relevant technical skills such as LTSpice, MATLAB, or Simetrix",
+    "No background in hardware development or debugging"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T10:55:37.601836"
+}

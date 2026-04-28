@@ -1,0 +1,20 @@
+{
+  "fitment_score": 60.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 59.1530086,
+  "reasoning": "The candidate has a strong background in data engineering with experience in Python, big data tools, and cloud technologies. However, their experience is more aligned with data engineering and big data, which may not be a direct fit for the Python backend developer role. The candidate's skills in Python, databases, and API integration are relevant, but they lack experience in backend development frameworks like Django, Flask, or FastAPI.",
+  "strengths": [
+    "Strong experience in Python and big data tools",
+    "Experience in cloud technologies like AWS and GCP",
+    "Good understanding of databases and data storage solutions"
+  ],
+  "gaps": [
+    "Lack of experience in backend development frameworks",
+    "Limited experience in API development and integration",
+    "No direct experience in building and managing REST APIs"
+  ],
+  "recommendation": "hold",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:44:38.276224"
+}

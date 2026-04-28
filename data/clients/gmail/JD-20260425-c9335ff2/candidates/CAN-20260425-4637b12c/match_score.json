@@ -1,0 +1,20 @@
+{
+  "fitment_score": 20.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 33.155265400000005,
+  "reasoning": "The candidate's background is primarily in Java and Spring Boot, which does not align with the job description's requirement for Python and frameworks like Django, Flask, or FastAPI. Although the candidate has experience with backend development, database management, and API design, the lack of proficiency in Python and relevant frameworks is a significant gap.",
+  "strengths": [
+    "Strong experience in backend development and system design",
+    "Proficient in database management and API design",
+    "Excellent problem-solving skills with a focus on scalability and performance"
+  ],
+  "gaps": [
+    "Lack of proficiency in Python and relevant frameworks like Django, Flask, or FastAPI",
+    "No experience with REST APIs in a Python environment",
+    "Limited knowledge of Python-specific libraries and tools"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:44:37.354226"
+}

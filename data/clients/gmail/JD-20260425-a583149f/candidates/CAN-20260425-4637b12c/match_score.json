@@ -1,0 +1,18 @@
+{
+  "fitment_score": 80.0,
+  "completeness_score": 100.0,
+  "composite_score": 79.5832668,
+  "reasoning": "The candidate has a strong background in Java and backend development, with experience in Spring Boot, Hibernate, and REST APIs, which aligns well with the job requirements. However, the candidate's experience is more focused on system design, architecture, and distributed systems, which may require additional training to fit the specific needs of the Java Developer role.",
+  "strengths": [
+    "Strong experience in Java and Spring Boot",
+    "Proven track record of improving system performance and resilience",
+    "Good understanding of database management and caching"
+  ],
+  "gaps": [
+    "Limited experience in core Java concepts such as OOPs, Collections Framework, and Exception Handling",
+    "No direct experience with MySQL, which is specified in the job requirements",
+    "May require additional training on debugging and problem-solving skills"
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": 

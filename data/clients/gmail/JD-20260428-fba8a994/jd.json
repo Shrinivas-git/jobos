@@ -1,0 +1,43 @@
+{
+  "title": "Senior Power Electronics Engineer",
+  "level": "Senior",
+  "client_email": "shrinivassondur03@gmail.com",
+  "responsibilities": "Design and develop power electronic converters (DC-DC, AC-DC, Inverters). Work on high-power systems such as chargers, power supplies, and energy systems. Perform circuit simulation using LTSpice, MATLAB, Simetrix. Design transformers, magnetics, and gate driver circuits. Conduct testing, debugging, board bring-up, and RCA of failed units. Perform loss calculation, efficiency improvement, and thermal optimization. Work on EMI/EMC filter design and compliance standards. Validate converters through DPT, switching analysis, and reliability testing. Prepare technical documentation, reports, and test plans. Collaborate with R&D, mechanical, and manufacturing teams.",
+  "kpis": "",
+  "skills": [
+    "Power Electronics Converter Design",
+    "DC-DC Converters",
+    "AC-DC Converters",
+    "Gate Driver Circuits",
+    "GaN/SiC Devices",
+    "EMI/EMC Standards",
+    "Transformer Design",
+    "Thermal Management",
+    "Hardware Debugging",
+    "Board Bring-up",
+    "Root Cause Analysis",
+    "Reliability Analysis",
+    "LTSpice",
+    "MATLAB",
+    "Simetrix",
+    "Soldering",
+    "Test Validation"
+  ],
+  "relevant_experience": 4,
+  "total_experience": 5,
+  "compensation_range": "\u20b98 LPA \u2013 \u20b920 LPA",
+  "work_structure": "In-office",
+  "location": "Bangalore",
+  "hiring_timeline": "",
+  "urgency": "Critical",
+  "num_positions": 1,
+  "gender_preference": "Any",
+  "college_preference": "Government Engineering college Thrissur",
+  "college_exclusion": "",
+  "preferred_company_type": [
+    "Any"
+  ],
+  "preferred_team_size": "Any",
+  "role_type": "Any",
+  "obfuscate": false
+}

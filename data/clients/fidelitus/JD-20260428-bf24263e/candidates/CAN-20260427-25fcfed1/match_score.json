@@ -1,0 +1,20 @@
+{
+  "fitment_score": 20.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 30.7062988,
+  "reasoning": "The candidate has significant experience in data engineering, but lacks direct experience with FastAPI and MongoDB, which are the key requirements for the Senior Backend Engineer position. The candidate's skills and experience are more aligned with data engineering and big data technologies.",
+  "strengths": [
+    "Extensive experience with big data technologies",
+    "Strong skills in Python and Spark",
+    "Experience working with cloud technologies such as AWS and GCP"
+  ],
+  "gaps": [
+    "Lack of experience with FastAPI",
+    "No experience with MongoDB",
+    "Limited experience with backend engineering"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T10:41:19.645168"
+}

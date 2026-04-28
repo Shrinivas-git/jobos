@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Header
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import List, Optional
 from datetime import datetime
 import uuid
@@ -6,8 +7,21 @@ import logging
 import os
 from pydantic import BaseModel, Field
 from utils.pydantic_utils import PyObjectId
-from auth import check_role
+from auth import check_role, get_current_user
 from utils.client_utils import get_db
+
+_bearer = HTTPBearer(auto_error=False)
+INTERNAL_API_KEY = os.getenv("INTERNAL_API_KEY", "")
+
+async def _internal_or_auth(
+    x_internal_key: Optional[str] = Header(default=None),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(_bearer),
+):
+    if x_internal_key and INTERNAL_API_KEY and x_internal_key == INTERNAL_API_KEY:
+        return {"sub": "email-watcher", "roles": ["system"]}
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return await get_current_user(credentials.credentials)
 from utils.storage_utils import save_resume_file
 from utils.gemini_utils import extract_resume_metadata, generate_embedding
 from utils.qdrant_utils import upsert_resume_vector, get_resume_vector
@@ -143,7 +157,7 @@ async def update_my_profile(
 @router.post("/email-intake")
 async def email_intake(
     intake_data: EmailIntakeRequest,
-    user: dict = Depends(check_role(["recruiter", "manager", "admin", "system"]))
+    user: dict = Depends(_internal_or_auth),
 ):
     """
     Inbound resume intake from email watcher.

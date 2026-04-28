@@ -1,0 +1,20 @@
+{
+  "fitment_score": 0.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 0.0,
+  "composite_score": 10.222515066666666,
+  "reasoning": "The candidate's resume does not demonstrate any relevant experience or skills in Python backend development, which is the primary requirement for the job. The candidate's background is in finance and accounting, with no mention of programming languages, software development, or relevant technical skills.",
+  "strengths": [
+    "Strong financial analysis and accounting skills",
+    "Experience in financial reporting and compliance",
+    "Ability to work with financial models and data"
+  ],
+  "gaps": [
+    "Lack of programming skills in Python or any other language",
+    "No experience in backend development or software engineering",
+    "No knowledge of relevant technical skills such as Django, Flask, or REST APIs"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:45:13.196263"
+}

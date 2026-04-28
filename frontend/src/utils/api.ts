@@ -31,6 +31,9 @@ export interface MatchResult {
   company_types?: string[];
   avg_team_size?: string;
   role_type?: string;
+  preferred_company_type?: string[];
+  preferred_team_size?: string;
+  jd_role_type?: string;
 }
 
 export type CandidateLookup = Record<string, string>;

@@ -1,125 +1,49 @@
 ﻿param(
     [Parameter(Mandatory=$true)]
-    [ValidateSet('prd-read','debug','list','api','frontend','email-watcher','naukri-sourcer')]
+    [ValidateSet("notifications","candidate-page","jd-fix","debug","list")]
     [string]$Session
 )
-
-$PROJECT_ROOT    = "C:\staging\jobos"
-$CHECKPOINTS_DIR = Join-Path $PROJECT_ROOT ".checkpoints"
-$FLASH           = "gemini-2.0-flash"
-$PRO             = "gemini-2.5-pro"
-$STACK           = "Python, FastAPI, React, MongoDB, Qdrant, Docker, Gemini API"
-
-function Get-LatestCheckpoint {
-    if (-not (Test-Path $CHECKPOINTS_DIR)) { return $null }
-    $files = Get-ChildItem -Path $CHECKPOINTS_DIR -Filter "ck*.md" -File | Sort-Object Name -Descending
-    if ($files.Count -eq 0) { return $null }
-    return $files[0]
-}
-
-function Get-NextCheckpointPath {
-    $files = Get-ChildItem -Path $CHECKPOINTS_DIR -Filter "ck*.md" -File
-    $next  = ($files.Count + 1).ToString("D2")
-    return Join-Path $CHECKPOINTS_DIR "ck$next.md"
-}
-function Write-Checkpoint {
-    param($SessionKey, $TaskId, $Label)
-    $ckPath = Get-NextCheckpointPath
-    $ts = Get-Date -Format "yyyy-MM-dd HH:mm"
-    $changed = git -C $PROJECT_ROOT diff --name-only HEAD 2>$null
-    $changedList = if ($changed) { $changed -join "`n" } else { "(no changes)" }
-    
-    $content = @"
-# Checkpoint -- $Label
-**Session :** $SessionKey
-**Task     :** $TaskId
-**Saved    :** $ts
-
-## What was completed
-[Paste SESSION-SUMMARY from Gemini here]
-
-## Files changed
-$changedList
-"@
-    $content | Set-Content $ckPath -Encoding UTF8
-    Write-Host ""
-    Write-Host "  CHECKPOINT  $ckPath" -ForegroundColor Cyan
-}
-
-function Invoke-GitCommitPush {
-    param($TaskId, $Label)
-    Write-Host "[ GIT ] Staging and committing..." -ForegroundColor Yellow
-    git -C $PROJECT_ROOT add -A
-    $msg = "[$TaskId] $Label -- session end"
-    git -C $PROJECT_ROOT commit -m $msg
-    $branch = git -C $PROJECT_ROOT rev-parse --abbrev-ref HEAD
-    Write-Host "[ GIT ] Pushing $branch..." -ForegroundColor Yellow
-    git -C $PROJECT_ROOT push origin $branch
-}
-
-function Get-ResumeBlock {
-    $ck = Get-LatestCheckpoint
-    if ($null -eq $ck) { return "" }
-    $ckContent = Get-Content $ck.FullName -Raw
-    return "`n======================================================`nRESUME FROM CHECKPOINT: $($ck.Name)`n$ckContent`n======================================================`n"
-}
+$PROJECT_ROOT = "C:\staging\jobos"
+$SONNET = "claude-sonnet-4-6"
+$HAIKU  = "claude-haiku-4-5-20251001"
 $sessions = @{
-    'prd-read' = @{
-        model = $PRO
-        task  = "TASK-000"
-        label = "Session 0 -- PRD Read"
-        prompt = "Read PRD.md and sync tasks."
+    "notifications" = @{
+        model = $SONNET
+        label = "TASK-009 - Manager and HOD notifications"
+        prompt = "Read PRD.md Section 6.5 and tasks/TASK-009-manager-hod-notifications.md first. Stack: FastAPI/MongoDB/SMTP. Task: TASK-009. Build notification system: when Pass 2 matching completes for a JD, send email digest to Manager and HOD with stack-ranked candidate list including name, fitment score, strengths, gaps, recommendation. Also add in-app notification badge in the frontend header. PDCA: list all files, wait for confirm before touching anything."
     }
-    'api' = @{
-        model = $PRO
-        task  = 'TASK-???'
-        label = 'Session -- api'
-        prompt = 'Focus on api module.'
+    "candidate-page" = @{
+        model = $HAIKU
+        label = "TASK-012 - Candidate simple landing page"
+        prompt = "Stack: React frontend. Scope: frontend/src only. When user role is candidate, show a simple page instead of recruiter dashboard. Content: their name, email, skills, experience. Message: Your profile has been received. Our team will be in touch. No dashboard stats, no JD list, no matching engine. PDCA: list files, wait for confirm."
     }
-
-    'frontend' = @{
-        model = $PRO
-        task  = 'TASK-???'
-        label = 'Session -- frontend'
-        prompt = 'Focus on frontend module.'
+    "jd-fix" = @{
+        model = $HAIKU
+        label = "JD intake fixes"
+        prompt = "Stack: Python/FastAPI. Read api/tasks/jd_tasks.py first. Fix any remaining JD intake issues. PDCA: show plan before touching anything."
     }
-
-    'email-watcher' = @{
-        model = $PRO
-        task  = 'TASK-???'
-        label = 'Session -- email-watcher'
-        prompt = 'Focus on email-watcher module.'
-    }
-
-    'naukri-sourcer' = @{
-        model = $PRO
-        task  = 'TASK-???'
-        label = 'Session -- naukri-sourcer'
-        prompt = 'Focus on naukri-sourcer module.'
-    }
-    'debug' = @{
-        model = $PRO
-        task  = "DEBUG"
-        label = "Debug Session"
-        prompt = "Debug one error in one file."
+    "debug" = @{
+        model = $SONNET
+        label = "Debug session"
+        prompt = "Stack: Python/FastAPI/Groq/Docker. One error, one file, one session. Paste: (1) full traceback (2) only the function that threw it."
     }
 }
 if ($Session -eq "list") {
-    Write-Host "`n  Available sessions:" -ForegroundColor Magenta
+    Write-Host ""
+    Write-Host "  Available sessions:" -ForegroundColor Cyan
     foreach ($key in $sessions.Keys | Sort-Object) {
-        Write-Host "    $key"
+        Write-Host "  $key  ->  $($sessions[$key].label)" -ForegroundColor White
     }
+    Write-Host ""
     exit 0
 }
-
 $s = $sessions[$Session]
-$resume = Get-ResumeBlock
-$prompt = $resume + $s.prompt + "`n`nEND OF SESSION: Type SESSION-SUMMARY: <paragraph>."
-
-$prompt | Set-Clipboard
-Write-Host "`n  LAUNCHING: $($s.label)" -ForegroundColor Magenta
-gemini --model $s.model
-
-Write-Checkpoint -SessionKey $Session -TaskId $s.task -Label $s.label
-$doGit = Read-Host "  Commit and push? [Y/n]"
-if ($doGit -ne "n") { Invoke-GitCommitPush -TaskId $s.task -Label $s.label }
+Write-Host ""
+Write-Host "  $($s.label)" -ForegroundColor Cyan
+Write-Host "  Model: $($s.model)" -ForegroundColor DarkGray
+Write-Host ""
+$s.prompt | Set-Clipboard
+Write-Host "  Copied to clipboard. Paste into Claude Code and press Enter" -ForegroundColor Green
+Write-Host ""
+Set-Location $PROJECT_ROOT
+claude --model $s.model

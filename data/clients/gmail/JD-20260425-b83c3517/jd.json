@@ -1,0 +1,44 @@
+{
+  "title": "Senior Site Reliability / DevOps Engineer",
+  "level": "Senior",
+  "responsibilities": [
+    "Designing, implementing, and maintaining infrastructure as code using Terraform and Ansible",
+    "Building, operating, and supporting highly available cloud-native platforms on AKS/EKS",
+    "Implementing observability, incident management, and monitoring using Managed Prometheus, Grafana, and Azure Monitor",
+    "Automating infrastructure changes, operating system patching, and application deployments using Jenkins and Ansible",
+    "Ensuring release safety and compliance by defining golden signals and production-readiness checklists",
+    "Collaborating with platform, development, and security teams in Agile environments"
+  ],
+  "kpis": [
+    "Reducing MTTR by ~25\u201330%",
+    "Improving deployment reliability and reducing operational toil through automation and standardized release practices",
+    "Improving rollback frequency and reducing MTTR by 25\u201340%",
+    "Reducing manual effort by 70%",
+    "Reducing P1/P2 incidents by ~20%",
+    "Improving on-call consistency and time to mitigation"
+  ],
+  "skills": [
+    "CI/CD, Kubernetes operations, Infrastructure as Code, observability, incident management",
+    "Docker, Kubernetes (EKS), Helm, ConfigMaps, Secrets, HPA, Rolling/Canary deployments",
+    "Prometheus, Grafana, ELK Stack, CloudWatch, alerting integrations like PagerDuty / Opsgenie",
+    "Terraform, Ansible, shell scripting, Jenkins, Git, Maven, Confluence, SharePoint, Markdown documentation, runbooks",
+    "Containerized workloads, Deployments, Services, ConfigMaps, Secrets, HPA, Rolling Updates, container images built using Docker",
+    "Dynatrace Davis AI, predictive capacity analytics, AI / LLM skills like Prompt Engineering, Llama / open-source LLMs",
+    "Operating Systems: Linux, Windows Servers & Web: NGINX, Apache HTTP, Apache Tomcat, JBoss Cloud Services: AWS, GCP, Azure",
+    "Configuration & Infrastructure Management: Ansible, Ansible Tower, Terraform CI/CD Tools: Jenkins, Harness CI/CD, Argo CD",
+    "Container Technology: Docker, Docker-Compose, Kubernetes Helm Database: PostgreSQL, MySQL, RDS Monitoring & Logging Tools: Grafana, Prometheus, Cortex, Fluentd, File beat, Net diagnostic, Splunk, ELK Stack, Dynatrace",
+    "Security & Vulnerability: SonarQube, Rapid7 Nexpose, CrowdStrike Falcon Ticketing Tools: JSM, ServiceNow Version Control: GitHub, GitLab",
+    "Incident Management & Automation: PagerDuty, Opsgenie, StackStorm, Shell scripting, AWX Artifact & Image Management: Docker Trusted Registry (DTR), Harbor, Nexus Messaging & Streaming: RabbitMQ, ActiveMQ, Kafka Documentation & Collaboration: Confluence, SharePoint, Google Workspace, Microsoft Teams + OneNote VPN Solutions: Libreswan, StrongSwan"
+  ],
+  "relevant_experience": 5,
+  "total_experience": 8,
+  "compensation_range": "Not specified",
+  "work_structure": "Hybrid",
+  "location": "Bangalore, India",
+  "hiring_timeline": "Immediate",
+  "urgency": "High",
+  "num_positions": 1,
+  "gender_preference": "Any",
+  "college_preference": "Dr. A.P.J. Abdul Kalam Technical University",
+  "college_exclusion": ""
+}

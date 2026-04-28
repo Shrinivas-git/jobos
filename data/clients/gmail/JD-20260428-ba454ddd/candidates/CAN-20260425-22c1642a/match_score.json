@@ -1,0 +1,20 @@
+{
+  "fitment_score": 20.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 32.9088656,
+  "reasoning": "The candidate has a strong background in DevOps and site reliability engineering, but lacks experience in backend engineering, fintech, and relevant technical skills such as Python, FastAPI, and Django, which are required for the junior backend engineer position.",
+  "strengths": [
+    "Strong expertise in CI/CD, Kubernetes operations, and Infrastructure as Code",
+    "Proven ability to reduce MTTR and improve deployment reliability through automation and standardized release practices",
+    "Experience with various tools and technologies, including Jenkins, Git, Maven, and Prometheus"
+  ],
+  "gaps": [
+    "Lack of experience in backend engineering and relevant technical skills",
+    "No experience in fintech or payment processing systems",
+    "Limited knowledge of Python, FastAPI, and Django, which are required for the position"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:34:05.954431"
+}

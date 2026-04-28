@@ -1,0 +1,20 @@
+{
+  "fitment_score": 10.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 22.712233400000002,
+  "reasoning": "The candidate's background is in embedded hardware engineering, which is significantly different from the requirements of the Python backend developer role. The candidate lacks experience in Python, Django, Flask, and other relevant technologies, making them a poor fit for the position.",
+  "strengths": [
+    "Strong expertise in digital electronics",
+    "Experience in board bring-up and production support",
+    "Cross-functional collaboration skills"
+  ],
+  "gaps": [
+    "Lack of experience in Python and related technologies",
+    "No experience in backend development or REST APIs",
+    "No knowledge of databases or data storage solutions"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:45:04.086402"
+}

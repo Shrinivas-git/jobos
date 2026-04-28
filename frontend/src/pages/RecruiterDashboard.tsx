@@ -54,16 +54,13 @@ const evaluateContextualMatch = (result: MatchResult, jd: JD | undefined): Conte
   const matches: string[] = [];
   const gaps: string[] = [];
 
-  if (!jd) return { matches, gaps };
+  const candidateCompanyTypes = result.company_types || [];
+  const candidateTeamSize = result.avg_team_size || 'Unknown';
+  const candidateRoleType = result.role_type || 'Unknown';
 
-  const candidate = result as any;
-  const candidateCompanyTypes = candidate.company_types || [];
-  const candidateTeamSize = candidate.avg_team_size || 'Unknown';
-  const candidateRoleType = candidate.role_type || 'Unknown';
-
-  const jdCompanyTypes = (jd as any).preferred_company_type || [];
-  const jdTeamSize = (jd as any).preferred_team_size || 'Any';
-  const jdRoleType = (jd as any).role_type || 'Any';
+  const jdCompanyTypes = result.preferred_company_type || [];
+  const jdTeamSize = result.preferred_team_size || 'Any';
+  const jdRoleType = result.jd_role_type || 'Any';
 
   // Company Type check
   if (jdCompanyTypes && jdCompanyTypes.length > 0 && !jdCompanyTypes.includes('Any')) {
@@ -341,7 +338,7 @@ const RecruiterDashboard: React.FC = () => {
             </>
           )}
 
-          {expanded && (contextualMatch.matches.length > 0 || contextualMatch.gaps.length > 0) && (
+          {expanded && (
             <div className="border-t border-slate-700/50 pt-3 space-y-2">
               <div className="flex items-center justify-between">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Contextual Match</p>

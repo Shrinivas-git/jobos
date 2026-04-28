@@ -1,0 +1,20 @@
+{
+  "fitment_score": 80.0,
+  "completeness_score": 100.0,
+  "context_bonus": 5.0,
+  "composite_score": 75.302846,
+  "reasoning": "The candidate has a strong foundation in Python, backend development, and data analysis, which aligns with the job requirements. They have experience with relevant frameworks like FastAPI and Flask, and have worked on various projects that demonstrate their skills in building scalable RESTful APIs and data handling. However, the candidate's experience is mostly limited to internships and personal projects, and they may require additional guidance and training to adapt to a junior developer role.",
+  "strengths": [
+    "Strong Python skills",
+    "Experience with backend development frameworks",
+    "Proficient in data handling and API design"
+  ],
+  "gaps": [
+    "Limited professional experience",
+    "No direct experience with Django",
+    "No experience with PostgreSQL"
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:44:35.445505"
+}

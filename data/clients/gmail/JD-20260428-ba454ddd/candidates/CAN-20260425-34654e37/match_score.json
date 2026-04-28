@@ -1,0 +1,20 @@
+{
+  "fitment_score": 20.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 29.904532,
+  "reasoning": "The candidate's background is in embedded hardware design, which is not directly relevant to the backend engineer role described in the job description. The candidate lacks experience in programming languages, software development, and cloud computing, making them a poor fit for the position.",
+  "strengths": [
+    "Strong expertise in digital electronics and communication interfaces",
+    "Experience in board bring-up, production support, and cross-functional collaboration",
+    "Proficient in using various tools such as OrCAD, SolidWorks, and oscilloscope"
+  ],
+  "gaps": [
+    "Lack of experience in programming languages such as Python, React.js, and Java",
+    "No experience in software development, cloud computing, and backend engineering",
+    "Limited knowledge of data structures, algorithms, and machine learning concepts"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:34:19.575347"
+}

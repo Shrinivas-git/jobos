@@ -1,0 +1,20 @@
+{
+  "fitment_score": 0.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 16.4430666,
+  "reasoning": "The candidate lacks experience in backend engineering, FastAPI, and MongoDB, which are the required skills for the Senior Backend Engineer position. The candidate's background is in embedded hardware design and development, which is not relevant to the job description.",
+  "strengths": [
+    "Strong expertise in digital electronics and embedded hardware design",
+    "Experience in board bring-up, production support, and cross-functional collaboration",
+    "Skilled in communication and networking protocols such as Ethernet, serial, and cellular interfaces"
+  ],
+  "gaps": [
+    "Lack of experience in backend engineering and software development",
+    "No knowledge of FastAPI and MongoDB, which are the required skills for the position",
+    "No relevant experience in the field of backend engineering or software development"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T10:41:28.887111"
+}

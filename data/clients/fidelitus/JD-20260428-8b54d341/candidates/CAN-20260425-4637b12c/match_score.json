@@ -1,0 +1,20 @@
+{
+  "fitment_score": 60.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 57.2633054,
+  "reasoning": "The candidate has strong experience in system design, API design, and data modeling, but lacks direct experience with FastAPI, which is a key requirement for the job. However, they have worked with MongoDB, which is also a required skill. Their experience in building and owning backend systems, handling production issues, and improving system robustness is a plus.",
+  "strengths": [
+    "Strong system design and architecture skills",
+    "Experience with MongoDB and other databases",
+    "Proven track record of improving system performance and robustness"
+  ],
+  "gaps": [
+    "Lack of experience with FastAPI",
+    "No direct experience with the required work structure (in-office, hybrid, or remote)",
+    "Limited exposure to the specific industry or domain mentioned in the job description"
+  ],
+  "recommendation": "hold",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:47:22.326274"
+}

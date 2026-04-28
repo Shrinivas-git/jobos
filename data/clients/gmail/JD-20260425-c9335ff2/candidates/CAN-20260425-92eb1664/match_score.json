@@ -1,0 +1,20 @@
+{
+  "fitment_score": 20.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 32.013078,
+  "reasoning": "The candidate's resume showcases expertise in Android development, but lacks experience in Python backend development, which is the primary requirement for the job. The candidate's skills in Java, Kotlin, and Android development are not directly applicable to the job description, which emphasizes Python, Django, Flask, and FastAPI.",
+  "strengths": [
+    "Experience in designing and developing scalable applications",
+    "Strong problem-solving skills with experience in debugging and optimizing performance",
+    "Excellent collaboration and teamwork skills"
+  ],
+  "gaps": [
+    "Lack of experience in Python backend development",
+    "No experience with Django, Flask, or FastAPI frameworks",
+    "Insufficient knowledge of SQL, MySQL, PostgreSQL, or MongoDB databases"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:44:45.456093"
+}

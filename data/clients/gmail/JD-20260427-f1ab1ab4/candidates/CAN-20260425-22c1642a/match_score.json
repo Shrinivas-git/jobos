@@ -1,0 +1,19 @@
+{
+  "fitment_score": 0.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 18.274175,
+  "reasoning": "The candidate's resume does not match the job description for a Senior Finance Controller, as their experience and skills are in DevOps and Site Reliability Engineering, with no mention of financial reporting, accounting, or controllership.",
+  "strengths": [
+    "Strong expertise in CI/CD and cloud-native platforms",
+    "Proven ability to reduce MTTR and improve deployment reliability",
+    "Experience with Agile environments and collaboration with cross-functional teams"
+  ],
+  "gaps": [
+    "Lack of experience in financial reporting and controllership",
+    "No background in accounting or finance-related fields",
+    "No mention of skills in MST, GST compliance, or ERP systems"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": 

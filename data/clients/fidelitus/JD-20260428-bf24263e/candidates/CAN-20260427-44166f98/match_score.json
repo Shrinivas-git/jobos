@@ -1,0 +1,20 @@
+{
+  "fitment_score": 60.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 59.7434046,
+  "reasoning": "The candidate has relevant technical skills, including proficiency in FastAPI and MongoDB, which are listed in the job description. However, the candidate's experience is limited to internships and personal projects, and there is no clear indication of senior-level experience. Additionally, the job description mentions urgency and criticality, but the candidate's resume does not convey a sense of urgency or senior-level responsibility.",
+  "strengths": [
+    "Proficiency in FastAPI and MongoDB",
+    "Experience with web development and RESTful APIs",
+    "Strong academic background in computer science"
+  ],
+  "gaps": [
+    "Lack of senior-level experience",
+    "Limited experience in a professional team environment",
+    "No clear indication of experience with large-scale or complex systems"
+  ],
+  "recommendation": "hold",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T10:41:10.732144"
+}

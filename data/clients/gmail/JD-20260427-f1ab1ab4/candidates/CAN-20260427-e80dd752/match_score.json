@@ -1,0 +1,19 @@
+{
+  "fitment_score": 80.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 5.0,
+  "composite_score": 67.76600426666667,
+  "reasoning": "The candidate has extensive experience in financial reporting, MIS, and controllership, which aligns with the job requirements. However, there are some gaps in skills such as GST compliance and ERP systems, which are essential for the role. The candidate's experience in leading month-end closure, budgeting, and variance analysis is a significant strength.",
+  "strengths": [
+    "Financial reporting and controllership",
+    "MIS and budgeting",
+    "Leadership and team management"
+  ],
+  "gaps": [
+    "GST compliance",
+    "ERP systems",
+    "Limited experience in Ind AS"
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": 

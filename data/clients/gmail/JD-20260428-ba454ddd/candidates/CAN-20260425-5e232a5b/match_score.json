@@ -1,0 +1,20 @@
+{
+  "fitment_score": 80.0,
+  "completeness_score": 100.0,
+  "context_bonus": 5.0,
+  "composite_score": 74.02133599999999,
+  "reasoning": "The candidate has a strong background in Python, Java, and SQL, with experience in backend development using FastAPI and Flask, which aligns with the job requirements. The candidate's projects, such as the AI-Driven Speech Clarity Enhancement System and the BookMyShow Clone, demonstrate their ability to design and develop scalable RESTful APIs and work with various technologies. However, the candidate lacks direct experience in fintech and payment processing, which are crucial aspects of the job.",
+  "strengths": [
+    "Strong proficiency in Python and relevant frameworks",
+    "Experience in building scalable RESTful APIs",
+    "Proficiency in data handling and API design"
+  ],
+  "gaps": [
+    "Lack of direct experience in fintech and payment processing",
+    "Limited experience in working with large teams",
+    "No clear experience in implementing authentication, authorization, and encryption mechanisms"
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:34:01.756359"
+}

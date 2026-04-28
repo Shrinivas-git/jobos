@@ -1,0 +1,20 @@
+{
+  "fitment_score": 40.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 46.376587,
+  "reasoning": "The candidate's resume does not align well with the job description, as they lack experience in FastAPI and have a strong background in Java and Spring Boot, which are not mentioned in the job requirements. However, they do have experience with MongoDB, which is one of the required skills. The candidate's overall experience and skills in system design, API design, and data modeling are impressive, but their lack of direct experience in the required technologies is a significant gap.",
+  "strengths": [
+    "Strong system design skills",
+    "Experience with MongoDB",
+    "Proficient in multiple programming languages and frameworks"
+  ],
+  "gaps": [
+    "Lack of experience in FastAPI",
+    "No experience in Python, which is likely required for FastAPI",
+    "Background in Java and Spring Boot may not be directly applicable to the job"
+  ],
+  "recommendation": "hold",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T10:41:11.839791"
+}

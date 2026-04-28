@@ -18,6 +18,7 @@ IMAP_USER = os.getenv("EMAIL_IMAP_USER", "")
 IMAP_PASSWORD = os.getenv("EMAIL_IMAP_PASSWORD", "")
 IMAP_FOLDER = os.getenv("INTAKE_EMAIL_FOLDER", "INBOX")
 INTAKE_API_URL = os.getenv("INTAKE_API_URL", "http://api:8000")
+INTERNAL_API_KEY = os.getenv("INTERNAL_API_KEY", "")
 INTAKE_BASE_PATH = "/data/resumes/intake"
 POLL_INTERVAL = int(os.getenv("EMAIL_POLL_INTERVAL_SECS", 60))
 
@@ -122,6 +123,7 @@ def call_intake_api(file_path: str, jd_id: str | None, source_email: str):
         response = requests.post(
             f"{INTAKE_API_URL}/candidates/email-intake",
             json=payload,
+            headers={"X-Internal-Key": INTERNAL_API_KEY},
             timeout=30
         )
 

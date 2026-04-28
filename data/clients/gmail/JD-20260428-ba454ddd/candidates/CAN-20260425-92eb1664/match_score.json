@@ -1,0 +1,20 @@
+{
+  "fitment_score": 20.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 33.675404,
+  "reasoning": "The candidate's background is primarily in Android development, which does not align with the job description's requirements for a backend engineer with expertise in Python, FastAPI, Flask, Django, and other related technologies. Although the candidate has experience with MySQL, the majority of their skills are not relevant to the job.",
+  "strengths": [
+    "Strong experience in Android development",
+    "Proficient in Java and Kotlin",
+    "Experience with optimization and performance improvement"
+  ],
+  "gaps": [
+    "Lack of experience in backend development",
+    "No experience with required programming languages such as Python",
+    "No experience with required frameworks such as FastAPI, Flask, or Django"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:34:04.733735"
+}

@@ -1,0 +1,20 @@
+{
+  "fitment_score": 20.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 30.674902,
+  "reasoning": "The candidate's resume does not match the job description's requirements, which are focused on backend engineering with FastAPI and MongoDB. The candidate's experience is primarily in Android development, with no mention of the required technologies.",
+  "strengths": [
+    "7+ years of experience in software development",
+    "Proven track record of performance optimization and architecture design",
+    "Strong technical skills in Java, Kotlin, and Android development"
+  ],
+  "gaps": [
+    "Lack of experience with FastAPI and MongoDB",
+    "No experience in backend engineering",
+    "No relevant technical skills for the job description"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:47:23.127540"
+}

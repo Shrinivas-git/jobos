@@ -1,0 +1,20 @@
+{
+  "fitment_score": 80.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 72.3652752,
+  "reasoning": "The candidate's experience with FastAPI and MongoDB aligns with the job description, and their projects demonstrate a strong foundation in backend development and data handling. However, the candidate's experience is mostly intern-based and lacks seniority, which may impact their ability to lead or mentor teams.",
+  "strengths": [
+    "Strong foundation in FastAPI and backend development",
+    "Experience with MongoDB and data handling",
+    "Proficient in multiple programming languages and frameworks"
+  ],
+  "gaps": [
+    "Lack of senior-level experience",
+    "Limited experience in leading or mentoring teams",
+    "No clear indication of experience with complex, scalable systems"
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T10:41:12.742578"
+}

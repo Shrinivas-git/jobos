@@ -55,3 +55,28 @@ def save_resume_file(candidate_id: str, original_filename: str, content: bytes):
         f.write(content)
         
     return file_path
+
+def save_candidate_match_results(client_slug: str, jd_id: str, candidate_id: str, match_data: dict, pointer_data: dict):
+    """
+    Saves match_score.json and pointer.json in /data/clients/<client_slug>/<jd_id>/candidates/<candidate_id>/
+    """
+    can_match_dir = os.path.join(BASE_DATA_DIR, "clients", client_slug, jd_id, "candidates", candidate_id)
+    os.makedirs(can_match_dir, exist_ok=True)
+    
+    import json
+    from datetime import datetime
+
+    def _default(o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+        raise TypeError(f"Object of type {type(o).__name__} is not JSON serializable")
+
+    # Save match_score.json
+    with open(os.path.join(can_match_dir, "match_score.json"), "w") as f:
+        json.dump(match_data, f, indent=2, default=_default)
+
+    # Save pointer.json
+    with open(os.path.join(can_match_dir, "pointer.json"), "w") as f:
+        json.dump(pointer_data, f, indent=2, default=_default)
+        
+    return can_match_dir

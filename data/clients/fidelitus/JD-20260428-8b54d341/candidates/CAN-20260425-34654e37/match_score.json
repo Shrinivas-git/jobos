@@ -1,0 +1,20 @@
+{
+  "fitment_score": 20.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 31.4634852,
+  "reasoning": "The candidate's background is in embedded hardware design and development, which is significantly different from the requirements of the senior backend engineer role. Although the candidate has experience with some relevant technologies like Ethernet, the overall skillset and experience do not align with the job description, which emphasizes FastAPI and MongoDB.",
+  "strengths": [
+    "Strong expertise in digital electronics and embedded hardware design",
+    "Experience in communication and networking protocols",
+    "Ability to work on end-to-end hardware development projects"
+  ],
+  "gaps": [
+    "Lack of experience in backend engineering and software development",
+    "No mention of proficiency in FastAPI or MongoDB",
+    "Insufficient information about the candidate's experience with agile development methodologies"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:47:21.417586"
+}

@@ -1,0 +1,18 @@
+{
+  "fitment_score": 90.0,
+  "completeness_score": 100.0,
+  "composite_score": 85.64106,
+  "reasoning": "The candidate's resume demonstrates a strong fit for the Senior Site Reliability/DevOps Engineer role, with 5 years of experience in building and operating highly available cloud-native platforms, and expertise in CI/CD, Kubernetes, Infrastructure as Code, observability, and incident management. The candidate's experience and skills align closely with the job description, and their achievements in reducing MTTR, improving deployment reliability, and reducing operational toil are impressive.",
+  "strengths": [
+    "Strong expertise in CI/CD, Kubernetes, and Infrastructure as Code",
+    "Proven ability to reduce MTTR and improve deployment reliability",
+    "Excellent collaboration and communication skills, with experience working in Agile environments"
+  ],
+  "gaps": [
+    "Limited experience with specific AI/LLM technologies, such as Prompt Engineering and Llama",
+    "No direct experience with Azure Monitor, although experience with similar monitoring tools is present",
+    "No mention of experience with specific security and compliance frameworks, such as HIPAA or PCI-DSS"
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": 

@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(claude-api)",
+      "Bash(curl -s -X POST http://localhost:8080/realms/jobos/protocol/openid-connect/token -H 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=password&client_id=jobos-api&client_secret=change-me&username=admin&password=admin&scope=openid')",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('TOKEN OK' if 'access_token' in d else json.dumps\\(d, indent=2\\)\\)\")",
+      "Bash(docker-compose ps *)",
+      "Bash(docker-compose build *)",
+      "Bash(docker build *)",
+      "Bash(docker-compose up *)",
+      "Bash(docker-compose exec *)",
+      "Bash(curl -s \"http://localhost:6333/collections/resume_vectors\")",
+      "Bash(docker-compose logs *)",
+      "Bash(docker-compose restart *)",
+      "Bash(xargs ls *)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(curl -s -X POST http://localhost:6333/collections/jd_vectors/points/delete -H 'Content-Type: application/json' -d '{\"filter\": {}}')",
+      "Bash(python -m json.tool)",
+      "Bash(curl -s 'http://localhost:6333/collections/jd_vectors')",
+      "Bash(docker exec mongodb *)",
+      "Bash(curl -s -X POST http://localhost:6333/collections/jd_vectors/points/scroll -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(curl -s -X POST http://localhost:6333/collections/jd_vectors/points/delete -H 'Content-Type: application/json' -d '{\"filter\": {\"must\": [{\"key\": \"jd_id\", \"match\": {\"value\": \"JD-20260425-5dd9fa83\"}}]}}')",
+      "Bash(git -C /c/staging/jobos diff HEAD~1 HEAD -- frontend/src/)",
+      "Bash(git *)",
+      "PowerShell(.\\\\jobos-sessions.ps1 -Session list)",
+      "PowerShell(.\\\\jobos-sessions.ps1 -Session candidate-page)",
+      "Bash(docker exec api *)",
+      "Bash(curl *)",
+      "Bash(docker-compose *)",
+      "Bash(python3 -m json.tool)"
+    ]
+  }
+}

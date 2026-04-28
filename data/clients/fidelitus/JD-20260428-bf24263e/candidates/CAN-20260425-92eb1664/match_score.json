@@ -1,0 +1,20 @@
+{
+  "fitment_score": 20.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 32.0402346,
+  "reasoning": "The candidate's resume lacks direct experience with FastAPI and MongoDB, which are the required skills for the Senior Backend Engineer position. Although the candidate has extensive experience in Android development and has worked with various technologies, the mismatch in skills and experience makes them a less suitable fit for the role.",
+  "strengths": [
+    "Extensive experience in Android development",
+    "Strong proficiency in Java and Kotlin",
+    "Proven track record of optimizing app performance and stability"
+  ],
+  "gaps": [
+    "Lack of experience with FastAPI",
+    "No experience with MongoDB",
+    "Limited background in backend development"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T10:41:14.010343"
+}

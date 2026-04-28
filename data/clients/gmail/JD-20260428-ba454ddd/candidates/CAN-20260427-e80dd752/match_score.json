@@ -1,0 +1,20 @@
+{
+  "fitment_score": 20.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 0.0,
+  "composite_score": 25.85250106666667,
+  "reasoning": "The candidate's resume does not demonstrate any relevant experience in backend engineering, API development, or software engineering, which are the primary requirements of the job description. The candidate's background is in finance and accounting, which is not aligned with the job requirements.",
+  "strengths": [
+    "Strong financial analysis skills",
+    "Experience in financial reporting and compliance",
+    "Excellent accounting knowledge"
+  ],
+  "gaps": [
+    "Lack of programming skills",
+    "No experience in backend engineering or software development",
+    "No knowledge of relevant technologies such as Python, FastAPI, or REST APIs"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:34:29.627028"
+}

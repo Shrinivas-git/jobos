@@ -1,0 +1,20 @@
+{
+  "fitment_score": 20.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 30.927519,
+  "reasoning": "The candidate's resume does not match the job description for a Senior Backend Engineer, as it lacks experience with FastAPI and MongoDB, and instead focuses on DevOps, site reliability, and cloud engineering.",
+  "strengths": [
+    "Strong experience in CI/CD, Kubernetes operations, and Infrastructure as Code",
+    "Proven ability to reduce MTTR and improve deployment reliability",
+    "Expertise in observability, incident management, and automation"
+  ],
+  "gaps": [
+    "Lack of experience with FastAPI",
+    "No experience with MongoDB",
+    "Limited background in backend engineering"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T10:41:15.654312"
+}

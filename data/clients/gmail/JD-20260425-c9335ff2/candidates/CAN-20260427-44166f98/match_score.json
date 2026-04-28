@@ -1,0 +1,20 @@
+{
+  "fitment_score": 80.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 5.0,
+  "composite_score": 73.01206533333333,
+  "reasoning": "The candidate's strong proficiency in Python, experience with FastAPI and Flask, and skills in RESTful API integration, Git version control, and database management align well with the job requirements. However, the candidate's lack of direct experience in building and managing REST APIs for web and mobile applications and limited experience in collaborating with frontend developers, testers, and product teams are areas of concern.",
+  "strengths": [
+    "Strong proficiency in Python and modern web development frameworks",
+    "Experience with RESTful API integration and database management",
+    "Proven ability to build scalable applications and work with various technologies"
+  ],
+  "gaps": [
+    "Limited experience in building and managing REST APIs for web and mobile applications",
+    "Lack of direct experience in collaborating with frontend developers, testers, and product teams",
+    "No experience in working with Django, a required skill for the job"
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:44:36.432848"
+}

@@ -1,0 +1,20 @@
+{
+  "fitment_score": 0.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 0.0,
+  "composite_score": 12.713001866666666,
+  "reasoning": "The candidate's background is in finance and accounting, with no experience in backend engineering, FastAPI, or MongoDB, which are the required skills for the Senior Backend Engineer position.",
+  "strengths": [
+    "Strong financial analysis and reporting skills",
+    "Experience in financial modeling and budgeting",
+    "Excellent communication and presentation skills"
+  ],
+  "gaps": [
+    "Lack of experience in backend engineering",
+    "No knowledge of FastAPI and MongoDB",
+    "No experience in software development or programming"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:47:35.645663"
+}

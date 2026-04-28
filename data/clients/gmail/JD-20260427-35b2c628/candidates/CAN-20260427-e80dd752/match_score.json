@@ -1,0 +1,19 @@
+{
+  "fitment_score": 85.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 5.0,
+  "composite_score": 71.01600426666667,
+  "reasoning": "The candidate's extensive experience in financial reporting, controllership, and leadership roles, along with their Chartered Accountancy background, make them a strong fit for the Senior Finance Controller position. Their skills in financial analysis, budgeting, and variance analysis, as well as their experience with ERP systems and GST compliance, align well with the job requirements. However, there may be gaps in their experience with specific industries or company types.",
+  "strengths": [
+    "Strong financial reporting and controllership experience",
+    "Proven leadership and team management skills",
+    "Good understanding of financial regulations and compliance"
+  ],
+  "gaps": [
+    "Limited experience in fintech or ecommerce industries",
+    "No direct experience with Ind AS and IGAAP requirements mentioned in the job description",
+    "No clear evidence of experience with cash flow management and working capital optimization"
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": 

@@ -1,0 +1,20 @@
+{
+  "fitment_score": 60.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "composite_score": 55.003517333333335,
+  "reasoning": "The candidate has experience with FastAPI and MongoDB, which are required skills for the job, and has built projects that demonstrate proficiency in these areas. However, the candidate's professional experience is limited to a data science internship and their education is ongoing, indicating a potential lack of direct experience in the field.",
+  "strengths": [
+    "Proficiency in FastAPI and MongoDB",
+    "Experience with building web applications",
+    "Strong educational background in computer applications"
+  ],
+  "gaps": [
+    "Limited professional experience",
+    "Lack of direct experience in a senior backend engineer role",
+    "No clear evidence of experience with in-office, hybrid, or remote work structures"
+  ],
+  "recommendation": "hold",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:47:24.017062"
+}

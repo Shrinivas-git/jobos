@@ -1,0 +1,20 @@
+{
+  "fitment_score": 0.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 18.946693600000003,
+  "reasoning": "The candidate's resume does not match the job description's requirements, as they have experience in DevOps and site reliability engineering, but not in power electronics converter design, which is the primary responsibility of the job.",
+  "strengths": [
+    "Strong experience in DevOps and site reliability engineering",
+    "Proficient in a wide range of tools and technologies",
+    "Proven ability to reduce MTTR and improve deployment reliability"
+  ],
+  "gaps": [
+    "Lack of experience in power electronics converter design",
+    "No knowledge of power electronics-related tools and technologies such as LTSpice, MATLAB, and Simetrix",
+    "No experience in EMI/EMC filter design and compliance standards"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T10:55:03.910600"
+}

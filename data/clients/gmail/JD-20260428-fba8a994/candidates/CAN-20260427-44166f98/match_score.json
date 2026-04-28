@@ -1,0 +1,20 @@
+{
+  "fitment_score": 0.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 17.3720896,
+  "reasoning": "The candidate's skills and experience are entirely focused on software development, web development, and data analysis, with no relevance to power electronics, electrical engineering, or the specific requirements listed in the job description.",
+  "strengths": [
+    "Proficient in multiple programming languages",
+    "Experienced in web development frameworks",
+    "Strong problem-solving skills"
+  ],
+  "gaps": [
+    "Lack of experience in power electronics",
+    "No knowledge of electrical engineering principles",
+    "No relevant technical skills for the position"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T10:55:16.654691"
+}

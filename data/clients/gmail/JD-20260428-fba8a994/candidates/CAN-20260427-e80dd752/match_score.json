@@ -1,0 +1,20 @@
+{
+  "fitment_score": 0.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 0.0,
+  "composite_score": 13.670193266666665,
+  "reasoning": "The candidate's background is entirely in finance and accounting, with no experience or skills in power electronics, engineering, or related technical fields, making them a poor fit for the Senior Power Electronics Engineer role.",
+  "strengths": [
+    "Financial analysis and planning",
+    "Accounting and auditing",
+    "Compliance and regulatory affairs"
+  ],
+  "gaps": [
+    "Lack of power electronics engineering experience",
+    "No skills in DC-DC, AC-DC, or other converter designs",
+    "No knowledge of EMI/EMC standards, thermal management, or related technical areas"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T10:55:30.636286"
+}

@@ -6,6 +6,7 @@ from celery_app import celery
 from utils.client_utils import get_db
 from utils.gemini_utils import extract_jd_data, generate_jd_formats, generate_embedding
 from utils.qdrant_utils import upsert_jd_vector
+from utils.resume_utils import extract_text_from_file
 
 logger = logging.getLogger(__name__)
 
@@ -40,9 +41,15 @@ def process_jd_task(jd_id: str):
             raw_file = "email_body.txt" if "email_body.txt" in raw_files else raw_files[0]
             file_path = os.path.join(raw_path, raw_file)
             
-            # Basic text reading. (Note: pdf/docx extraction could be added here in utils)
-            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-                raw_text = f.read()
+            ext = raw_file.split('.')[-1].lower()
+            if ext in ('pdf', 'docx'):
+                raw_text = extract_text_from_file(file_path)
+                if not raw_text:
+                    logger.error(f"Text extraction returned empty for {raw_file}")
+                    return f"Text extraction failed for {jd_id}"
+            else:
+                with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                    raw_text = f.read()
             
             logger.info(f"Extracting structured data from {raw_file}...")
             structured_data = extract_jd_data(raw_text)
@@ -85,9 +92,24 @@ def process_jd_task(jd_id: str):
         
         payload = {
             "jd_id": jd_id,
-            "title": structured_data.get("title"),
             "client_id": str(jd_record.get("client_id")),
+            "title": structured_data.get("title"),
             "location": structured_data.get("location"),
+            "gender_preference": structured_data.get("gender_preference", "Any"),
+            "college_preference": structured_data.get("college_preference", ""),
+            "college_exclusion": structured_data.get("college_exclusion", ""),
+            "skills": structured_data.get("skills", []),
+            "relevant_experience": structured_data.get("relevant_experience", 0),
+            "total_experience": structured_data.get("total_experience", 0),
+            "compensation_range": structured_data.get("compensation_range", ""),
+            "work_structure": structured_data.get("work_structure", ""),
+            "urgency": structured_data.get("urgency", "Medium"),
+            "num_positions": structured_data.get("num_positions", 1),
+            "hiring_timeline": structured_data.get("hiring_timeline", ""),
+            "responsibilities": structured_data.get("responsibilities", ""),
+            "kpis": structured_data.get("kpis", ""),
+            "level": structured_data.get("level", ""),
+            "created_at": jd_record.get("created_at", datetime.now()).isoformat(),
             "status": "structured"
         }
         upsert_jd_vector(jd_id, vector, payload)
@@ -110,3 +132,52 @@ def process_jd_task(jd_id: str):
     run_matching.delay(jd_id)
     
     return f"Successfully structured {jd_id}"
+
+
+@celery.task(name="tasks.jd_tasks.backfill_jd_vectors")
+def backfill_jd_vectors():
+    """Re-upserts all existing JD Qdrant vectors with the full payload schema."""
+    db = get_db()
+    jds = list(db.job_descriptions.find({"structured_data": {"$exists": True}}))
+    logger.info(f"Backfilling {len(jds)} JD vectors...")
+    updated = 0
+    for jd_record in jds:
+        try:
+            jd_id = jd_record["jd_id"]
+            structured_data = jd_record.get("structured_data", {})
+            text_to_embed = f"""
+            Title: {structured_data.get('title')}
+            Level: {structured_data.get('level')}
+            Responsibilities: {structured_data.get('responsibilities')}
+            Skills: {', '.join(structured_data.get('skills', []))}
+            Location: {structured_data.get('location')}
+            """
+            vector = generate_embedding(text_to_embed)
+            payload = {
+                "jd_id": jd_id,
+                "client_id": str(jd_record.get("client_id")),
+                "title": structured_data.get("title"),
+                "location": structured_data.get("location"),
+                "gender_preference": structured_data.get("gender_preference", "Any"),
+                "college_preference": structured_data.get("college_preference", ""),
+                "college_exclusion": structured_data.get("college_exclusion", ""),
+                "skills": structured_data.get("skills", []),
+                "relevant_experience": structured_data.get("relevant_experience", 0),
+                "total_experience": structured_data.get("total_experience", 0),
+                "compensation_range": structured_data.get("compensation_range", ""),
+                "work_structure": structured_data.get("work_structure", ""),
+                "urgency": structured_data.get("urgency", "Medium"),
+                "num_positions": structured_data.get("num_positions", 1),
+                "hiring_timeline": structured_data.get("hiring_timeline", ""),
+                "responsibilities": structured_data.get("responsibilities", ""),
+                "kpis": structured_data.get("kpis", ""),
+                "level": structured_data.get("level", ""),
+                "created_at": jd_record.get("created_at", datetime.now()).isoformat(),
+                "status": "structured"
+            }
+            upsert_jd_vector(jd_id, vector, payload)
+            updated += 1
+        except Exception as e:
+            logger.error(f"Backfill failed for JD {jd_record.get('jd_id')}: {e}")
+    logger.info(f"Backfill complete: {updated}/{len(jds)} JDs re-upserted.")
+    return f"Backfill complete: {updated}/{len(jds)}"

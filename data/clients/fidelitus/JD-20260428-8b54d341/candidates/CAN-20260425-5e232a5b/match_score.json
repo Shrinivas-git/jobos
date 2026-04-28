@@ -1,0 +1,20 @@
+{
+  "fitment_score": 80.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 69.2989606,
+  "reasoning": "The candidate has relevant technical skills in FastAPI and MongoDB, and has demonstrated experience in backend development and building RESTful APIs. However, the candidate's experience is mostly in internships and personal projects, and there is limited information about their work experience in a professional setting.",
+  "strengths": [
+    "Proficient in FastAPI and MongoDB",
+    "Experience in building scalable RESTful APIs",
+    "Strong skills in Python and data analysis"
+  ],
+  "gaps": [
+    "Limited professional work experience",
+    "Lack of experience in a senior role",
+    "No clear indication of experience in a team lead or management role"
+  ],
+  "recommendation": "hold",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:47:24.920161"
+}

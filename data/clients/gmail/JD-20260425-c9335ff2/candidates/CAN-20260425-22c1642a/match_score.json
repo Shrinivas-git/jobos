@@ -1,0 +1,20 @@
+{
+  "fitment_score": 20.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 31.5822666,
+  "reasoning": "The candidate's background is heavily focused on DevOps and Site Reliability Engineering, with significant experience in cloud-native platforms, CI/CD, and infrastructure management. However, the job description requires a Python Backend Developer with expertise in Python, Django, Flask, and REST APIs, which is not evident in the candidate's profile.",
+  "strengths": [
+    "Strong expertise in CI/CD and DevOps",
+    "Experience with cloud-native platforms and infrastructure management",
+    "Proven ability to reduce MTTR and improve deployment reliability"
+  ],
+  "gaps": [
+    "Lack of experience with Python as a primary programming language",
+    "No evident experience with Django, Flask, or REST APIs",
+    "Insufficient background in backend development"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:44:54.932950"
+}

@@ -1,0 +1,20 @@
+{
+  "fitment_score": 20.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 29.426137,
+  "reasoning": "The candidate lacks experience in the required technologies, specifically FastAPI and MongoDB, and their background is more focused on data engineering with big data technologies such as Hadoop, Spark, and cloud services like AWS and GCP.",
+  "strengths": [
+    "Strong experience in big data technologies",
+    "Proficient in programming languages such as Python",
+    "Good hand in cloud technologies such as AWS and GCP"
+  ],
+  "gaps": [
+    "Lack of experience in FastAPI",
+    "No experience with MongoDB",
+    "Background not aligned with backend engineering"
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-28T09:47:26.342121"
+}
