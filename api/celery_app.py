@@ -1,14 +1,22 @@
 import os
 from celery import Celery
+from celery.schedules import crontab
+
+from utils.config_utils import get_pipeline_config
 
 celery = Celery(
     "jobos",
     broker=os.getenv("REDIS_URL", "redis://redis:6379/0"),
     backend=os.getenv("REDIS_URL", "redis://redis:6379/0"),
-    include=['tasks.jd_tasks', 'tasks.resume_tasks', 'tasks.matching_tasks', 'tasks.notification_tasks']
+    include=[
+        'tasks.jd_tasks',
+        'tasks.resume_tasks',
+        'tasks.matching_tasks',
+        'tasks.notification_tasks',
+        'tasks.pipeline_tasks',
+    ]
 )
 
-# Optional: Configuration overrides
 celery.conf.update(
     task_serializer='json',
     accept_content=['json'],
@@ -16,3 +24,11 @@ celery.conf.update(
     timezone='UTC',
     enable_utc=True,
 )
+
+_monitor_interval = int(get_pipeline_config().get("monitor_interval_minutes", 30))
+celery.conf.beat_schedule = {
+    "check-stage-breaches": {
+        "task": "tasks.pipeline_tasks.check_stage_breaches",
+        "schedule": crontab(minute=f"*/{_monitor_interval}"),
+    },
+}

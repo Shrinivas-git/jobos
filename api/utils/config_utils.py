@@ -40,3 +40,25 @@ def get_matching_thresholds():
         matching.get("p_threshold", 0.50),
         matching.get("k_threshold", 10)
     )
+
+
+_PIPELINE_DEFAULTS = {
+    "stage_order": ["shortlist", "interview_1", "interview_final", "offer", "joined"],
+    "sla_hours": {
+        "shortlist": 72,
+        "interview_1": 120,
+        "interview_final": 168,
+        "offer": 72,
+        "joined": 360,
+    },
+    "warning_threshold": 0.75,
+    "monitor_interval_minutes": 30,
+    "escalation_roles": ["manager", "admin"],
+}
+
+
+def get_pipeline_config():
+    cfg = get_config().get("pipeline") or {}
+    merged = {**_PIPELINE_DEFAULTS, **cfg}
+    merged["sla_hours"] = {**_PIPELINE_DEFAULTS["sla_hours"], **(cfg.get("sla_hours") or {})}
+    return merged

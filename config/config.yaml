@@ -22,3 +22,22 @@ notifications:
   channels:
     - in_app
     - email
+
+pipeline:
+  stage_order:
+    - shortlist
+    - interview_1
+    - interview_final
+    - offer
+    - joined
+  sla_hours:
+    shortlist: 72
+    interview_1: 120
+    interview_final: 168
+    offer: 72
+    joined: 360
+  warning_threshold: 0.75
+  monitor_interval_minutes: 30
+  escalation_roles:
+    - manager
+    - admin

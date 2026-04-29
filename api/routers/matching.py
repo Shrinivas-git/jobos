@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from auth import check_role
 from tasks.matching_tasks import run_matching
 from utils.client_utils import get_db
+from routers.pipeline import upsert_initial_stage
 
 router = APIRouter(prefix="/matching", tags=["matching"])
 
@@ -106,6 +107,8 @@ async def record_candidate_action(
             "updated_at": datetime.utcnow(),
         }},
     )
+    if body.action == "shortlist":
+        upsert_initial_stage(db, jd_id, candidate_id, "shortlist")
     return {"ok": True}
 
 

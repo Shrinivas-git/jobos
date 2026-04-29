@@ -1,5 +1,5 @@
 # TASK-015: Closure Enforcement Rules
-**Status:** TODO
+**Status:** DONE
 **Priority:** High
 **Phase:** Phase 3 — Recruiter Pipeline, Batch Model & Closure Engine
 **Sprint:** 7
@@ -8,10 +8,10 @@
 Develop the closure enforcement engine to monitor pipeline stages and enforce time windows. This task involves Celery Beat for periodic monitoring and an escalation system for overdue actions.
 
 ## Deliverables
-- [ ] Celery Beat tasks for periodic stage time-window monitoring.
-- [ ] Logic to trigger 75% warning and 100% escalation alerts.
-- [ ] Auto-escalation logic to the ops team for unhandled breaches.
-- [ ] Extension request and approval workflow for pipeline stages.
+- [x] Celery Beat tasks for periodic stage time-window monitoring. (api/tasks/pipeline_tasks.py + beat_schedule in celery_app.py)
+- [x] Logic to trigger 75% warning and 100% escalation alerts.
+- [x] Auto-escalation logic to the ops team for unhandled breaches. (escalation_roles in config.yaml)
+- [x] Extension request and approval workflow for pipeline stages. (POST /pipeline/extension-request, /pipeline/extension-approve)
 
 ## PRD References
 - Section 7.2 (Closure Enforcement Rules)
