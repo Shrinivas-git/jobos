@@ -10,10 +10,12 @@ logger = logging.getLogger(__name__)
 
 @celery.task(name="tasks.feedback_tasks.generate_and_store_feedback")
 def generate_and_store_feedback(candidate_id: str, jd_id: str):
-    """Generate rejection feedback via Groq and store in candidate_feedback collection."""
     db = get_db()
 
-    candidate = db.candidates.find_one({"candidate_id": candidate_id})
+    candidate = db.candidates.find_one(
+        {"candidate_id": candidate_id},
+        {"name": 1, "email": 1, "experience_years": 1, "skills": 1}
+    )
     if not candidate:
         logger.error(f"Candidate {candidate_id} not found")
         return {"error": "candidate not found"}
@@ -54,12 +56,11 @@ def generate_and_store_feedback(candidate_id: str, jd_id: str):
 
 @celery.task(name="tasks.feedback_tasks.send_weekly_digest")
 def send_weekly_digest():
-    """Every Monday 09:00 UTC: group unsent feedback by candidate email, send one digest per candidate."""
     db = get_db()
 
     unsent = list(db.candidate_feedback.find(
-        {"digest_sent": False, "candidate_email": {"$nin": [None, ""]}}
-    ))
+        {"digest_sent": False, "candidate_email": {"$nin": [None, ""]}},
+    ).limit(500))
     if not unsent:
         logger.info("No unsent feedback records — digest skipped.")
         return {"sent": 0}
