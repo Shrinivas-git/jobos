@@ -135,3 +135,42 @@ export async function updateMyProfile(data: {
     return null;
   }
 }
+
+export interface PipelineExtension {
+  requested_at: string;
+  requested_by: string;
+  additional_hours: number;
+  reason: string;
+  approved: boolean;
+  approved_until: string | null;
+  approved_by: string | null;
+  approved_at: string | null;
+}
+
+export interface PipelineStageEntry {
+  name: string;
+  entered_at: string;
+  sla_hours: number;
+  due_at: string;
+  warned_at: string | null;
+  escalated_at: string | null;
+  completed_at: string | null;
+  extension: PipelineExtension | null;
+}
+
+export interface PipelineRecord {
+  jd_id: string;
+  candidate_id: string;
+  current_stage: string;
+  stages: PipelineStageEntry[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PipelineBreach {
+  jd_id: string;
+  candidate_id: string;
+  stage: string;
+  due_at: string;
+  escalated: boolean;
+}

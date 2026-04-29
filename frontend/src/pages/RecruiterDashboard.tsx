@@ -1,8 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ClipboardList, CheckCircle, XCircle, ChevronDown, ChevronUp, Users,
+  Clock, AlertTriangle, ArrowRight,
 } from 'lucide-react';
-import { API, getAuthHeaders, JD, MatchResult, CandidateLookup } from '../utils/api';
+import keycloak from '../keycloak';
+import {
+  API, getAuthHeaders, JD, MatchResult, CandidateLookup,
+  PipelineRecord, PipelineBreach, PipelineStageEntry,
+} from '../utils/api';
 import { recommendationBadge } from '../utils/badges';
 
 interface LocalAction {
@@ -22,6 +27,15 @@ const REJECTION_REASONS = [
   'Cultural fit concern',
   'Other',
 ];
+
+const STAGE_LABELS: Record<string, string> = {
+  shortlist: 'Shortlisted',
+  interview_1: 'Interview 1',
+  interview_final: 'Final Interview',
+  offer: 'Offer',
+  joined: 'Joined',
+};
+const STAGE_ORDER = ['shortlist', 'interview_1', 'interview_final', 'offer', 'joined'];
 
 const statusPill = (status: string) => {
   const map: Record<string, string> = {
@@ -45,6 +59,36 @@ const getCardClass = (actioned: boolean, actionState: LocalAction | null): strin
     : 'bg-red-900/10 border-red-500/20 opacity-75';
 };
 
+const getSlaProgress = (stage: PipelineStageEntry): { pct: number; barColor: string; textColor: string } => {
+  const now = Date.now();
+  const entered = new Date(stage.entered_at).getTime();
+  const dueMs = stage.extension?.approved && stage.extension.approved_until
+    ? new Date(stage.extension.approved_until).getTime()
+    : new Date(stage.due_at).getTime();
+  const total = dueMs - entered;
+  const elapsed = now - entered;
+  const rawPct = total > 0 ? Math.round((elapsed / total) * 100) : 100;
+  const pct = Math.min(rawPct, 100);
+  if (rawPct < 75) return { pct, barColor: 'bg-emerald-500', textColor: 'text-emerald-400' };
+  if (rawPct < 100) return { pct, barColor: 'bg-yellow-500', textColor: 'text-yellow-400' };
+  return { pct: 100, barColor: 'bg-red-500', textColor: 'text-red-400' };
+};
+
+const formatTimeRemaining = (stage: PipelineStageEntry): string => {
+  const now = Date.now();
+  const dueMs = stage.extension?.approved && stage.extension.approved_until
+    ? new Date(stage.extension.approved_until).getTime()
+    : new Date(stage.due_at).getTime();
+  const diffMs = dueMs - now;
+  if (diffMs <= 0) {
+    const h = Math.floor(-diffMs / 3600000);
+    return h < 24 ? `${h}h overdue` : `${Math.floor(h / 24)}d overdue`;
+  }
+  const h = Math.floor(diffMs / 3600000);
+  if (h >= 24) return `${Math.floor(h / 24)}d ${h % 24}h left`;
+  return `${h}h left`;
+};
+
 interface ContextualMatch {
   matches: string[];
   gaps: string[];
@@ -62,24 +106,18 @@ const evaluateContextualMatch = (result: MatchResult, jd: JD | undefined): Conte
   const jdTeamSize = result.preferred_team_size || 'Any';
   const jdRoleType = result.jd_role_type || 'Any';
 
-  // Company Type check
   if (jdCompanyTypes && jdCompanyTypes.length > 0 && !jdCompanyTypes.includes('Any')) {
     const matchingTypes = candidateCompanyTypes.filter((ct: string) => jdCompanyTypes.includes(ct));
     if (matchingTypes.length > 0) {
-      matchingTypes.forEach((type: string) => {
-        matches.push(`Worked in ${type}`);
-      });
+      matchingTypes.forEach((type: string) => { matches.push(`Worked in ${type}`); });
     } else if (candidateCompanyTypes.length > 0) {
       const nonMatching = jdCompanyTypes.filter((t: string) => !candidateCompanyTypes.includes(t));
-      nonMatching.forEach((type: string) => {
-        gaps.push(`No ${type} experience`);
-      });
+      nonMatching.forEach((type: string) => { gaps.push(`No ${type} experience`); });
     } else {
       gaps.push('Company type unknown');
     }
   }
 
-  // Team Size check
   if (jdTeamSize && jdTeamSize !== 'Any') {
     if (candidateTeamSize === jdTeamSize) {
       matches.push(`Team size matches: ${candidateTeamSize}`);
@@ -90,7 +128,6 @@ const evaluateContextualMatch = (result: MatchResult, jd: JD | undefined): Conte
     }
   }
 
-  // Role Type check
   if (jdRoleType && jdRoleType !== 'Any') {
     if (candidateRoleType === jdRoleType) {
       matches.push(`Role type matches: ${candidateRoleType}`);
@@ -105,6 +142,7 @@ const evaluateContextualMatch = (result: MatchResult, jd: JD | undefined): Conte
 };
 
 const RecruiterDashboard: React.FC = () => {
+  // Review tab state
   const [jds, setJds] = useState<JD[]>([]);
   const [selectedJdId, setSelectedJdId] = useState<string>('');
   const [results, setResults] = useState<MatchResult[]>([]);
@@ -117,8 +155,22 @@ const RecruiterDashboard: React.FC = () => {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Pipeline tab state
+  const [activeTab, setActiveTab] = useState<'review' | 'pipeline'>('review');
+  const [pipelineRecords, setPipelineRecords] = useState<PipelineRecord[]>([]);
+  const [breaches, setBreaches] = useState<PipelineBreach[]>([]);
+  const [extensionForms, setExtensionForms] = useState<Record<string, { open: boolean; hours: number; reason: string }>>({});
+  const [pipelineLoading, setPipelineLoading] = useState(false);
+  const [pipelineError, setPipelineError] = useState<string | null>(null);
+  const [isManager, setIsManager] = useState(false);
+
   // Prevents stale results from a superseded JD click arriving after a newer one.
   const pendingJdRef = useRef<string>('');
+
+  useEffect(() => {
+    const roles: string[] = (keycloak.tokenParsed as any)?.realm_access?.roles ?? [];
+    setIsManager(roles.some(r => ['manager', 'admin'].includes(r)));
+  }, []);
 
   useEffect(() => {
     const init = async () => {
@@ -142,6 +194,13 @@ const RecruiterDashboard: React.FC = () => {
     init();
   }, []);
 
+  useEffect(() => {
+    if (activeTab === 'pipeline' && selectedJdId) {
+      loadPipeline(selectedJdId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, selectedJdId]);
+
   const loadJd = async (jdId: string) => {
     pendingJdRef.current = jdId;
     setSelectedJdId(jdId);
@@ -150,6 +209,8 @@ const RecruiterDashboard: React.FC = () => {
     setExpandedIds(new Set());
     setRejectingId(null);
     setError(null);
+    setPipelineRecords([]);
+    setPipelineError(null);
     try {
       const res = await fetch(`${API}/matching/results/${jdId}`, { headers: getAuthHeaders() });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -158,6 +219,78 @@ const RecruiterDashboard: React.FC = () => {
     } catch (e: any) {
       if (pendingJdRef.current !== jdId) return;
       setError('Failed to load JD data: ' + e.message);
+    }
+  };
+
+  const loadPipeline = async (jdId: string) => {
+    const roles: string[] = (keycloak.tokenParsed as any)?.realm_access?.roles ?? [];
+    const managerRole = roles.some(r => ['manager', 'admin'].includes(r));
+    setPipelineLoading(true);
+    setPipelineError(null);
+    try {
+      const res = await fetch(`${API}/pipeline/${jdId}`, { headers: getAuthHeaders() });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data: PipelineRecord[] = await res.json();
+      setPipelineRecords(data);
+      setExtensionForms({});
+      if (managerRole) {
+        const bRes = await fetch(`${API}/pipeline/breaches`, { headers: getAuthHeaders() });
+        if (bRes.ok) setBreaches(await bRes.json());
+      }
+    } catch (e: any) {
+      setPipelineError('Failed to load pipeline: ' + e.message);
+    } finally {
+      setPipelineLoading(false);
+    }
+  };
+
+  const advanceStage = async (jdId: string, candidateId: string) => {
+    try {
+      const res = await fetch(`${API}/pipeline/advance/${jdId}/${candidateId}`, {
+        method: 'POST',
+        headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      await loadPipeline(jdId);
+    } catch (e: any) {
+      setPipelineError('Advance failed: ' + e.message);
+    }
+  };
+
+  const requestExtension = async (jdId: string, candidateId: string) => {
+    const form = extensionForms[candidateId];
+    if (!form?.reason?.trim()) return;
+    try {
+      const res = await fetch(`${API}/pipeline/extension-request`, {
+        method: 'POST',
+        headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jd_id: jdId,
+          candidate_id: candidateId,
+          additional_hours: form.hours,
+          reason: form.reason,
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setExtensionForms(prev => ({ ...prev, [candidateId]: { ...prev[candidateId], open: false } }));
+      await loadPipeline(jdId);
+    } catch (e: any) {
+      setPipelineError('Extension request failed: ' + e.message);
+    }
+  };
+
+  const decideExtension = async (jdId: string, candidateId: string, approve: boolean) => {
+    try {
+      const res = await fetch(`${API}/pipeline/extension-approve`, {
+        method: 'POST',
+        headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jd_id: jdId, candidate_id: candidateId, approve }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      await loadPipeline(jdId);
+    } catch (e: any) {
+      setPipelineError('Decision failed: ' + e.message);
     }
   };
 
@@ -257,7 +390,6 @@ const RecruiterDashboard: React.FC = () => {
     const contextualMatch = evaluateContextualMatch(result, selectedJd);
     const contextBonus = (result as any).context_bonus || 0;
 
-    // Debug: log full result to see what fields are present
     if (expanded) {
       console.log('DEBUG MatchResult:', {
         candidate_id: result.candidate_id,
@@ -349,7 +481,6 @@ const RecruiterDashboard: React.FC = () => {
                 )}
               </div>
               <div className="grid grid-cols-2 gap-3">
-                {/* Matches Column */}
                 <div className="bg-emerald-900/10 border border-emerald-500/20 rounded-lg p-3 space-y-2">
                   <p className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">Matches</p>
                   {contextualMatch.matches.length > 0 ? (
@@ -362,12 +493,9 @@ const RecruiterDashboard: React.FC = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="flex items-start space-x-1.5">
-                      <span className="text-[10px] text-slate-500">—</span>
-                    </div>
+                    <span className="text-[10px] text-slate-500">—</span>
                   )}
                 </div>
-                {/* Gaps Column */}
                 <div className="bg-red-900/10 border border-red-500/20 rounded-lg p-3 space-y-2">
                   <p className="text-[9px] font-bold text-red-400 uppercase tracking-widest">Gaps</p>
                   {contextualMatch.gaps.length > 0 ? (
@@ -380,9 +508,7 @@ const RecruiterDashboard: React.FC = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="flex items-start space-x-1.5">
-                      <span className="text-[10px] text-slate-500">—</span>
-                    </div>
+                    <span className="text-[10px] text-slate-500">—</span>
                   )}
                 </div>
               </div>
@@ -452,6 +578,226 @@ const RecruiterDashboard: React.FC = () => {
     );
   };
 
+  const renderPipelineTab = () => {
+    if (pipelineLoading) {
+      return <p className="text-slate-400 text-sm py-12 text-center">Loading pipeline...</p>;
+    }
+    if (pipelineRecords.length === 0) {
+      return (
+        <div className="text-center py-12 text-slate-500 text-sm">
+          No candidates in the pipeline yet. Shortlist candidates from the Review tab.
+        </div>
+      );
+    }
+
+    const jdBreaches = breaches.filter(b => b.jd_id === selectedJdId);
+
+    return (
+      <div className="space-y-6">
+        {/* Manager: breach list */}
+        {isManager && jdBreaches.length > 0 && (
+          <section>
+            <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest mb-3">Overdue Stages</p>
+            <div className="space-y-2">
+              {jdBreaches.map(b => (
+                <div
+                  key={`${b.candidate_id}-breach`}
+                  className="flex items-center justify-between px-4 py-3 bg-red-900/10 border border-red-500/20 rounded-xl"
+                >
+                  <div className="flex items-center space-x-3">
+                    <AlertTriangle size={14} className="text-red-400 shrink-0" />
+                    <div>
+                      <p className="text-xs font-bold text-white">{candidateNames[b.candidate_id] || b.candidate_id}</p>
+                      <p className="text-[10px] text-red-300">
+                        {STAGE_LABELS[b.stage] || b.stage} — overdue since {new Date(b.due_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  {b.escalated && (
+                    <span className="text-[9px] font-bold text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded border border-orange-500/20">
+                      Escalated
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Pipeline cards */}
+        <div className="space-y-3">
+          {pipelineRecords.map(record => {
+            const currentStageEntry = record.stages.find(s => s.name === record.current_stage);
+            if (!currentStageEntry) return null;
+
+            const { pct, barColor, textColor } = getSlaProgress(currentStageEntry);
+            const timeLabel = formatTimeRemaining(currentStageEntry);
+            const stageIdx = STAGE_ORDER.indexOf(record.current_stage);
+            const extForm = extensionForms[record.candidate_id];
+            const ext = currentStageEntry.extension;
+            const hasPendingExt = !!(ext && !ext.approved_at);
+            const isLastStage = record.current_stage === STAGE_ORDER[STAGE_ORDER.length - 1];
+
+            return (
+              <div key={record.candidate_id} className="bg-slate-800/40 border border-slate-700/50 rounded-2xl overflow-hidden">
+                <div className="px-5 py-4 space-y-3">
+                  {/* Header */}
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-bold text-white">
+                        {candidateNames[record.candidate_id] || record.candidate_id}
+                      </p>
+                      <p className="text-[11px] text-slate-400">{record.candidate_id}</p>
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded bg-blue-500/20 text-blue-400 shrink-0">
+                      {STAGE_LABELS[record.current_stage] || record.current_stage}
+                    </span>
+                  </div>
+
+                  {/* Stage progression dots */}
+                  <div className="flex items-center">
+                    {STAGE_ORDER.map((s, i) => (
+                      <React.Fragment key={s}>
+                        <div className={`h-2 w-2 rounded-full shrink-0 ${
+                          i < stageIdx ? 'bg-emerald-500' : i === stageIdx ? 'bg-blue-400' : 'bg-slate-700'
+                        }`} />
+                        {i < STAGE_ORDER.length - 1 && (
+                          <div className={`h-px flex-1 ${i < stageIdx ? 'bg-emerald-500/50' : 'bg-slate-700'}`} />
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </div>
+
+                  {/* SLA progress bar */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">SLA</p>
+                      <span className={`text-[10px] font-bold ${textColor}`}>{timeLabel}</span>
+                    </div>
+                    <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all ${barColor}`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                    {ext?.approved && (
+                      <p className="text-[9px] text-blue-400">Extended by {ext.additional_hours}h</p>
+                    )}
+                    {hasPendingExt && (
+                      <p className="text-[9px] text-yellow-400">
+                        Extension pending approval (+{ext!.additional_hours}h)
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Manager: approve / deny extension */}
+                  {isManager && hasPendingExt && (
+                    <div className="flex items-center space-x-2 pt-1 border-t border-slate-700/50">
+                      <p className="text-[10px] text-slate-300 flex-1 truncate">
+                        Extension: "{ext!.reason}"
+                      </p>
+                      <button
+                        onClick={() => decideExtension(selectedJdId, record.candidate_id, true)}
+                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold rounded-lg transition-colors"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => decideExtension(selectedJdId, record.candidate_id, false)}
+                        className="px-3 py-1.5 bg-red-600/20 hover:bg-red-600/40 text-red-400 text-[10px] font-bold rounded-lg border border-red-500/20 transition-colors"
+                      >
+                        Deny
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Extension request form */}
+                  {extForm?.open && (
+                    <div className="space-y-2 border-t border-slate-700/50 pt-3">
+                      <div className="flex items-center space-x-2">
+                        <select
+                          value={extForm.hours}
+                          onChange={e => setExtensionForms(prev => ({
+                            ...prev,
+                            [record.candidate_id]: { ...prev[record.candidate_id], hours: Number(e.target.value) },
+                          }))}
+                          className="bg-slate-900 border border-slate-600 text-white text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                        >
+                          {[24, 48, 72, 96, 120].map(h => <option key={h} value={h}>{h}h</option>)}
+                        </select>
+                        <input
+                          placeholder="Reason for extension"
+                          value={extForm.reason}
+                          onChange={e => setExtensionForms(prev => ({
+                            ...prev,
+                            [record.candidate_id]: { ...prev[record.candidate_id], reason: e.target.value },
+                          }))}
+                          className="flex-1 bg-slate-900 border border-slate-600 text-white text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500 placeholder-slate-500"
+                        />
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => requestExtension(selectedJdId, record.candidate_id)}
+                          disabled={!extForm.reason.trim()}
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-xs font-bold rounded-lg transition-colors"
+                        >
+                          Submit
+                        </button>
+                        <button
+                          onClick={() => setExtensionForms(prev => ({
+                            ...prev,
+                            [record.candidate_id]: { ...prev[record.candidate_id], open: false },
+                          }))}
+                          className="px-3 py-2 text-slate-400 hover:text-white text-xs rounded-lg transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Action footer */}
+                {!extForm?.open && (
+                  <div className="border-t border-slate-700/30 px-5 py-3 flex items-center space-x-2">
+                    {isLastStage ? (
+                      <span className="text-xs font-bold text-emerald-400 flex items-center space-x-1.5">
+                        <CheckCircle size={12} />
+                        <span>Placement Complete</span>
+                      </span>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => advanceStage(selectedJdId, record.candidate_id)}
+                          className="flex items-center space-x-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-colors"
+                        >
+                          <ArrowRight size={12} />
+                          <span>Advance Stage</span>
+                        </button>
+                        {!hasPendingExt && (
+                          <button
+                            onClick={() => setExtensionForms(prev => ({
+                              ...prev,
+                              [record.candidate_id]: { open: true, hours: 24, reason: '' },
+                            }))}
+                            className="flex items-center space-x-1.5 px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg border border-slate-600/50 transition-colors"
+                          >
+                            <Clock size={12} />
+                            <span>Request Extension</span>
+                          </button>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex items-center space-x-3">
@@ -464,10 +810,10 @@ const RecruiterDashboard: React.FC = () => {
         </div>
       </div>
 
-      {error && (
+      {(error || pipelineError) && (
         <div className="flex items-center space-x-2 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl">
           <XCircle size={14} className="text-red-400 shrink-0" />
-          <span className="text-xs text-red-300">{error}</span>
+          <span className="text-xs text-red-300">{error || pipelineError}</span>
         </div>
       )}
 
@@ -507,76 +853,108 @@ const RecruiterDashboard: React.FC = () => {
         )}
       </section>
 
-      {/* Batch Review */}
       {selectedJdId && (
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Batch Review</p>
-            {results.length > 0 && !poolExhausted && (
-              <div className="flex items-center space-x-2">
-                {Array.from({ length: totalBatches }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`h-1.5 w-10 rounded-full transition-all ${
-                      i < activeBatchIndex ? 'bg-emerald-500' :
-                      i === activeBatchIndex ? 'bg-blue-500' :
-                      'bg-slate-700'
-                    }`}
-                  />
-                ))}
-                <span className="text-[10px] font-bold text-slate-400">
-                  Batch {activeBatchIndex + 1} of {totalBatches}
-                </span>
-              </div>
-            )}
+        <>
+          {/* Tab switcher */}
+          <div className="flex border-b border-slate-700/50">
+            <button
+              onClick={() => setActiveTab('review')}
+              className={`px-4 py-2.5 text-xs font-bold uppercase tracking-widest transition-colors border-b-2 -mb-px ${
+                activeTab === 'review'
+                  ? 'border-blue-500 text-blue-400'
+                  : 'border-transparent text-slate-500 hover:text-slate-300'
+              }`}
+            >
+              Review
+            </button>
+            <button
+              onClick={() => setActiveTab('pipeline')}
+              className={`px-4 py-2.5 text-xs font-bold uppercase tracking-widest transition-colors border-b-2 -mb-px ${
+                activeTab === 'pipeline'
+                  ? 'border-blue-500 text-blue-400'
+                  : 'border-transparent text-slate-500 hover:text-slate-300'
+              }`}
+            >
+              Pipeline
+            </button>
           </div>
 
-          {results.length === 0 ? (
-            <div className="text-center py-12 text-slate-500 text-sm">
-              No candidates matched yet. Run the matching engine from the Matching Engine page.
-            </div>
-          ) : poolExhausted ? (
-            <div className="text-center py-16 bg-slate-800/40 border border-slate-700/50 rounded-2xl">
-              <CheckCircle size={36} className="text-emerald-400 mx-auto mb-3" />
-              <p className="text-white font-bold text-lg">Pool Exhausted</p>
-              <p className="text-slate-400 text-sm mt-1">
-                All {totalBatches} batch{totalBatches !== 1 ? 'es' : ''} reviewed.{' '}
-                {computedStats.shortlisted} candidate{computedStats.shortlisted !== 1 ? 's' : ''} shortlisted.
-              </p>
-            </div>
-          ) : (
+          {activeTab === 'review' && (
             <>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                {currentBatch.map(r => renderCandidateCard(r))}
-              </div>
-              {!allCurrentActioned && (
-                <p className="mt-4 text-center text-[11px] text-slate-600">
-                  Action all {currentBatch.length} candidate{currentBatch.length !== 1 ? 's' : ''} to unlock Batch {activeBatchIndex + 2}
-                </p>
+              {/* Batch Review */}
+              <section>
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Batch Review</p>
+                  {results.length > 0 && !poolExhausted && (
+                    <div className="flex items-center space-x-2">
+                      {Array.from({ length: totalBatches }).map((_, i) => (
+                        <div
+                          key={i}
+                          className={`h-1.5 w-10 rounded-full transition-all ${
+                            i < activeBatchIndex ? 'bg-emerald-500' :
+                            i === activeBatchIndex ? 'bg-blue-500' :
+                            'bg-slate-700'
+                          }`}
+                        />
+                      ))}
+                      <span className="text-[10px] font-bold text-slate-400">
+                        Batch {activeBatchIndex + 1} of {totalBatches}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {results.length === 0 ? (
+                  <div className="text-center py-12 text-slate-500 text-sm">
+                    No candidates matched yet. Run the matching engine from the Matching Engine page.
+                  </div>
+                ) : poolExhausted ? (
+                  <div className="text-center py-16 bg-slate-800/40 border border-slate-700/50 rounded-2xl">
+                    <CheckCircle size={36} className="text-emerald-400 mx-auto mb-3" />
+                    <p className="text-white font-bold text-lg">Pool Exhausted</p>
+                    <p className="text-slate-400 text-sm mt-1">
+                      All {totalBatches} batch{totalBatches !== 1 ? 'es' : ''} reviewed.{' '}
+                      {computedStats.shortlisted} candidate{computedStats.shortlisted !== 1 ? 's' : ''} shortlisted.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                      {currentBatch.map(r => renderCandidateCard(r))}
+                    </div>
+                    {!allCurrentActioned && (
+                      <p className="mt-4 text-center text-[11px] text-slate-600">
+                        Action all {currentBatch.length} candidate{currentBatch.length !== 1 ? 's' : ''} to unlock Batch {activeBatchIndex + 2}
+                      </p>
+                    )}
+                  </>
+                )}
+              </section>
+
+              {/* Pipeline Stats */}
+              {results.length > 0 && (
+                <section>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Pipeline Status</p>
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    {[
+                      { label: 'Total Matched',  value: computedStats.total,       cls: 'text-slate-300' },
+                      { label: 'Shortlisted',    value: computedStats.shortlisted,  cls: 'text-emerald-400' },
+                      { label: 'Rejected',       value: computedStats.rejected,     cls: 'text-red-400' },
+                      { label: 'Pending Review', value: computedStats.pending,      cls: 'text-yellow-400' },
+                    ].map(({ label, value, cls }) => (
+                      <div key={label} className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5 text-center">
+                        <p className={`text-3xl font-bold ${cls}`}>{value}</p>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">{label}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
               )}
             </>
           )}
-        </section>
-      )}
 
-      {/* Pipeline Stats */}
-      {selectedJdId && results.length > 0 && (
-        <section>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Pipeline Status</p>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { label: 'Total Matched',  value: computedStats.total,       cls: 'text-slate-300' },
-              { label: 'Shortlisted',    value: computedStats.shortlisted,  cls: 'text-emerald-400' },
-              { label: 'Rejected',       value: computedStats.rejected,     cls: 'text-red-400' },
-              { label: 'Pending Review', value: computedStats.pending,      cls: 'text-yellow-400' },
-            ].map(({ label, value, cls }) => (
-              <div key={label} className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5 text-center">
-                <p className={`text-3xl font-bold ${cls}`}>{value}</p>
-                <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">{label}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+          {activeTab === 'pipeline' && renderPipelineTab()}
+        </>
       )}
     </div>
   );
