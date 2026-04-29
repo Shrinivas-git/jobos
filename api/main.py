@@ -3,7 +3,7 @@ import logging
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from celery_app import celery
-from routers import auth, candidates, jd, matching, pipeline, documents, crm, analytics, notifications
+from routers import auth, candidates, jd, matching, pipeline, documents, crm, analytics, notifications, feedback
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -30,6 +30,7 @@ app.include_router(documents.router)
 app.include_router(crm.router)
 app.include_router(analytics.router)
 app.include_router(notifications.router)
+app.include_router(feedback.router)
 
 @app.get("/")
 async def root():

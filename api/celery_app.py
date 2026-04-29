@@ -14,6 +14,7 @@ celery = Celery(
         'tasks.matching_tasks',
         'tasks.notification_tasks',
         'tasks.pipeline_tasks',
+        'tasks.feedback_tasks',
     ]
 )
 
@@ -30,5 +31,9 @@ celery.conf.beat_schedule = {
     "check-stage-breaches": {
         "task": "tasks.pipeline_tasks.check_stage_breaches",
         "schedule": crontab(minute=f"*/{_monitor_interval}"),
+    },
+    "send-weekly-feedback-digest": {
+        "task": "tasks.feedback_tasks.send_weekly_digest",
+        "schedule": crontab(hour=9, minute=0, day_of_week=1),  # Every Monday 09:00 UTC
     },
 }
