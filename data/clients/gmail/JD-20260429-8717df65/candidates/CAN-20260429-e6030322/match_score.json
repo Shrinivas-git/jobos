@@ -1,0 +1,24 @@
+{
+  "fitment_score": 70.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 66.667056,
+  "reasoning": "The candidate's skills and experience in Python, Java, and SQL, along with their experience in building scalable RESTful APIs, data handling, and writing clean code, align with the job requirements. However, their experience in fintech products, payment processing, and security standards is limited, which may impact their ability to deliver in this specific role.",
+  "strengths": [
+    "The candidate has experience in building scalable RESTful APIs using FastAPI and Flask, which is relevant to the job requirement of designing, developing, and maintaining scalable backend systems.",
+    "They have worked with databases such as MySQL and MongoDB, and have experience in data handling and API design, which is essential for the role.",
+    "The candidate has a strong foundation in programming languages, including Python and Java, which are required for the job.",
+    "They have experience in working with microservices environment, having built a 13-container microservices environment, which is relevant to the job requirement.",
+    "The candidate has a strong educational background, currently pursuing a Master of Computer Applications, which demonstrates their commitment to learning and professional development."
+  ],
+  "gaps": [
+    "The candidate lacks experience in fintech products, payment processing, and security standards, which is a critical requirement for the job.",
+    "They do not have direct experience in implementing authentication, authorization, encryption, and fraud-prevention mechanisms, which is essential for the role.",
+    "The candidate's experience in Node.js is limited to a BookMyShow clone project, which may not be sufficient to handle the complexities of a fintech product.",
+    "They do not have experience in working with AWS or Azure, which are preferred cloud platforms for the job.",
+    "The candidate's experience in CI/CD and system design is limited, which may impact their ability to deliver in this role."
+  ],
+  "recommendation": "hold",
+  "status": "pass_2_complete",
+  "updated_at": "2026-04-29T10:20:53.062177"
+}

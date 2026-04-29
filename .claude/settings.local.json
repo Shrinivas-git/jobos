@@ -29,7 +29,12 @@
       "Bash(docker exec api *)",
       "Bash(curl *)",
       "Bash(docker-compose *)",
-      "Bash(python3 -m json.tool)"
+      "Bash(python3 -m json.tool)",
+      "Bash(docker compose *)",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('tasks/pipeline_tasks.py'\\).read\\(\\)\\); ast.parse\\(open\\('routers/pipeline.py'\\).read\\(\\)\\); ast.parse\\(open\\('routers/matching.py'\\).read\\(\\)\\); ast.parse\\(open\\('celery_app.py'\\).read\\(\\)\\); ast.parse\\(open\\('utils/config_utils.py'\\).read\\(\\)\\); print\\('OK: all files parse'\\)\")",
+      "Bash(npx tsc *)",
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "Bash(node_modules/.bin/vite build *)"
     ]
   }
 }

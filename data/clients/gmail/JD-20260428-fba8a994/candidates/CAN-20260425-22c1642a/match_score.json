@@ -3,10 +3,22 @@
   "completeness_score": 100.0,
   "context_bonus": 0.0,
   "composite_score": 18.946693600000003,
-  "reasoning": "AI evaluation failed.",
-  "strengths": [],
-  "gaps": [],
-  "recommendation": "hold",
+  "reasoning": "The candidate's resume does not match the job description for a Senior Power Electronics Engineer, as it lacks relevant experience and skills in power electronics, such as designing and developing power electronic converters, working with high-power systems, and performing circuit simulation using LTSpice, MATLAB, and Simetrix.",
+  "strengths": [
+    "The candidate has strong experience in DevOps and Site Reliability Engineering, with 5 years of experience in building, operating, and supporting highly available cloud-native platforms.",
+    "The candidate has expertise in CI/CD, Kubernetes operations, and infrastructure as code, which could be useful in a related field.",
+    "The candidate has experience with monitoring and logging tools such as Prometheus, Grafana, and ELK Stack.",
+    "The candidate has worked with various cloud services, including AWS, GCP, and Azure, which demonstrates adaptability and knowledge of cloud computing.",
+    "The candidate has a strong educational background, with a Bachelor of Technology degree from a reputable university."
+  ],
+  "gaps": [
+    "The candidate lacks experience in power electronics, which is a critical requirement for the job description.",
+    "The candidate does not have experience with power electronic converter design, high-power systems, or circuit simulation software such as LTSpice, MATLAB, and Simetrix.",
+    "The candidate's skills in GaN/SiC devices, EMI/EMC standards, and thermal management are not mentioned in the resume.",
+    "The candidate does not have experience with hardware debugging, board bring-up, or root cause analysis, which are essential skills for a Senior Power Electronics Engineer.",
+    "The candidate's resume does not demonstrate knowledge of transformer design, magnetics, or gate driver circuits, which are critical aspects of power electronics."
+  ],
+  "recommendation": "reject",
   "status": "pass_2_complete",
-  "updated_at": "2026-04-28T11:31:37.999411"
+  "updated_at": "2026-04-29T07:09:49.818321"
 }

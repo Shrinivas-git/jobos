@@ -1,31 +1,26 @@
 ﻿param(
     [Parameter(Mandatory=$true)]
-    [ValidateSet("notifications","candidate-page","jd-fix","debug","list")]
+    [ValidateSet("pipeline-ui","why-not-selected","debug","list")]
     [string]$Session
 )
 $PROJECT_ROOT = "C:\staging\jobos"
 $SONNET = "claude-sonnet-4-6"
 $HAIKU  = "claude-haiku-4-5-20251001"
 $sessions = @{
-    "notifications" = @{
+    "pipeline-ui" = @{
         model = $SONNET
-        label = "TASK-009 - Manager and HOD notifications"
-        prompt = "Read PRD.md Section 6.5 and tasks/TASK-009-manager-hod-notifications.md first. Stack: FastAPI/MongoDB/SMTP. Task: TASK-009. Build notification system: when Pass 2 matching completes for a JD, send email digest to Manager and HOD with stack-ranked candidate list including name, fitment score, strengths, gaps, recommendation. Also add in-app notification badge in the frontend header. PDCA: list all files, wait for confirm before touching anything."
+        label = "TASK-015 - Pipeline Stage Management UI"
+        prompt = "STOP if context exceeds 95%. Read PRD Section 7.1-7.2 and tasks/TASK-015-closure-enforcement.md and frontend/src/pages/RecruiterDashboard.tsx first. TASK-015 UI: Add a Pipeline tab inside RecruiterDashboard. For each shortlisted candidate show: current stage (shortlist/interview_1/interview_final/offer/joined), time remaining as progress bar (green=safe, yellow=75%, red=100%), Advance Stage button, Request Extension button. For managers show: Approve/Deny extension requests, breach list of overdue candidates. Use GET /pipeline/{jd_id}, POST /pipeline/advance/{jd_id}/{candidate_id}, POST /pipeline/extension-request, POST /pipeline/extension-approve endpoints. PDCA: list all files, wait for confirm, then apply."
     }
-    "candidate-page" = @{
-        model = $HAIKU
-        label = "TASK-012 - Candidate simple landing page"
-        prompt = "Stack: React frontend. Scope: frontend/src only. When user role is candidate, show a simple page instead of recruiter dashboard. Content: their name, email, skills, experience. Message: Your profile has been received. Our team will be in touch. No dashboard stats, no JD list, no matching engine. PDCA: list files, wait for confirm."
-    }
-    "jd-fix" = @{
-        model = $HAIKU
-        label = "JD intake fixes"
-        prompt = "Stack: Python/FastAPI. Read api/tasks/jd_tasks.py first. Fix any remaining JD intake issues. PDCA: show plan before touching anything."
+    "why-not-selected" = @{
+        model = $SONNET
+        label = "TASK-016 - Why Not Selected feedback engine"
+        prompt = "STOP if context exceeds 95%. Read tasks/TASK-016-why-not-selected.md and api/utils/gemini_utils.py first. Build feedback generation: when candidate is rejected, Groq generates constructive feedback explaining why. Store in MongoDB. Send weekly digest email to candidates. PDCA: list files, wait for confirm."
     }
     "debug" = @{
         model = $SONNET
         label = "Debug session"
-        prompt = "Stack: Python/FastAPI/Groq/Docker. One error, one file, one session. Paste: (1) full traceback (2) only the function that threw it."
+        prompt = "STOP if context exceeds 95%. Stack: Python/FastAPI/Groq/Docker. One error, one file, one session. Paste: (1) full traceback (2) only the function that threw it."
     }
 }
 if ($Session -eq "list") {

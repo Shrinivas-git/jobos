@@ -365,6 +365,7 @@ const RecruiterDashboard: React.FC = () => {
       setLocalActions(prev => ({ ...prev, [candidateId]: { action: 'reject', reason: rejectReason } }));
       setRejectingId(null);
       setRejectReason('');
+      fetch(`${API}/feedback/generate/${candidateId}/${selectedJdId}`, { method: 'POST', headers: getAuthHeaders() });
     });
   };
 
