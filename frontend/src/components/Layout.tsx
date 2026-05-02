@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import keycloak from '../keycloak';
-import { LogOut, User, LayoutDashboard, Briefcase, Users, FileText, BarChart3, MessageSquare, ShieldCheck, Zap, Bell } from 'lucide-react';
+import { LogOut, User, LayoutDashboard, Briefcase, Users, FileText, BarChart3, MessageSquare, ShieldCheck, Zap, Bell, Settings } from 'lucide-react';
 import { getUnreadCount, listNotifications, markAllRead, markNotificationRead, Notification } from '../utils/api';
 
 interface LayoutProps {
@@ -81,6 +81,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { label: 'Communications', icon: <MessageSquare size={18} />, path: '/crm', roles: ['recruiter', 'manager', 'admin'] },
     { label: 'Matching Engine', icon: <Zap size={18} />, path: '/matching', roles: ['recruiter', 'manager', 'admin'] },
     { label: 'Analytics', icon: <BarChart3 size={18} />, path: '/analytics', roles: ['manager', 'admin', 'hod'] },
+    { label: 'Configuration', icon: <Settings size={18} />, path: '/admin', roles: ['admin'] },
   ];
 
   const filteredNav = navItems.filter(item => 
