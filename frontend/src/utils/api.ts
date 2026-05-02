@@ -290,3 +290,56 @@ export async function getAccessLog(params: {
   if (!res.ok) throw new Error((await res.json()).detail ?? 'Failed to load access log');
   return res.json();
 }
+
+// ── CRM ──────────────────────────────────────────────────────────────────────
+
+export interface CrmMessage {
+  id: string;
+  message_id: string;
+  jd_id: string;
+  candidate_id: string;
+  candidate_email: string;
+  candidate_name: string;
+  jd_title: string;
+  subject: string;
+  body: string;
+  status: 'draft' | 'sent' | 'failed';
+  created_by: string;
+  created_at: string;
+  approved_at: string | null;
+  sent_at: string | null;
+  edited: boolean;
+}
+
+export async function draftCrmMessage(jd_id: string, candidate_id: string): Promise<CrmMessage> {
+  const res = await fetch(`${API}/crm/draft`, {
+    method: 'POST',
+    headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ jd_id, candidate_id }),
+  });
+  if (!res.ok) throw new Error((await res.json()).detail ?? 'Draft failed');
+  return res.json();
+}
+
+export async function listCrmMessages(jd_id?: string, status?: string): Promise<CrmMessage[]> {
+  const q = new URLSearchParams();
+  if (jd_id) q.set('jd_id', jd_id);
+  if (status) q.set('status', status);
+  const res = await fetch(`${API}/crm/messages?${q}`, { headers: getAuthHeaders() });
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function approveAndSendCrmMessage(
+  message_id: string,
+  subject?: string,
+  body?: string,
+): Promise<CrmMessage> {
+  const res = await fetch(`${API}/crm/messages/${encodeURIComponent(message_id)}/approve`, {
+    method: 'POST',
+    headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ subject, body }),
+  });
+  if (!res.ok) throw new Error((await res.json()).detail ?? 'Send failed');
+  return res.json();
+}

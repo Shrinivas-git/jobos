@@ -1,21 +1,21 @@
 ﻿param(
     [Parameter(Mandatory=$true)]
-    [ValidateSet("live-sync","document-vault","analytics","debug","list")]
+    [ValidateSet("crm-messages","task-management","analytics","debug","list")]
     [string]$Session
 )
 $PROJECT_ROOT = "C:\staging\jobos"
 $SONNET = "claude-sonnet-4-6"
 $HAIKU  = "claude-haiku-4-5-20251001"
 $sessions = @{
-    "live-sync" = @{
-        model = $HAIKU
-        label = "TASK-018 - Candidate Live Sync"
-        prompt = "STOP if context exceeds 95%. Read api/routers/candidates.py PUT /me endpoint. Task: when candidate updates profile via PUT /candidates/me, re-generate embedding and upsert to Qdrant resume_vectors. Also re-run matching for all open JDs this candidate is in. Scope: api/routers/candidates.py and api/tasks/resume_tasks.py ONLY. PDCA: list exact changes, wait for confirm."
-    }
-    "document-vault" = @{
+    "crm-messages" = @{
         model = $SONNET
-        label = "TASK-017 - Document Vault"
-        prompt = "STOP if context exceeds 95%. Read api/routers/documents.py and PRD Section 8. Build document vault: candidates upload documents, access gated by pipeline stage, immutable access log, consent gating. PDCA: list all files, wait for confirm."
+        label = "TASK-019 - CRM Message Approval"
+        prompt = "STOP if context exceeds 95%. Read api/routers/crm.py and frontend/src/pages/CRM.tsx. Build CRM message approval: Groq drafts outreach message for shortlisted candidate based on JD and candidate profile. Recruiter reviews and approves/edits. On approval send via email using existing send_email(). Store in crm_messages MongoDB collection. PDCA: list files, wait for confirm."
+    }
+    "task-management" = @{
+        model = $SONNET
+        label = "TASK-020 - Task Management"
+        prompt = "STOP if context exceeds 95%. Read PRD Section 10 and api/routers/crm.py. Build task management: auto-create tasks on pipeline actions, task list UI for recruiters, call logging, due dates. PDCA: list files, wait for confirm."
     }
     "analytics" = @{
         model = $SONNET
