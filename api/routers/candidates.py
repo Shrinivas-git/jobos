@@ -24,7 +24,7 @@ async def _internal_or_auth(
     return await get_current_user(credentials.credentials)
 from utils.storage_utils import save_resume_file
 from utils.gemini_utils import extract_resume_metadata, generate_embedding
-from utils.qdrant_utils import upsert_resume_vector, get_resume_vector
+from utils.qdrant_utils import upsert_resume_vector
 from utils.resume_utils import extract_text_from_file
 from tasks.resume_tasks import process_resume_task
 from tasks.matching_tasks import run_matching
@@ -126,30 +126,47 @@ async def update_my_profile(
         raise HTTPException(status_code=404, detail="Candidate profile not found")
 
     candidate_id = result.get("candidate_id")
-    vector = get_resume_vector(candidate_id)
-    if vector:
-        qdrant_payload = {
-            "candidate_id": candidate_id,
-            "name": result.get("name"),
-            "email": result.get("email"),
-            "phone": result.get("phone"),
-            "skills": result.get("skills"),
-            "experience_years": result.get("experience_years"),
-            "location": result.get("location"),
-            "notice_period": result.get("notice_period"),
-            "gender": result.get("gender"),
-            "college": result.get("college"),
-            "projects": result.get("projects", []),
-            "achievements": result.get("achievements", []),
-            "certifications": result.get("certifications", []),
-            "education": result.get("education", []),
-            "languages": result.get("languages", []),
-            "previous_companies": result.get("previous_companies", []),
-            "companies_switched": result.get("companies_switched", 0),
-            "source": result.get("source"),
-            "ingested_at": datetime.now().isoformat()
-        }
-        upsert_resume_vector(candidate_id, vector, qdrant_payload)
+
+    # Generate new embedding from updated metadata
+    text_to_embed = f"""
+    Name: {result.get('name')}
+    Skills: {', '.join(result.get('skills', []))}
+    Experience: {result.get('experience_years')} years
+    Location: {result.get('location')}
+    College: {result.get('college')}
+    Resume Text: {result.get('resume_text', '')[:4000]}
+    """
+    vector = generate_embedding(text_to_embed)
+
+    # Upsert to Qdrant with new embedding
+    qdrant_payload = {
+        "candidate_id": candidate_id,
+        "name": result.get("name"),
+        "email": result.get("email"),
+        "phone": result.get("phone"),
+        "skills": result.get("skills"),
+        "experience_years": result.get("experience_years"),
+        "location": result.get("location"),
+        "notice_period": result.get("notice_period"),
+        "gender": result.get("gender"),
+        "college": result.get("college"),
+        "projects": result.get("projects", []),
+        "achievements": result.get("achievements", []),
+        "certifications": result.get("certifications", []),
+        "education": result.get("education", []),
+        "languages": result.get("languages", []),
+        "previous_companies": result.get("previous_companies", []),
+        "companies_switched": result.get("companies_switched", 0),
+        "source": result.get("source"),
+        "ingested_at": datetime.now().isoformat()
+    }
+    upsert_resume_vector(candidate_id, vector, qdrant_payload)
+
+    # Trigger matching for all open JDs
+    open_jds = db.job_descriptions.find({"status": "active"}, {"jd_id": 1})
+    for jd_doc in open_jds:
+        run_matching.delay(jd_doc["jd_id"])
+        logger.info(f"Triggered matching for candidate {candidate_id} against JD {jd_doc['jd_id']}")
 
     del result["_id"]
     return result
