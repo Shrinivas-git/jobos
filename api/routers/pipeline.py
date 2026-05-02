@@ -7,6 +7,7 @@ from auth import check_role
 from utils.client_utils import get_db
 from utils.config_utils import get_pipeline_config
 from routers.recruiter_tasks import create_auto_task
+from tasks.invoice_tasks import generate_and_send_invoice
 
 # stage → (task_type, description_template, priority, due_hours)
 _STAGE_TASK_MAP = {
@@ -164,6 +165,12 @@ async def advance_stage(
             create_auto_task(db, t_type, desc, owner, jd_id, candidate_id, priority, due_h)
         except Exception:
             pass  # task creation must never block pipeline advance
+
+    if next_name == "joined":
+        try:
+            generate_and_send_invoice.delay(jd_id, candidate_id)
+        except Exception:
+            pass  # invoice generation must never block pipeline advance
 
     return {"ok": True, "current_stage": next_name}
 

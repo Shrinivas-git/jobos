@@ -1,21 +1,16 @@
 ﻿param(
     [Parameter(Mandatory=$true)]
-    [ValidateSet("crm-messages","task-management","analytics","debug","list")]
+    [ValidateSet("invoice","analytics","debug","list")]
     [string]$Session
 )
 $PROJECT_ROOT = "C:\staging\jobos"
 $SONNET = "claude-sonnet-4-6"
 $HAIKU  = "claude-haiku-4-5-20251001"
 $sessions = @{
-    "crm-messages" = @{
-        model = $SONNET
-        label = "TASK-019 - CRM Message Approval"
-        prompt = "STOP if context exceeds 95%. Read api/routers/crm.py and frontend/src/pages/CRM.tsx. Build CRM message approval: Groq drafts outreach message for shortlisted candidate based on JD and candidate profile. Recruiter reviews and approves/edits. On approval send via email using existing send_email(). Store in crm_messages MongoDB collection. PDCA: list files, wait for confirm."
-    }
-    "task-management" = @{
-        model = $SONNET
-        label = "TASK-020 - Task Management"
-        prompt = "STOP if context exceeds 95%. Read PRD Section 10 and api/routers/crm.py. Build task management: auto-create tasks on pipeline actions, task list UI for recruiters, call logging, due dates. PDCA: list files, wait for confirm."
+    "invoice" = @{
+        model = $HAIKU
+        label = "TASK-021 - Invoice Generation"
+        prompt = "STOP if context exceeds 95%. Read api/routers/pipeline.py advance_stage endpoint. Task: when candidate reaches joined stage, auto-generate a PDF invoice for the client. Invoice should include: candidate name, JD title, client email, placement date, fee (15% of compensation_range from JD). Store invoice in MongoDB invoices collection. Save PDF to /data/invoices/. Send PDF via email to client. Use reportlab for PDF generation. PDCA: list files, wait for confirm."
     }
     "analytics" = @{
         model = $SONNET
