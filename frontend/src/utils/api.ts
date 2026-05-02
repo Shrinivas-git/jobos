@@ -343,3 +343,109 @@ export async function approveAndSendCrmMessage(
   if (!res.ok) throw new Error((await res.json()).detail ?? 'Send failed');
   return res.json();
 }
+
+// ── Recruiter Tasks ───────────────────────────────────────────────────────────
+
+export type TaskType = 'call' | 'follow_up' | 'document_request' | 'interview' | 'reminder' | 'custom';
+export type TaskPriority = 'low' | 'medium' | 'high';
+export type CallOutcome = 'connected' | 'no_answer' | 'callback_requested';
+
+export interface RecruiterTask {
+  task_id: string;
+  type: TaskType;
+  description: string;
+  owner_id: string;
+  jd_id: string | null;
+  candidate_id: string | null;
+  priority: TaskPriority;
+  due_at: string;
+  completed_at: string | null;
+  created_at: string;
+  created_by: string;
+  notes: string | null;
+  call_outcome: CallOutcome | null;
+  call_duration_mins: number | null;
+}
+
+export async function listTasks(params?: {
+  owner_me?: boolean;
+  overdue?: boolean;
+  jd_id?: string;
+  candidate_id?: string;
+  completed?: boolean;
+  task_type?: string;
+}): Promise<RecruiterTask[]> {
+  const q = new URLSearchParams();
+  if (params?.owner_me) q.set('owner_me', 'true');
+  if (params?.overdue) q.set('overdue', 'true');
+  if (params?.jd_id) q.set('jd_id', params.jd_id);
+  if (params?.candidate_id) q.set('candidate_id', params.candidate_id);
+  if (params?.completed != null) q.set('completed', String(params.completed));
+  if (params?.task_type) q.set('task_type', params.task_type);
+  const res = await fetch(`${API}/tasks/?${q}`, { headers: getAuthHeaders() });
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function createTask(data: {
+  type?: TaskType;
+  description: string;
+  jd_id?: string;
+  candidate_id?: string;
+  priority?: TaskPriority;
+  due_at: string;
+  notes?: string;
+}): Promise<RecruiterTask> {
+  const res = await fetch(`${API}/tasks/`, {
+    method: 'POST',
+    headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error((await res.json()).detail ?? 'Create failed');
+  return res.json();
+}
+
+export async function completeTask(task_id: string): Promise<RecruiterTask> {
+  const res = await fetch(`${API}/tasks/${encodeURIComponent(task_id)}`, {
+    method: 'PATCH',
+    headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ completed: true }),
+  });
+  if (!res.ok) throw new Error((await res.json()).detail ?? 'Update failed');
+  return res.json();
+}
+
+export async function deleteTask(task_id: string): Promise<void> {
+  await fetch(`${API}/tasks/${encodeURIComponent(task_id)}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+}
+
+export async function logCall(data: {
+  jd_id?: string;
+  candidate_id?: string;
+  outcome: CallOutcome;
+  duration_mins?: number;
+  notes?: string;
+}): Promise<RecruiterTask> {
+  const res = await fetch(`${API}/tasks/calls`, {
+    method: 'POST',
+    headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error((await res.json()).detail ?? 'Log failed');
+  return res.json();
+}
+
+export async function listCalls(params?: {
+  jd_id?: string;
+  candidate_id?: string;
+}): Promise<RecruiterTask[]> {
+  const q = new URLSearchParams();
+  if (params?.jd_id) q.set('jd_id', params.jd_id);
+  if (params?.candidate_id) q.set('candidate_id', params.candidate_id);
+  const res = await fetch(`${API}/tasks/calls/list?${q}`, { headers: getAuthHeaders() });
+  if (!res.ok) return [];
+  return res.json();
+}

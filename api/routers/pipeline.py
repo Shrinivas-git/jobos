@@ -6,6 +6,14 @@ from pydantic import BaseModel
 from auth import check_role
 from utils.client_utils import get_db
 from utils.config_utils import get_pipeline_config
+from routers.recruiter_tasks import create_auto_task
+
+# stage → (task_type, description_template, priority, due_hours)
+_STAGE_TASK_MAP = {
+    "shortlist":  ("follow_up",  "Initial outreach to candidate {cid} for {jid}", "medium", 72),
+    "interview":  ("interview",  "Schedule interview call for candidate {cid} ({jid})", "high",   24),
+    "offer":      ("reminder",   "Prepare offer letter for candidate {cid} ({jid})", "high",   48),
+}
 
 router = APIRouter(prefix="/pipeline", tags=["pipeline"])
 
@@ -147,6 +155,16 @@ async def advance_stage(
         {"_id": doc["_id"]},
         {"$set": {"stages": stages, "current_stage": next_name, "updated_at": now}},
     )
+
+    if next_name in _STAGE_TASK_MAP:
+        t_type, tmpl, priority, due_h = _STAGE_TASK_MAP[next_name]
+        desc = tmpl.format(cid=candidate_id, jid=jd_id)
+        owner = user.get("sub", "unknown")
+        try:
+            create_auto_task(db, t_type, desc, owner, jd_id, candidate_id, priority, due_h)
+        except Exception:
+            pass  # task creation must never block pipeline advance
+
     return {"ok": True, "current_stage": next_name}
 
 

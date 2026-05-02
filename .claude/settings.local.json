@@ -37,7 +37,8 @@
       "Bash(node_modules/.bin/vite build *)",
       "Bash(Get-ChildItem -Path . -Directory)",
       "Bash(Select-Object Name)",
-      "PowerShell(grep *)"
+      "PowerShell(grep *)",
+      "PowerShell(Get-ChildItem C:\\\\staging\\\\jobos\\\\frontend\\\\node_modules\\\\.bin | Where-Object { $_.Name -match \"ts\" } | Select-Object -First 10)"
     ]
   }
 }

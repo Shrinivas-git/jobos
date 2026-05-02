@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Send, Clock, CheckCircle, XCircle, Eye, EyeOff, RefreshCw } from 'lucide-react';
+import { Mail, Send, Clock, CheckCircle, XCircle, Eye, EyeOff, RefreshCw, Phone, Plus, Trash2, AlertTriangle } from 'lucide-react';
 import {
   API, getAuthHeaders, JD, MatchResult, CrmMessage,
   draftCrmMessage, listCrmMessages, approveAndSendCrmMessage,
+  RecruiterTask, TaskType, TaskPriority, CallOutcome,
+  listTasks, createTask, completeTask, deleteTask, logCall, listCalls,
 } from '../utils/api';
 
 const fmtDateTime = (iso: string) =>
@@ -35,8 +37,37 @@ const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
   );
 };
 
+const fmtDate = (iso: string) =>
+  new Date(iso).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+const isOverdue = (task: RecruiterTask) =>
+  !task.completed_at && new Date(task.due_at) < new Date();
+
+const PriorityBadge: React.FC<{ p: TaskPriority }> = ({ p }) => {
+  const cls = p === 'high'
+    ? 'bg-red-500/10 border-red-500/20 text-red-400'
+    : p === 'medium'
+    ? 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+    : 'bg-slate-500/10 border-slate-500/20 text-slate-400';
+  return <span className={`inline-flex text-[10px] px-2 py-0.5 border rounded-lg font-bold uppercase ${cls}`}>{p}</span>;
+};
+
+const OutcomeBadge: React.FC<{ o: CallOutcome }> = ({ o }) => {
+  const map: Record<CallOutcome, string> = {
+    connected: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400',
+    no_answer: 'bg-slate-500/10 border-slate-500/20 text-slate-400',
+    callback_requested: 'bg-blue-500/10 border-blue-500/20 text-blue-400',
+  };
+  const labels: Record<CallOutcome, string> = {
+    connected: 'Connected',
+    no_answer: 'No Answer',
+    callback_requested: 'Callback',
+  };
+  return <span className={`inline-flex text-[10px] px-2 py-0.5 border rounded-lg font-bold ${map[o]}`}>{labels[o]}</span>;
+};
+
 const CRM: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'outreach' | 'history'>('outreach');
+  const [activeTab, setActiveTab] = useState<'outreach' | 'history' | 'tasks' | 'calls'>('outreach');
 
   // Outreach
   const [jds, setJds] = useState<JD[]>([]);
@@ -60,6 +91,20 @@ const CRM: React.FC = () => {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [historyJdFilter, setHistoryJdFilter] = useState('');
   const [viewingMsg, setViewingMsg] = useState<CrmMessage | null>(null);
+
+  // Tasks
+  const [tasks, setTasks] = useState<RecruiterTask[]>([]);
+  const [loadingTasks, setLoadingTasks] = useState(false);
+  const [taskFilter, setTaskFilter] = useState<'all' | 'mine' | 'overdue' | 'done'>('all');
+  const [showCreateTask, setShowCreateTask] = useState(false);
+  const [newTask, setNewTask] = useState({ description: '', type: 'custom' as TaskType, priority: 'medium' as TaskPriority, due_at: '', jd_id: '', candidate_id: '', notes: '' });
+  const [savingTask, setSavingTask] = useState(false);
+
+  // Call log
+  const [calls, setCalls] = useState<RecruiterTask[]>([]);
+  const [loadingCalls, setLoadingCalls] = useState(false);
+  const [callForm, setCallForm] = useState({ jd_id: '', candidate_id: '', outcome: 'connected' as CallOutcome, duration_mins: '', notes: '' });
+  const [loggingCall, setLoggingCall] = useState(false);
 
   // Toast
   const [toast, setToast] = useState('');
@@ -101,7 +146,89 @@ const CRM: React.FC = () => {
 
   useEffect(() => {
     if (activeTab === 'history') loadHistory(historyJdFilter || undefined);
+    if (activeTab === 'tasks') loadTasksForFilter(taskFilter);
+    if (activeTab === 'calls') loadCalls();
   }, [activeTab]);
+
+  const loadTasksForFilter = async (f: typeof taskFilter) => {
+    setLoadingTasks(true);
+    const params: Parameters<typeof listTasks>[0] = {};
+    if (f === 'mine') params.owner_me = true;
+    else if (f === 'overdue') params.overdue = true;
+    else if (f === 'done') params.completed = true;
+    setTasks(await listTasks(params));
+    setLoadingTasks(false);
+  };
+
+  const loadCalls = async () => {
+    setLoadingCalls(true);
+    setCalls(await listCalls());
+    setLoadingCalls(false);
+  };
+
+  const handleCreateTask = async () => {
+    if (!newTask.description.trim() || !newTask.due_at) return;
+    setSavingTask(true);
+    try {
+      await createTask({
+        type: newTask.type,
+        description: newTask.description,
+        priority: newTask.priority,
+        due_at: newTask.due_at,
+        jd_id: newTask.jd_id || undefined,
+        candidate_id: newTask.candidate_id || undefined,
+        notes: newTask.notes || undefined,
+      });
+      setShowCreateTask(false);
+      setNewTask({ description: '', type: 'custom', priority: 'medium', due_at: '', jd_id: '', candidate_id: '', notes: '' });
+      await loadTasksForFilter(taskFilter);
+      showToast('Task created');
+    } catch (e: any) {
+      showToast(e.message ?? 'Create failed');
+    } finally {
+      setSavingTask(false);
+    }
+  };
+
+  const handleComplete = async (task_id: string) => {
+    try {
+      await completeTask(task_id);
+      setTasks(prev => prev.map(t => t.task_id === task_id ? { ...t, completed_at: new Date().toISOString() } : t));
+      showToast('Task completed');
+    } catch {
+      showToast('Update failed');
+    }
+  };
+
+  const handleDeleteTask = async (task_id: string) => {
+    try {
+      await deleteTask(task_id);
+      setTasks(prev => prev.filter(t => t.task_id !== task_id));
+    } catch {
+      showToast('Delete failed');
+    }
+  };
+
+  const handleLogCall = async () => {
+    if (!callForm.outcome) return;
+    setLoggingCall(true);
+    try {
+      await logCall({
+        jd_id: callForm.jd_id || undefined,
+        candidate_id: callForm.candidate_id || undefined,
+        outcome: callForm.outcome,
+        duration_mins: callForm.duration_mins ? parseInt(callForm.duration_mins) : undefined,
+        notes: callForm.notes || undefined,
+      });
+      setCallForm({ jd_id: '', candidate_id: '', outcome: 'connected', duration_mins: '', notes: '' });
+      await loadCalls();
+      showToast('Call logged');
+    } catch (e: any) {
+      showToast(e.message ?? 'Log failed');
+    } finally {
+      setLoggingCall(false);
+    }
+  };
 
   const handleDraft = async (candidate_id: string) => {
     setDraftingFor(candidate_id);
@@ -152,8 +279,8 @@ const CRM: React.FC = () => {
       )}
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-[#0f172a] p-1 rounded-xl w-fit border border-slate-800">
-        {(['outreach', 'history'] as const).map(tab => (
+      <div className="flex gap-1 bg-[#0f172a] p-1 rounded-xl w-fit border border-slate-800 flex-wrap">
+        {(['outreach', 'history', 'tasks', 'calls'] as const).map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -161,7 +288,7 @@ const CRM: React.FC = () => {
               activeTab === tab ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
             }`}
           >
-            {tab === 'outreach' ? 'Compose Outreach' : 'Message History'}
+            {tab === 'outreach' ? 'Compose Outreach' : tab === 'history' ? 'Message History' : tab === 'tasks' ? 'Tasks' : 'Call Log'}
           </button>
         ))}
       </div>
@@ -326,6 +453,348 @@ const CRM: React.FC = () => {
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {/* ── Tasks tab ── */}
+      {activeTab === 'tasks' && (
+        <div className="space-y-4">
+          {/* toolbar */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex gap-1 bg-[#0f172a] p-1 rounded-xl border border-slate-800">
+              {(['all', 'mine', 'overdue', 'done'] as const).map(f => (
+                <button
+                  key={f}
+                  onClick={() => { setTaskFilter(f); loadTasksForFilter(f); }}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-colors capitalize ${
+                    taskFilter === f ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {f === 'all' ? 'All' : f === 'mine' ? 'Mine' : f === 'overdue' ? 'Overdue' : 'Done'}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setShowCreateTask(true)}
+              className="ml-auto flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-colors"
+            >
+              <Plus size={13} /> New Task
+            </button>
+          </div>
+
+          {/* task list */}
+          <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl overflow-hidden">
+            {loadingTasks ? (
+              <div className="flex items-center justify-center h-32 text-slate-500 text-sm">Loading…</div>
+            ) : tasks.length === 0 ? (
+              <div className="flex items-center justify-center h-32 border-2 border-dashed border-slate-700 m-6 rounded-xl text-slate-500 text-sm">
+                No tasks
+              </div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-[#0f172a]">
+                    <th className="text-left px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Task</th>
+                    <th className="text-left px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Linked</th>
+                    <th className="text-center px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Priority</th>
+                    <th className="text-right px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Due</th>
+                    <th className="px-5 py-3"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tasks.map(t => (
+                    <tr
+                      key={t.task_id}
+                      className={`border-t border-slate-800/60 transition-colors ${
+                        isOverdue(t) ? 'bg-red-900/10 hover:bg-red-900/20' : 'hover:bg-slate-800/20'
+                      } ${t.completed_at ? 'opacity-50' : ''}`}
+                    >
+                      <td className="px-5 py-3 max-w-xs">
+                        <div className="flex items-start gap-2">
+                          {isOverdue(t) && <AlertTriangle size={13} className="text-red-400 shrink-0 mt-0.5" />}
+                          <div>
+                            <p className={`font-medium ${t.completed_at ? 'line-through text-slate-500' : 'text-white'}`}>
+                              {t.description}
+                            </p>
+                            <p className="text-[10px] text-slate-500 capitalize mt-0.5">{t.type.replace('_', ' ')}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3 text-slate-400 text-xs hidden md:table-cell">
+                        {t.candidate_id ? <span className="font-mono">{t.candidate_id}</span> : '—'}
+                      </td>
+                      <td className="px-5 py-3 text-center">
+                        <PriorityBadge p={t.priority} />
+                      </td>
+                      <td className="px-5 py-3 text-right text-xs whitespace-nowrap">
+                        <span className={isOverdue(t) ? 'text-red-400 font-bold' : 'text-slate-400'}>
+                          {fmtDate(t.due_at)}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3">
+                        <div className="flex items-center gap-1.5 justify-end">
+                          {!t.completed_at && (
+                            <button
+                              onClick={() => handleComplete(t.task_id)}
+                              className="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 transition-colors"
+                              title="Mark complete"
+                            >
+                              <CheckCircle size={13} />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleDeleteTask(t.task_id)}
+                            className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors"
+                            title="Delete"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── Call Log tab ── */}
+      {activeTab === 'calls' && (
+        <div className="space-y-5">
+          {/* log form */}
+          <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-6">
+            <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2">
+              <Phone size={15} className="text-blue-400" /> Log a Call
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">JD ID (optional)</label>
+                <input
+                  value={callForm.jd_id}
+                  onChange={e => setCallForm(f => ({ ...f, jd_id: e.target.value }))}
+                  placeholder="JD-20250101-XXXX"
+                  className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Candidate ID (optional)</label>
+                <input
+                  value={callForm.candidate_id}
+                  onChange={e => setCallForm(f => ({ ...f, candidate_id: e.target.value }))}
+                  placeholder="CAND-XXXX"
+                  className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Outcome</label>
+                <select
+                  value={callForm.outcome}
+                  onChange={e => setCallForm(f => ({ ...f, outcome: e.target.value as CallOutcome }))}
+                  className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="connected">Connected</option>
+                  <option value="no_answer">No Answer</option>
+                  <option value="callback_requested">Callback Requested</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Duration (mins)</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={callForm.duration_mins}
+                  onChange={e => setCallForm(f => ({ ...f, duration_mins: e.target.value }))}
+                  placeholder="e.g. 15"
+                  className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Notes</label>
+                <textarea
+                  value={callForm.notes}
+                  onChange={e => setCallForm(f => ({ ...f, notes: e.target.value }))}
+                  rows={3}
+                  placeholder="Call summary…"
+                  className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 resize-none"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={handleLogCall}
+                disabled={loggingCall}
+                className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl transition-colors"
+              >
+                <Phone size={14} />
+                {loggingCall ? 'Saving…' : 'Log Call'}
+              </button>
+            </div>
+          </div>
+
+          {/* call history */}
+          <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-700/60 flex items-center justify-between">
+              <h3 className="text-base font-bold text-white">Call History</h3>
+              <button
+                onClick={loadCalls}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs font-bold rounded-xl transition-colors"
+              >
+                <RefreshCw size={13} /> Refresh
+              </button>
+            </div>
+            {loadingCalls ? (
+              <div className="flex items-center justify-center h-32 text-slate-500 text-sm">Loading…</div>
+            ) : calls.length === 0 ? (
+              <div className="flex items-center justify-center h-32 border-2 border-dashed border-slate-700 m-6 rounded-xl text-slate-500 text-sm">
+                No calls logged yet
+              </div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-[#0f172a]">
+                    <th className="text-left px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Candidate</th>
+                    <th className="text-center px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Outcome</th>
+                    <th className="text-center px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Duration</th>
+                    <th className="text-left px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Notes</th>
+                    <th className="text-right px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">When</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {calls.map(c => (
+                    <tr key={c.task_id} className="border-t border-slate-800/60 hover:bg-slate-800/20 transition-colors">
+                      <td className="px-5 py-3">
+                        <p className="text-white font-mono text-xs">{c.candidate_id ?? '—'}</p>
+                        {c.jd_id && <p className="text-[10px] text-slate-500 mt-0.5">{c.jd_id}</p>}
+                      </td>
+                      <td className="px-5 py-3 text-center">
+                        {c.call_outcome ? <OutcomeBadge o={c.call_outcome} /> : '—'}
+                      </td>
+                      <td className="px-5 py-3 text-center text-slate-400 text-xs hidden md:table-cell">
+                        {c.call_duration_mins != null ? `${c.call_duration_mins} min` : '—'}
+                      </td>
+                      <td className="px-5 py-3 text-slate-300 text-xs max-w-xs truncate hidden lg:table-cell">
+                        {c.notes ?? '—'}
+                      </td>
+                      <td className="px-5 py-3 text-right text-slate-400 text-xs whitespace-nowrap">
+                        {fmtDate(c.created_at)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── Create Task modal ── */}
+      {showCreateTask && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-lg bg-[#1e293b] border border-slate-700/60 rounded-2xl shadow-2xl">
+            <div className="px-6 py-4 border-b border-slate-700/60 flex items-center justify-between">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Plus size={15} className="text-blue-400" /> New Task
+              </h3>
+              <button onClick={() => setShowCreateTask(false)} className="text-slate-500 hover:text-white">
+                <XCircle size={20} />
+              </button>
+            </div>
+            <div className="px-6 py-5 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Description *</label>
+                <input
+                  value={newTask.description}
+                  onChange={e => setNewTask(t => ({ ...t, description: e.target.value }))}
+                  placeholder="What needs to be done?"
+                  className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Type</label>
+                  <select
+                    value={newTask.type}
+                    onChange={e => setNewTask(t => ({ ...t, type: e.target.value as TaskType }))}
+                    className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="custom">Custom</option>
+                    <option value="follow_up">Follow-up</option>
+                    <option value="document_request">Document Request</option>
+                    <option value="interview">Interview</option>
+                    <option value="reminder">Reminder</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Priority</label>
+                  <select
+                    value={newTask.priority}
+                    onChange={e => setNewTask(t => ({ ...t, priority: e.target.value as TaskPriority }))}
+                    className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Due Date *</label>
+                <input
+                  type="datetime-local"
+                  value={newTask.due_at}
+                  onChange={e => setNewTask(t => ({ ...t, due_at: e.target.value }))}
+                  className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">JD ID (optional)</label>
+                  <input
+                    value={newTask.jd_id}
+                    onChange={e => setNewTask(t => ({ ...t, jd_id: e.target.value }))}
+                    placeholder="JD-…"
+                    className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Candidate ID (optional)</label>
+                  <input
+                    value={newTask.candidate_id}
+                    onChange={e => setNewTask(t => ({ ...t, candidate_id: e.target.value }))}
+                    placeholder="CAND-…"
+                    className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Notes (optional)</label>
+                <textarea
+                  value={newTask.notes}
+                  onChange={e => setNewTask(t => ({ ...t, notes: e.target.value }))}
+                  rows={2}
+                  className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 resize-none"
+                />
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t border-slate-700/60 flex justify-end gap-3">
+              <button
+                onClick={() => setShowCreateTask(false)}
+                className="px-4 py-2 text-sm font-bold text-slate-400 hover:text-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreateTask}
+                disabled={savingTask || !newTask.description.trim() || !newTask.due_at}
+                className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl transition-colors"
+              >
+                <Plus size={14} />
+                {savingTask ? 'Saving…' : 'Create Task'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
