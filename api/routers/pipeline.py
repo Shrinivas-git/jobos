@@ -8,6 +8,7 @@ from utils.client_utils import get_db
 from utils.config_utils import get_pipeline_config
 from routers.recruiter_tasks import create_auto_task
 from tasks.invoice_tasks import generate_and_send_invoice
+from tasks.retention_tasks import start_retention_clock
 
 # stage → (task_type, description_template, priority, due_hours)
 _STAGE_TASK_MAP = {
@@ -171,6 +172,10 @@ async def advance_stage(
             generate_and_send_invoice.delay(jd_id, candidate_id)
         except Exception:
             pass  # invoice generation must never block pipeline advance
+        try:
+            start_retention_clock.delay(jd_id, candidate_id)
+        except Exception:
+            pass  # retention tracking must never block pipeline advance
 
     return {"ok": True, "current_stage": next_name}
 

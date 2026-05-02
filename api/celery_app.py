@@ -15,6 +15,7 @@ celery = Celery(
         'tasks.notification_tasks',
         'tasks.pipeline_tasks',
         'tasks.feedback_tasks',
+        'tasks.retention_tasks',
     ]
 )
 
@@ -35,5 +36,9 @@ celery.conf.beat_schedule = {
     "send-weekly-feedback-digest": {
         "task": "tasks.feedback_tasks.send_weekly_digest",
         "schedule": crontab(hour=9, minute=0, day_of_week=1),  # Every Monday 09:00 UTC
+    },
+    "check-retention-clock": {
+        "task": "tasks.retention_tasks.check_retention_clock",
+        "schedule": crontab(hour=0, minute=0),  # Daily at midnight UTC
     },
 }
