@@ -34,7 +34,10 @@
       "Bash(python -c \"import ast; ast.parse\\(open\\('tasks/pipeline_tasks.py'\\).read\\(\\)\\); ast.parse\\(open\\('routers/pipeline.py'\\).read\\(\\)\\); ast.parse\\(open\\('routers/matching.py'\\).read\\(\\)\\); ast.parse\\(open\\('celery_app.py'\\).read\\(\\)\\); ast.parse\\(open\\('utils/config_utils.py'\\).read\\(\\)\\); print\\('OK: all files parse'\\)\")",
       "Bash(npx tsc *)",
       "Bash(./node_modules/.bin/tsc --noEmit)",
-      "Bash(node_modules/.bin/vite build *)"
+      "Bash(node_modules/.bin/vite build *)",
+      "Bash(Get-ChildItem -Path . -Directory)",
+      "Bash(Select-Object Name)",
+      "PowerShell(grep *)"
     ]
   }
 }

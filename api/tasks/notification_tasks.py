@@ -157,3 +157,82 @@ def notify_pool_ready(jd_id: str):
         send_email(email, subject, email_html)
 
     logger.info(f"notify_pool_ready complete for {jd_id}: {len(recipients)} recipients notified")
+
+
+@celery.task(name="tasks.notification_tasks.notify_candidate_document_access")
+def notify_candidate_document_access(
+    doc_id: str,
+    candidate_id: str,
+    doc_type: str,
+    accessor_email: str,
+    access_type: str,
+):
+    """Notify the candidate in real time when a recruiter views or downloads their document."""
+    logger.info(f"notify_candidate_document_access: {doc_id} {access_type} by {accessor_email}")
+    db = get_db()
+
+    candidate = db.candidates.find_one({"candidate_id": candidate_id}, {"email": 1, "name": 1})
+    if not candidate or not candidate.get("email"):
+        logger.warning(f"Candidate {candidate_id} has no email — skipping document access notification")
+        return
+
+    now = datetime.utcnow()
+    action_label = "downloaded" if access_type == "download" else "viewed"
+    doc_label = doc_type.replace("_", " ").title()
+
+    db.notifications.insert_one({
+        "notification_id": str(uuid.uuid4()),
+        "type": "document_access",
+        "recipient_email": candidate["email"],
+        "recipient_roles": ["candidate"],
+        "title": f"Your {doc_label} document was {action_label}",
+        "body": (
+            f"A recruiter ({accessor_email}) {action_label} your {doc_label} document "
+            f"on {now.strftime('%d %b %Y at %H:%M UTC')}."
+        ),
+        "data": {
+            "doc_id": doc_id,
+            "doc_type": doc_type,
+            "accessor_email": accessor_email,
+            "access_type": access_type,
+            "timestamp": now.isoformat(),
+        },
+        "is_read": False,
+        "created_at": now,
+    })
+
+    subject = f"[JobOS] Your document was {action_label}"
+    html = f"""<!DOCTYPE html>
+<html>
+<body style="background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#f1f5f9;margin:0;padding:24px">
+  <div style="max-width:600px;margin:0 auto">
+    <div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px">
+      <h1 style="color:#60a5fa;margin:0 0 4px 0;font-size:22px">JobOS</h1>
+      <p style="color:#94a3b8;margin:0;font-size:12px;text-transform:uppercase;letter-spacing:2px">Document Access Alert</p>
+    </div>
+    <div style="background:#1e293b;padding:24px;border-radius:12px">
+      <p style="color:#f1f5f9;margin:0 0 16px 0">Hi {candidate.get('name', 'Candidate')},</p>
+      <p style="color:#94a3b8;margin:0 0 16px 0">
+        A recruiter <strong style="color:#60a5fa">{action_label}</strong> your
+        <strong style="color:#f1f5f9">{doc_label}</strong> document.
+      </p>
+      <div style="background:#0f172a;padding:16px;border-radius:8px;margin-bottom:16px">
+        <p style="color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px 0">Access Details</p>
+        <p style="color:#94a3b8;margin:4px 0;font-size:13px">Recruiter: <span style="color:#f1f5f9">{accessor_email}</span></p>
+        <p style="color:#94a3b8;margin:4px 0;font-size:13px">Document: <span style="color:#f1f5f9">{doc_label}</span></p>
+        <p style="color:#94a3b8;margin:4px 0;font-size:13px">Action: <span style="color:#f1f5f9">{action_label.title()}</span></p>
+        <p style="color:#94a3b8;margin:4px 0;font-size:13px">Time: <span style="color:#f1f5f9">{now.strftime('%d %b %Y at %H:%M UTC')}</span></p>
+      </div>
+      <p style="color:#64748b;font-size:12px;margin:0">
+        You can revoke document access at any time from your JobOS profile.
+      </p>
+    </div>
+    <p style="color:#334155;font-size:11px;text-align:center;margin-top:24px">
+      JobOS · Recruitment Operating System · Do not reply to this email
+    </p>
+  </div>
+</body>
+</html>"""
+
+    send_email(candidate["email"], subject, html)
+    logger.info(f"Document access notification sent to {candidate['email']} for {doc_id}")

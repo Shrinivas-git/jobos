@@ -80,3 +80,12 @@ def save_candidate_match_results(client_slug: str, jd_id: str, candidate_id: str
         json.dump(pointer_data, f, indent=2, default=_default)
         
     return can_match_dir
+
+
+def save_document_file(candidate_id: str, doc_id: str, ext: str, content: bytes) -> str:
+    doc_dir = os.path.join(BASE_DATA_DIR, "documents", candidate_id)
+    os.makedirs(doc_dir, exist_ok=True)
+    file_path = os.path.join(doc_dir, f"{doc_id}.{ext}")
+    with open(file_path, "wb") as f:
+        f.write(content)
+    return file_path
