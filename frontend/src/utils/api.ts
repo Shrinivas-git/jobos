@@ -449,3 +449,82 @@ export async function listCalls(params?: {
   if (!res.ok) return [];
   return res.json();
 }
+
+// ── Analytics ─────────────────────────────────────────────────────────────────
+
+export interface FunnelStage {
+  stage: string;
+  current_count: number;
+  reached_count: number;
+  breach_count: number;
+  conversion_pct: number;
+}
+
+export interface PipelineHealth {
+  total_active: number;
+  sla_breach_total: number;
+  funnel: FunnelStage[];
+}
+
+export interface RecruiterPerf {
+  recruiter_id: string;
+  recruiter_name: string;
+  total_tasks: number;
+  completed_tasks: number;
+  overdue_tasks: number;
+  avg_days_to_complete: number | null;
+  completion_rate: number;
+}
+
+export interface JDFill {
+  jd_id: string;
+  title: string;
+  status: string;
+  created_at: string | null;
+  filled_at: string | null;
+  days_to_fill: number | null;
+}
+
+export interface TimeToFillSummary {
+  avg_days: number | null;
+  min_days: number | null;
+  max_days: number | null;
+  filled_count: number;
+  total_jds: number;
+  open_count: number;
+}
+
+export interface TimeToFill {
+  summary: TimeToFillSummary;
+  jds: JDFill[];
+}
+
+export async function getPipelineHealth(): Promise<PipelineHealth | null> {
+  try {
+    const res = await fetch(`${API}/analytics/pipeline-health`, { headers: getAuthHeaders() });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function getRecruiterPerformance(): Promise<RecruiterPerf[]> {
+  try {
+    const res = await fetch(`${API}/analytics/recruiter-performance`, { headers: getAuthHeaders() });
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
+}
+
+export async function getTimeToFill(): Promise<TimeToFill | null> {
+  try {
+    const res = await fetch(`${API}/analytics/time-to-fill`, { headers: getAuthHeaders() });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
