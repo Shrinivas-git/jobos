@@ -174,3 +174,119 @@ export interface PipelineBreach {
   due_at: string;
   escalated: boolean;
 }
+
+// ── Document Vault ──────────────────────────────────────────────────────────
+
+export type DocType = 'experience' | 'education' | 'licence' | 'identity' | 'salary';
+
+export interface VaultDocument {
+  doc_id: string;
+  candidate_id: string;
+  doc_type: DocType;
+  tier_required: number;
+  original_filename: string;
+  consent_given: boolean;
+  consent_timestamp: string;
+  access_revoked: boolean;
+  revoked_at: string | null;
+  uploaded_at: string;
+}
+
+export interface DocumentListResponse {
+  candidate_id: string;
+  jd_id: string;
+  unlocked_tier: number;
+  documents: VaultDocument[];
+}
+
+export interface AccessLogEntry {
+  log_id: string;
+  doc_id: string;
+  candidate_id: string;
+  accessed_by: string;
+  accessor_role: string;
+  accessor_email: string;
+  jd_id: string;
+  access_type: 'view' | 'download';
+  doc_type: string;
+  tier_at_access: number;
+  timestamp: string;
+}
+
+export async function uploadDocument(
+  docType: string,
+  consent: boolean,
+  file: File,
+): Promise<{ doc_id: string; doc_type: string; tier_required: number }> {
+  const form = new FormData();
+  form.append('doc_type', docType);
+  form.append('consent', String(consent));
+  form.append('file', file);
+  const res = await fetch(`${API}/documents/upload`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: form,
+  });
+  if (!res.ok) throw new Error((await res.json()).detail ?? 'Upload failed');
+  return res.json();
+}
+
+export async function listMyDocuments(): Promise<VaultDocument[]> {
+  const res = await fetch(`${API}/documents/my`, { headers: getAuthHeaders() });
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data.documents ?? [];
+}
+
+export async function listCandidateDocuments(
+  candidateId: string,
+  jdId: string,
+): Promise<DocumentListResponse> {
+  const res = await fetch(
+    `${API}/documents/list?candidate_id=${encodeURIComponent(candidateId)}&jd_id=${encodeURIComponent(jdId)}`,
+    { headers: getAuthHeaders() },
+  );
+  if (!res.ok) throw new Error((await res.json()).detail ?? 'Failed to load documents');
+  return res.json();
+}
+
+export async function revokeDocumentConsent(
+  docId: string,
+): Promise<{ ok: boolean; message: string }> {
+  const res = await fetch(`${API}/documents/${encodeURIComponent(docId)}/consent`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+  if (!res.ok) throw new Error((await res.json()).detail ?? 'Revoke failed');
+  return res.json();
+}
+
+export async function fetchDocumentBlob(
+  docId: string,
+  jdId: string,
+  mode: 'view' | 'download',
+): Promise<{ blob: Blob; filename: string }> {
+  const res = await fetch(
+    `${API}/documents/${encodeURIComponent(docId)}/${mode}?jd_id=${encodeURIComponent(jdId)}`,
+    { headers: getAuthHeaders() },
+  );
+  if (!res.ok) throw new Error((await res.json()).detail ?? 'Failed to fetch document');
+  const disposition = res.headers.get('content-disposition') ?? '';
+  const match = disposition.match(/filename="?([^"]+)"?/);
+  const filename = match ? match[1] : `${docId}.pdf`;
+  return { blob: await res.blob(), filename };
+}
+
+export async function getAccessLog(params: {
+  candidateId?: string;
+  docId?: string;
+  limit?: number;
+}): Promise<{ total: number; logs: AccessLogEntry[] }> {
+  const q = new URLSearchParams();
+  if (params.candidateId) q.set('candidate_id', params.candidateId);
+  if (params.docId) q.set('doc_id', params.docId);
+  if (params.limit) q.set('limit', String(params.limit));
+  const res = await fetch(`${API}/documents/access-log?${q}`, { headers: getAuthHeaders() });
+  if (!res.ok) throw new Error((await res.json()).detail ?? 'Failed to load access log');
+  return res.json();
+}

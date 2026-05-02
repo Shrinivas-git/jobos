@@ -163,6 +163,23 @@ async def list_documents(
 
 
 # ---------------------------------------------------------------------------
+# GET /documents/my  (candidate self-list)
+# ---------------------------------------------------------------------------
+@router.get("/my")
+async def list_my_documents(
+    user: dict = Depends(check_role(["candidate"])),
+):
+    """Candidate lists all their own uploaded documents."""
+    candidate_id = user.get("preferred_username") or user.get("sub")
+    db = get_db()
+    docs = list(
+        db.documents.find({"candidate_id": candidate_id}, {"_id": 0, "stored_path": 0})
+        .sort("uploaded_at", -1)
+    )
+    return {"candidate_id": candidate_id, "documents": docs}
+
+
+# ---------------------------------------------------------------------------
 # GET /documents/{doc_id}/view
 # ---------------------------------------------------------------------------
 @router.get("/{doc_id}/view")
