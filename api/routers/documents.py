@@ -37,6 +37,19 @@ ALLOWED_EXTENSIONS = {"pdf", "jpg", "jpeg", "png", "docx"}
 MAX_FILE_BYTES = 10 * 1024 * 1024  # 10 MB
 
 
+def _resolve_candidate_id(db, user: dict) -> str:
+    """Map Keycloak preferred_username/email to the JobOS candidate_id (CAN-...).
+    Falls back to preferred_username if no matching candidate record is found."""
+    keycloak_username = user.get("preferred_username") or user.get("sub", "")
+    email = user.get("email", "")
+    rec = db.candidates.find_one(
+        {"$or": [{"email": email}, {"candidate_id": keycloak_username}]} if email
+        else {"candidate_id": keycloak_username},
+        {"candidate_id": 1}
+    )
+    return rec["candidate_id"] if rec else keycloak_username
+
+
 def _get_candidate_tier(db, candidate_id: str, jd_id: str) -> int:
     """Return the highest tier unlocked for this candidate on this JD."""
     doc = db.pipeline_stages.find_one(
@@ -106,12 +119,12 @@ async def upload_document(
     if len(content) > MAX_FILE_BYTES:
         raise HTTPException(status_code=413, detail="File exceeds 10 MB limit")
 
-    candidate_id = user.get("preferred_username") or user.get("sub")
+    db = get_db()
+    candidate_id = _resolve_candidate_id(db, user)
     doc_id = f"DOC-{datetime.utcnow().strftime('%Y%m%d')}-{uuid.uuid4().hex[:8]}"
 
     stored_path = save_document_file(candidate_id, doc_id, ext, content)
 
-    db = get_db()
     now = datetime.utcnow()
     db.documents.insert_one({
         "doc_id": doc_id,
@@ -170,8 +183,8 @@ async def list_my_documents(
     user: dict = Depends(check_role(["candidate"])),
 ):
     """Candidate lists all their own uploaded documents."""
-    candidate_id = user.get("preferred_username") or user.get("sub")
     db = get_db()
+    candidate_id = _resolve_candidate_id(db, user)
     docs = list(
         db.documents.find({"candidate_id": candidate_id}, {"_id": 0, "stored_path": 0})
         .sort("uploaded_at", -1)
@@ -286,7 +299,7 @@ async def revoke_consent(
 ):
     """Candidate revokes consent. Blocked if they are at offer/joined stage in any active pipeline."""
     db = get_db()
-    candidate_id = user.get("preferred_username") or user.get("sub")
+    candidate_id = _resolve_candidate_id(db, user)
 
     doc = db.documents.find_one({"doc_id": doc_id, "candidate_id": candidate_id})
     if not doc:
