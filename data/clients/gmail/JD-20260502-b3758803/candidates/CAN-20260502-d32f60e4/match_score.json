@@ -1,0 +1,24 @@
+{
+  "fitment_score": 70.0,
+  "completeness_score": 100.0,
+  "context_bonus": 5.0,
+  "composite_score": 65.744128,
+  "reasoning": "The candidate's resume shows a good fit for the junior Python developer role, with relevant technical skills such as Python, Django, and MySQL, as well as experience with projects like the student database management system and chatbot, which demonstrate their ability to design and develop comprehensive systems and collaborate with teams.",
+  "strengths": [
+    "The candidate has a strong educational background, having completed their Master of Computer Applications from Dayananda Sagar University with a CGPA of 6.82/10.0.",
+    "The candidate has experience with Python and Django, having worked on the student database management system project, which is relevant to the job requirements.",
+    "The candidate has experience with databases such as MySQL and MongoDB, which is a requirement for the job.",
+    "The candidate has a certification in AWS Cloud Practitioner Essentials, which demonstrates their ability to learn and adapt to new technologies.",
+    "The candidate has a strong foundation in object-oriented programming and data structures and algorithms, which is essential for the role."
+  ],
+  "gaps": [
+    "The candidate lacks direct experience as a Python developer, having only interned as a developer and worked on personal projects.",
+    "The candidate's experience with REST APIs is limited, which is a key requirement for the job.",
+    "The candidate's experience with team collaboration is limited to their internship experience, which may not be sufficient for a full-time role.",
+    "The candidate's portfolio of projects is limited, with only three projects mentioned, which may not demonstrate their full range of skills and abilities.",
+    "The candidate lacks experience with Git, which is a key tool for version control and collaboration in the role."
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-02T06:39:27.477060"
+}

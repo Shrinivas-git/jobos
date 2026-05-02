@@ -1,0 +1,24 @@
+{
+  "fitment_score": 85.0,
+  "completeness_score": 100.0,
+  "context_bonus": 5.0,
+  "composite_score": 79.993452,
+  "reasoning": "The candidate's resume demonstrates strong technical skills in Python, FastAPI, and Flask, which aligns with the job description. The candidate's experience in building RESTful APIs, data handling, and writing clean code also matches the job requirements. However, the candidate's limited work experience and lack of direct experience in some of the required skills, such as PostgreSQL and MongoDB, are concerns.",
+  "strengths": [
+    "The candidate has strong technical skills in Python, with experience in building scalable RESTful APIs using FastAPI and Flask.",
+    "The candidate has experience in data handling and writing clean, efficient code, with a working knowledge of React for frontend integration.",
+    "The candidate has built multiple projects, including an AI-driven speech clarity enhancement system and a BookMyShow clone, demonstrating their ability to apply technical skills to real-world problems.",
+    "The candidate has a strong educational background, with a Master of Computer Applications from Dayanand Sagar University, which matches the JD's college preference.",
+    "The candidate has certifications in Oracle Cloud Infrastructure and AI Foundations, demonstrating their commitment to ongoing learning and professional development."
+  ],
+  "gaps": [
+    "The candidate has limited work experience, with only two internships, which may not be sufficient to demonstrate their ability to work in a full-time role.",
+    "The candidate lacks direct experience in some of the required skills, such as PostgreSQL and MongoDB, which could be a concern for the role.",
+    "The candidate's experience in building RESTful APIs is mostly limited to FastAPI and Flask, with little experience in other frameworks.",
+    "The candidate's experience in data analysis and AI/ML workflows is mostly limited to academic projects, with little experience in industry applications.",
+    "The candidate's communication skills and teamwork experience are not well-documented in the resume, which could be a concern for a collaborative work environment."
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-02T06:39:24.541290"
+}

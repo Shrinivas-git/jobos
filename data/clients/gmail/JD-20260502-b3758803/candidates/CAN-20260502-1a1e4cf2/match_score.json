@@ -1,0 +1,24 @@
+{
+  "fitment_score": 60.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 5.0,
+  "composite_score": 58.662063333333336,
+  "reasoning": "The candidate has a strong foundation in programming languages, databases, and object-oriented programming, which aligns with the job description. However, the candidate lacks direct experience with Python frameworks like Flask or FastAPI, and there is limited evidence of working with REST APIs, MySQL, PostgreSQL, or MongoDB, which are essential requirements for the role.",
+  "strengths": [
+    "The candidate has a strong academic background in computer applications, with a CGPA of 8.04 from Dayananda Sagar University, which is the preferred college in the job description.",
+    "The candidate has hands-on experience with programming languages, including Java and Python, which is a requirement for the role.",
+    "The candidate has experience with databases, including SQL and DBMS, which is relevant to the job description.",
+    "The candidate has worked on projects that demonstrate problem-solving and data-driven skills, such as the Uncertainty-Aware Fire Detection System.",
+    "The candidate has basic knowledge of Git, Jupyter Notebook, and VS Code, which are useful tools for a developer role."
+  ],
+  "gaps": [
+    "The candidate lacks direct experience with Python frameworks like Flask or FastAPI, which are essential requirements for the role.",
+    "There is limited evidence of the candidate working with REST APIs, which is a critical aspect of the job description.",
+    "The candidate has not mentioned working with MySQL, PostgreSQL, or MongoDB, which are the preferred databases in the job description.",
+    "The candidate's experience with machine learning is basic, and it is unclear if they can apply these skills to a professional environment.",
+    "The candidate lacks experience with teamwork and collaboration, which is an important aspect of the role."
+  ],
+  "recommendation": "hold",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-02T06:39:26.019186"
+}
