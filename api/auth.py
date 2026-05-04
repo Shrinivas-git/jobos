@@ -49,16 +49,19 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
                 }
             )
 
-            expected_iss = f"{KEYCLOAK_URL}/realms/{REALM}"
-            if payload.get("iss") != expected_iss:
+            # Issuer must end with /realms/{REALM} — handles internal vs external URL mismatch
+            iss = payload.get("iss", "")
+            if not iss.endswith(f"/realms/{REALM}"):
                 raise HTTPException(status_code=401, detail="Invalid issuer")
-                 
+
             return payload
         else:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid token header",
             )
+    except HTTPException:
+        raise  # never swallow HTTP exceptions into a 500
     except JWTError as e:
         print(f"JWT Error: {e}")
         raise HTTPException(

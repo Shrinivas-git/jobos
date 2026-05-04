@@ -187,9 +187,9 @@ const RecruiterDashboard: React.FC = () => {
           fetch(`${API}/jd/`, { headers: getAuthHeaders() }),
           fetch(`${API}/candidates/`, { headers: getAuthHeaders() }),
         ]);
-        const jdData: JD[] = await jdRes.json();
-        const candData: { candidate_id: string; name?: string }[] = await candRes.json();
-        setJds(jdData);
+        const jdData = jdRes.ok ? await jdRes.json() : [];
+        const candData = candRes.ok ? await candRes.json() : [];
+        setJds(Array.isArray(jdData) ? jdData : []);
         const lookup: CandidateLookup = {};
         candData.forEach(c => { lookup[c.candidate_id] = c.name || c.candidate_id; });
         setCandidateNames(lookup);
