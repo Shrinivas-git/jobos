@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from datetime import datetime
+from datetime import datetime, timedelta
 from collections import defaultdict
 
 from auth import check_role
@@ -149,3 +149,55 @@ async def time_to_fill(user: dict = Depends(check_role(["manager", "admin", "hod
         "max_days": max(days_list) if days_list else None,
     }
     return {"summary": summary, "jds": rows}
+
+
+@router.get("/finance")
+async def finance_analytics(user: dict = Depends(check_role(["manager", "admin"]))):
+    db = get_db()
+    now = datetime.utcnow()
+    overdue_cutoff = now - timedelta(days=30)
+
+    invoices = list(db.invoices.find({}, {"_id": 0}))
+
+    total_count = len(invoices)
+    pending = [i for i in invoices if i.get("email_status") in ("pending", "failed")]
+    sent    = [i for i in invoices if i.get("email_status") == "sent"]
+    overdue = [
+        i for i in invoices
+        if i.get("email_status") == "sent"
+        and i.get("generated_at")
+        and i["generated_at"] < overdue_cutoff
+    ]
+
+    recent = sorted(
+        invoices,
+        key=lambda x: x.get("generated_at") or datetime.min,
+        reverse=True,
+    )[:10]
+
+    def total_amount(lst):
+        return round(sum(i.get("amount", 0) for i in lst), 2)
+
+    return {
+        "total_count": total_count,
+        "total_amount": total_amount(invoices),
+        "pending": {"count": len(pending), "amount": total_amount(pending)},
+        "sent":    {"count": len(sent),    "amount": total_amount(sent)},
+        "overdue": {"count": len(overdue), "amount": total_amount(overdue)},
+        "recent": [
+            {
+                "invoice_id":     i.get("invoice_id"),
+                "candidate_name": i.get("candidate_name", "—"),
+                "jd_title":       i.get("jd_title", "—"),
+                "amount":         i.get("amount", 0),
+                "email_status":   i.get("email_status", "pending"),
+                "generated_at":   _iso(i.get("generated_at")),
+                "is_overdue":     (
+                    i.get("email_status") == "sent"
+                    and bool(i.get("generated_at"))
+                    and i["generated_at"] < overdue_cutoff
+                ),
+            }
+            for i in recent
+        ],
+    }

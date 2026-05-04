@@ -1,10 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart2, Users, Clock, AlertTriangle, TrendingUp, CheckCircle2 } from 'lucide-react';
+import { Users, Clock, AlertTriangle, TrendingUp, CheckCircle2, DollarSign } from 'lucide-react';
 import keycloak from '../keycloak';
 import {
-  getPipelineHealth, getRecruiterPerformance, getTimeToFill,
+  getPipelineHealth, getRecruiterPerformance, getTimeToFill, API, getAuthHeaders,
   PipelineHealth, RecruiterPerf, TimeToFill,
 } from '../utils/api';
+
+interface FinanceData {
+  total_count: number;
+  total_amount: number;
+  pending: { count: number; amount: number };
+  sent:    { count: number; amount: number };
+  overdue: { count: number; amount: number };
+  recent: {
+    invoice_id: string;
+    candidate_name: string;
+    jd_title: string;
+    amount: number;
+    email_status: string;
+    generated_at: string;
+    is_overdue: boolean;
+  }[];
+}
 
 const ALLOWED_ROLES = ['admin', 'manager', 'hod'];
 
@@ -26,20 +43,28 @@ const Analytics: React.FC = () => {
   const roles: string[] = keycloak.tokenParsed?.realm_access?.roles || [];
   const hasAccess = roles.some(r => ALLOWED_ROLES.includes(r));
 
+  const [activeTab, setActiveTab] = useState<'pipeline' | 'finance'>('pipeline');
   const [health, setHealth] = useState<PipelineHealth | null>(null);
   const [recruiters, setRecruiters] = useState<RecruiterPerf[]>([]);
   const [ttf, setTtf] = useState<TimeToFill | null>(null);
+  const [finance, setFinance] = useState<FinanceData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!hasAccess) { setLoading(false); return; }
-    Promise.all([getPipelineHealth(), getRecruiterPerformance(), getTimeToFill()])
-      .then(([h, r, t]) => {
-        setHealth(h);
-        setRecruiters(r);
-        setTtf(t);
-        setLoading(false);
-      });
+    Promise.all([
+      getPipelineHealth(),
+      getRecruiterPerformance(),
+      getTimeToFill(),
+      fetch(`${API}/analytics/finance`, { headers: getAuthHeaders() })
+        .then(r => r.ok ? r.json() : null).catch(() => null),
+    ]).then(([h, r, t, f]) => {
+      setHealth(h);
+      setRecruiters(r);
+      setTtf(t);
+      setFinance(f);
+      setLoading(false);
+    });
   }, [hasAccess]);
 
   if (!hasAccess) {
@@ -73,6 +98,24 @@ const Analytics: React.FC = () => {
         <div className="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 bg-blue-600/5 rounded-full blur-[80px]" />
       </div>
 
+      {/* Tab switcher */}
+      <div className="flex border-b border-slate-700/50">
+        {(['pipeline', 'finance'] as const).map(tab => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-5 py-2.5 text-xs font-black uppercase tracking-widest transition-colors border-b-2 -mb-px ${
+              activeTab === tab
+                ? 'border-blue-500 text-blue-400'
+                : 'border-transparent text-slate-500 hover:text-slate-300'
+            }`}
+          >
+            {tab === 'pipeline' ? 'Pipeline' : 'Finance'}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === 'pipeline' && <>
       {/* KPI bar */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <KpiCard
@@ -280,6 +323,89 @@ const Analytics: React.FC = () => {
       {!health && recruiters.length === 0 && !ttf && (
         <div className="flex items-center justify-center h-40 text-slate-500 text-sm">
           No analytics data available yet.
+        </div>
+      )}
+      </>}
+
+      {activeTab === 'finance' && (
+        <div className="space-y-8">
+          {/* Finance KPI cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <KpiCard
+              title="Total Invoiced"
+              value={finance ? `₹${finance.total_amount.toLocaleString()}` : '—'}
+              sub={finance ? `${finance.total_count} invoice${finance.total_count !== 1 ? 's' : ''}` : ''}
+              icon={<DollarSign size={24} />}
+              color="blue"
+            />
+            <KpiCard
+              title="Awaiting Payment"
+              value={finance ? `₹${finance.sent.amount.toLocaleString()}` : '—'}
+              sub={finance ? `${finance.sent.count} sent` : ''}
+              icon={<Clock size={24} />}
+              color="amber"
+            />
+            <KpiCard
+              title="Overdue"
+              value={finance ? `₹${finance.overdue.amount.toLocaleString()}` : '—'}
+              sub={finance ? `${finance.overdue.count} past 30 days` : ''}
+              icon={<AlertTriangle size={24} />}
+              color={finance && finance.overdue.count > 0 ? 'red' : 'emerald'}
+            />
+          </div>
+
+          {/* Recent invoices table */}
+          <div className="bg-[#1e293b] border border-slate-700/50 rounded-3xl p-8 shadow-sm">
+            <h4 className="text-base font-bold text-white mb-6 flex items-center gap-2">
+              <DollarSign size={18} className="text-blue-400" />
+              Recent Invoices
+            </h4>
+            {!finance || finance.recent.length === 0 ? (
+              <p className="text-slate-500 text-sm">No invoices generated yet.</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-[10px] font-black text-slate-500 uppercase tracking-widest border-b border-slate-800">
+                      <th className="pb-3 text-left">Candidate</th>
+                      <th className="pb-3 text-left">Position</th>
+                      <th className="pb-3 text-right">Amount</th>
+                      <th className="pb-3 text-center">Status</th>
+                      <th className="pb-3 text-right">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/50">
+                    {finance.recent.map(inv => {
+                      const isOverdue = inv.is_overdue;
+                      const statusLabel = isOverdue ? 'Overdue' : inv.email_status === 'sent' ? 'Sent' : 'Pending';
+                      const statusCls = isOverdue
+                        ? 'text-red-400 bg-red-500/10 border-red-500/20'
+                        : inv.email_status === 'sent'
+                        ? 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+                        : 'text-slate-400 bg-slate-800 border-slate-700';
+                      return (
+                        <tr key={inv.invoice_id} className="hover:bg-slate-800/20 transition-colors">
+                          <td className="py-3.5 text-slate-200 font-medium">{inv.candidate_name}</td>
+                          <td className="py-3.5 text-slate-400 max-w-xs truncate pr-4">{inv.jd_title}</td>
+                          <td className="py-3.5 text-right text-white font-bold">
+                            ₹{Number(inv.amount).toLocaleString()}
+                          </td>
+                          <td className="py-3.5 text-center">
+                            <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full border ${statusCls}`}>
+                              {statusLabel}
+                            </span>
+                          </td>
+                          <td className="py-3.5 text-right text-slate-500 text-xs">
+                            {inv.generated_at ? new Date(inv.generated_at).toLocaleDateString() : '—'}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
