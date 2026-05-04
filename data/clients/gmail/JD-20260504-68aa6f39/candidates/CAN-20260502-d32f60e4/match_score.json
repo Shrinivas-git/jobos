@@ -1,0 +1,24 @@
+{
+  "fitment_score": 60.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 56.363126,
+  "reasoning": "The candidate has some relevant skills such as HTML, CSS, and JavaScript, and has worked on projects that demonstrate their ability to design and develop user-facing features. However, their experience is limited to internships and personal projects, and they lack experience with React.js and other specific technologies mentioned in the job description.",
+  "strengths": [
+    "The candidate has experience with HTML, CSS, and JavaScript, which are essential skills for a frontend developer.",
+    "They have worked on projects such as the Metrimony website, which demonstrates their ability to build responsive and visually appealing web pages.",
+    "The candidate has a strong educational background, with a Master of Computer Applications degree and a Bachelor of Computer Applications degree.",
+    "They have certifications in AWS and Cisco, which demonstrate their ability to learn and adapt to new technologies.",
+    "The candidate has experience with databases such as MySQL and MongoDB, which is relevant to the job description."
+  ],
+  "gaps": [
+    "The candidate lacks experience with React.js, which is a specific requirement mentioned in the job description.",
+    "They have limited experience with frontend frameworks and libraries, which is a key aspect of the job.",
+    "The candidate has no experience with REST API integration, which is a critical skill for a frontend developer.",
+    "They lack experience with Git and GitHub, which are essential tools for collaborative development.",
+    "The candidate has no experience working in a team environment, which is a key aspect of the job description."
+  ],
+  "recommendation": "hold",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T05:29:59.887322"
+}

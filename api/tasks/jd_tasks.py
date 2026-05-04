@@ -126,11 +126,6 @@ def process_jd_task(jd_id: str):
     )
 
     logger.info(f"Processing complete for JD: {jd_id}")
-    
-    # 5. Trigger Matching Engine
-    from tasks.matching_tasks import run_matching
-    run_matching.delay(jd_id)
-    
     return f"Successfully structured {jd_id}"
 
 

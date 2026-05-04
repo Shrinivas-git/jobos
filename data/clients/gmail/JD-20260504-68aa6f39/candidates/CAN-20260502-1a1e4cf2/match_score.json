@@ -1,0 +1,24 @@
+{
+  "fitment_score": 20.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "composite_score": 30.283891333333337,
+  "reasoning": "The candidate's resume shows a strong background in programming languages, databases, and machine learning, but lacks relevant experience and skills in frontend development, which is the primary requirement for the Frontend Developer intern role. The candidate's projects and technical skills are more focused on backend development, data analytics, and machine learning, which are not directly applicable to the job description.",
+  "strengths": [
+    "The candidate has a strong foundation in programming languages, including Java, Python, and C, which demonstrates their ability to learn and adapt to new technologies.",
+    "The candidate's experience with database management systems, including SQL and DBMS, is a valuable skill that can be applied to various aspects of software development.",
+    "The candidate's project on uncertainty-aware fire detection system showcases their ability to work on complex projects and apply machine learning concepts to real-world problems.",
+    "The candidate's certification in Cisco Certified Support Technician \u2013 Networking demonstrates their interest in networking and IT fundamentals.",
+    "The candidate's experience with Git, Jupyter Notebook, and VS Code shows their familiarity with popular development tools and platforms."
+  ],
+  "gaps": [
+    "The candidate lacks experience in frontend development frameworks such as React, Angular, or Vue, which is a critical requirement for the job description.",
+    "The candidate's resume does not mention any experience with responsive design, Bootstrap, or Tailwind CSS, which are essential skills for a frontend developer.",
+    "The candidate's projects do not demonstrate any experience with REST API integration, which is a key aspect of frontend development.",
+    "The candidate's resume does not show any evidence of experience with cross-browser compatibility, debugging, or optimization, which are important skills for a frontend developer.",
+    "The candidate's lack of experience in UI/UX design principles and DOM manipulation is a significant gap, as these skills are crucial for creating dynamic and interactive user interfaces."
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T05:29:58.436771"
+}

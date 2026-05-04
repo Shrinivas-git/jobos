@@ -219,15 +219,6 @@ const RecruiterDashboard: React.FC = () => {
     setError(null);
     setPipelineRecords([]);
     setPipelineError(null);
-    try {
-      const res = await fetch(`${API}/matching/results/${jdId}`, { headers: getAuthHeaders() });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      if (pendingJdRef.current !== jdId) return;
-      setResults(await res.json());
-    } catch (e: any) {
-      if (pendingJdRef.current !== jdId) return;
-      setError('Failed to load JD data: ' + e.message);
-    }
   };
 
   const loadPipeline = async (jdId: string) => {
@@ -953,7 +944,7 @@ const RecruiterDashboard: React.FC = () => {
 
                 {results.length === 0 ? (
                   <div className="text-center py-12 text-slate-500 text-sm">
-                    No candidates matched yet. Run the matching engine from the Matching Engine page.
+                    Run matching first to see candidates — go to the Matching Engine page and click Run Matching for this JD.
                   </div>
                 ) : poolExhausted ? (
                   <div className="text-center py-16 bg-slate-800/40 border border-slate-700/50 rounded-2xl">

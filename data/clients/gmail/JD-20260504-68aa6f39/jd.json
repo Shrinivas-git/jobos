@@ -1,0 +1,41 @@
+{
+  "title": "Frontend Developer intern",
+  "level": "Junior",
+  "client_email": "shrinivassondur03@gmail.com",
+  "responsibilities": "Develop and maintain user-facing features using HTML, CSS, and JavaScript\nBuild responsive and visually appealing web pages across devices\nWork with frameworks like React (or Angular/Vue) to create dynamic UI components\nCollaborate with designers and backend developers to implement features\nIntegrate REST APIs and handle data efficiently on the frontend\nDebug, test, and optimize application performance\nEnsure cross-browser compatibility and consistency\nWrite clean, maintainable, and reusable code\nParticipate in code reviews and team discussions\nStay updated with latest frontend technologies and best practices",
+  "kpis": "",
+  "skills": [
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "React.js",
+    "Responsive Design",
+    "Bootstrap/Tailwind CSS",
+    "REST API Integration",
+    "Git & GitHub",
+    "Cross-Browser Compatibility",
+    "Debugging",
+    "Basic UI/UX Understanding",
+    "DOM Manipulation",
+    "ES6+",
+    "Problem Solving",
+    "Communication Skills"
+  ],
+  "relevant_experience": 0,
+  "total_experience": 0,
+  "compensation_range": "4LPA-8LPA",
+  "work_structure": "In-office",
+  "location": "Bangalore",
+  "hiring_timeline": "",
+  "urgency": "High",
+  "num_positions": 3,
+  "gender_preference": "Any",
+  "college_preference": "",
+  "college_exclusion": "",
+  "preferred_company_type": [
+    "Any"
+  ],
+  "preferred_team_size": "Any",
+  "role_type": "Any",
+  "obfuscate": false
+}

@@ -1,0 +1,24 @@
+{
+  "fitment_score": 70.0,
+  "completeness_score": 100.0,
+  "context_bonus": 5.0,
+  "composite_score": 67.705786,
+  "reasoning": "The candidate's resume demonstrates experience with React.js, HTML5, CSS3, and REST APIs, which aligns with the job description's requirements. However, the candidate's primary experience is in backend development and data analysis, which might require additional training to excel in a frontend developer intern role.",
+  "strengths": [
+    "The candidate has experience with React.js, as seen in the AI-Driven Speech Clarity Enhancement System and BookMyShow Clone projects.",
+    "The candidate is familiar with frontend development frameworks and tools, including HTML5, CSS3, and REST APIs.",
+    "The candidate has a strong foundation in programming languages, including Python and Java.",
+    "The candidate has experience with Git and GitHub, which is essential for collaborative development.",
+    "The candidate has worked on various projects, demonstrating problem-solving skills and the ability to learn new technologies."
+  ],
+  "gaps": [
+    "The candidate lacks extensive experience in frontend development, which is the primary focus of the job description.",
+    "The candidate's experience with Bootstrap/Tailwind CSS is not explicitly mentioned, which is a required skill for the role.",
+    "The candidate's understanding of DOM manipulation and ES6+ is not clearly demonstrated in the resume.",
+    "The candidate's experience with debugging and testing frontend applications is not explicitly mentioned.",
+    "The candidate's portfolio does not showcase a strong focus on frontend development, which might indicate a lack of interest or expertise in the area."
+  ],
+  "recommendation": "hold",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T05:29:56.880287"
+}
