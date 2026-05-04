@@ -41,7 +41,8 @@
       "PowerShell(Get-ChildItem C:\\\\staging\\\\jobos\\\\frontend\\\\node_modules\\\\.bin | Where-Object { $_.Name -match \"ts\" } | Select-Object -First 10)",
       "Bash(pip install *)",
       "Bash(Get-ChildItem -Path C:\\\\staging\\\\jobos -Recurse -Depth 2)",
-      "Bash(Select-Object -First 50)"
+      "Bash(Select-Object -First 50)",
+      "Bash(Get-ChildItem *)"
     ]
   }
 }

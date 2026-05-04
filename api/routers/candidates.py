@@ -477,7 +477,13 @@ async def upload_resume(
             "file_path": file_path
         }
         upsert_resume_vector(candidate_id, vector, payload)
-        
+
+        # Trigger re-matching for all active JDs with the updated profile
+        open_jds = db.job_descriptions.find({"status": "active"}, {"jd_id": 1})
+        for jd in open_jds:
+            run_matching.delay(jd["jd_id"])
+            logger.info(f"Triggered matching for candidate {candidate_id} against JD {jd['jd_id']}")
+
         return {
             "message": "Resume uploaded and processed successfully",
             "candidate_id": candidate_id,
