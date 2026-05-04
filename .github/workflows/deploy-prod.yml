@@ -1,0 +1,181 @@
+name: Deploy — Production
+
+# Triggers on push to main (after branch protection enforces CI pass)
+# Also supports manual trigger via workflow_dispatch
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "ECR image tag to deploy (defaults to latest main SHA)"
+        required: false
+        default: ""
+
+# Required secrets — same as staging plus:
+#   ECS_CLUSTER_PROD
+#   ECS_SERVICE_API_PROD
+#   ECS_SERVICE_FRONTEND_PROD
+#   ECS_TASK_DEF_API_PROD
+#   ECS_TASK_DEF_FRONTEND_PROD
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  IMAGE_TAG: ${{ github.event.inputs.image_tag || github.sha }}
+
+jobs:
+  deploy-prod:
+    name: Build, Push & Deploy to Production
+    runs-on: ubuntu-latest
+    environment: production          # requires manual approval in GitHub Environments
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # ── API image ────────────────────────────────────────────────────────────
+      - name: Build & push API image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./api
+          push: true
+          tags: |
+            ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPO_API }}:${{ env.IMAGE_TAG }}
+            ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPO_API }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # ── Frontend image ───────────────────────────────────────────────────────
+      - name: Build & push Frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPO_FRONTEND }}:${{ env.IMAGE_TAG }}
+            ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPO_FRONTEND }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # ── ECS: API service ─────────────────────────────────────────────────────
+      - name: Download current API task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition ${{ secrets.ECS_TASK_DEF_API_PROD }} \
+            --query taskDefinition \
+            > api-task-def.json
+
+      - name: Inject new API image into task definition
+        id: api-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: api-task-def.json
+          container-name: ${{ secrets.ECS_CONTAINER_API }}
+          image: ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPO_API }}:${{ env.IMAGE_TAG }}
+
+      - name: Deploy API to ECS production
+        id: deploy-api
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.api-task-def.outputs.task-definition }}
+          service: ${{ secrets.ECS_SERVICE_API_PROD }}
+          cluster: ${{ secrets.ECS_CLUSTER_PROD }}
+          wait-for-service-stability: true
+
+      # ── ECS: Frontend service ─────────────────────────────────────────────────
+      - name: Download current Frontend task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition ${{ secrets.ECS_TASK_DEF_FRONTEND_PROD }} \
+            --query taskDefinition \
+            > frontend-task-def.json
+
+      - name: Inject new Frontend image into task definition
+        id: frontend-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: frontend-task-def.json
+          container-name: ${{ secrets.ECS_CONTAINER_FRONTEND }}
+          image: ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPO_FRONTEND }}:${{ env.IMAGE_TAG }}
+
+      - name: Deploy Frontend to ECS production
+        id: deploy-frontend
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.frontend-task-def.outputs.task-definition }}
+          service: ${{ secrets.ECS_SERVICE_FRONTEND_PROD }}
+          cluster: ${{ secrets.ECS_CLUSTER_PROD }}
+          wait-for-service-stability: true
+
+      # ── Health check ─────────────────────────────────────────────────────────
+      - name: Health check
+        id: health-check
+        run: |
+          echo "Waiting 15s for services to initialise..."
+          sleep 15
+          STATUS=$(aws ecs describe-services \
+            --cluster ${{ secrets.ECS_CLUSTER_PROD }} \
+            --services ${{ secrets.ECS_SERVICE_API_PROD }} \
+            --query 'services[0].deployments[0].rolloutState' \
+            --output text)
+          echo "Rollout state: $STATUS"
+          if [ "$STATUS" != "COMPLETED" ]; then
+            echo "::error::API service rollout did not complete (state: $STATUS)"
+            exit 1
+          fi
+
+      # ── Rollback on failure ───────────────────────────────────────────────────
+      - name: Rollback API on failure
+        if: failure() && steps.deploy-api.outcome == 'success'
+        run: |
+          echo "Rolling back API service to previous task definition..."
+          PREV_REVISION=$(aws ecs describe-task-definition \
+            --task-definition ${{ secrets.ECS_TASK_DEF_API_PROD }} \
+            --query 'taskDefinition.revision' \
+            --output text)
+          ROLLBACK_REVISION=$((PREV_REVISION - 1))
+          aws ecs update-service \
+            --cluster ${{ secrets.ECS_CLUSTER_PROD }} \
+            --service ${{ secrets.ECS_SERVICE_API_PROD }} \
+            --task-definition ${{ secrets.ECS_TASK_DEF_API_PROD }}:${ROLLBACK_REVISION} \
+            --force-new-deployment
+          echo "Rollback initiated to revision ${ROLLBACK_REVISION}"
+
+      - name: Rollback Frontend on failure
+        if: failure() && steps.deploy-frontend.outcome == 'success'
+        run: |
+          echo "Rolling back Frontend service to previous task definition..."
+          PREV_REVISION=$(aws ecs describe-task-definition \
+            --task-definition ${{ secrets.ECS_TASK_DEF_FRONTEND_PROD }} \
+            --query 'taskDefinition.revision' \
+            --output text)
+          ROLLBACK_REVISION=$((PREV_REVISION - 1))
+          aws ecs update-service \
+            --cluster ${{ secrets.ECS_CLUSTER_PROD }} \
+            --service ${{ secrets.ECS_SERVICE_FRONTEND_PROD }} \
+            --task-definition ${{ secrets.ECS_TASK_DEF_FRONTEND_PROD }}:${ROLLBACK_REVISION} \
+            --force-new-deployment
+          echo "Rollback initiated to revision ${ROLLBACK_REVISION}"
+
+      # ── Notify on success ─────────────────────────────────────────────────────
+      - name: Summarise deployment
+        if: success()
+        run: |
+          echo "## Production Deployment Complete" >> $GITHUB_STEP_SUMMARY
+          echo "| Image | Tag |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-----|" >> $GITHUB_STEP_SUMMARY
+          echo "| API | \`${{ env.IMAGE_TAG }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Frontend | \`${{ env.IMAGE_TAG }}\` |" >> $GITHUB_STEP_SUMMARY

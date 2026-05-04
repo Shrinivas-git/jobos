@@ -1,24 +1,24 @@
 {
-  "fitment_score": 70.0,
+  "fitment_score": 60.0,
   "completeness_score": 100.0,
   "context_bonus": 5.0,
-  "composite_score": 67.705786,
-  "reasoning": "The candidate's resume demonstrates experience with React.js, HTML5, CSS3, and REST APIs, which aligns with the job description's requirements. However, the candidate's primary experience is in backend development and data analysis, which might require additional training to excel in a frontend developer intern role.",
+  "composite_score": 61.205786,
+  "reasoning": "The candidate has some relevant skills such as React.js, HTML5, CSS3, and experience with REST APIs, but lacks extensive experience in frontend development and has a stronger background in backend development and data science.",
   "strengths": [
-    "The candidate has experience with React.js, as seen in the AI-Driven Speech Clarity Enhancement System and BookMyShow Clone projects.",
-    "The candidate is familiar with frontend development frameworks and tools, including HTML5, CSS3, and REST APIs.",
-    "The candidate has a strong foundation in programming languages, including Python and Java.",
-    "The candidate has experience with Git and GitHub, which is essential for collaborative development.",
-    "The candidate has worked on various projects, demonstrating problem-solving skills and the ability to learn new technologies."
+    "The candidate has experience with React.js, as seen in their project AI-Driven Speech Clarity Enhancement System, where they built a FastAPI and React-based application.",
+    "They have a strong foundation in programming languages such as Python and Java, with experience in building scalable RESTful APIs using FastAPI and Flask.",
+    "The candidate has worked on several projects, including a BookMyShow clone using the MERN stack, demonstrating their ability to develop full-stack applications.",
+    "They have experience with Git and have a GitHub profile, indicating familiarity with version control systems.",
+    "The candidate has a certification in AI Foundations and has worked on machine learning models using Scikit-learn, demonstrating their ability to learn and apply new technologies."
   ],
   "gaps": [
-    "The candidate lacks extensive experience in frontend development, which is the primary focus of the job description.",
-    "The candidate's experience with Bootstrap/Tailwind CSS is not explicitly mentioned, which is a required skill for the role.",
-    "The candidate's understanding of DOM manipulation and ES6+ is not clearly demonstrated in the resume.",
-    "The candidate's experience with debugging and testing frontend applications is not explicitly mentioned.",
-    "The candidate's portfolio does not showcase a strong focus on frontend development, which might indicate a lack of interest or expertise in the area."
+    "The candidate lacks extensive experience in frontend development, with most of their experience focused on backend development and data science.",
+    "They do not have experience with Bootstrap/Tailwind CSS, which is a required skill for the job.",
+    "The candidate's experience with cross-browser compatibility and debugging is not explicitly mentioned in their resume.",
+    "They do not have experience with ES6+, which is a required skill for the job.",
+    "The candidate's portfolio does not demonstrate a strong focus on frontend development, with most of their projects focusing on backend development and data science."
   ],
   "recommendation": "hold",
   "status": "pass_2_complete",
-  "updated_at": "2026-05-04T05:29:56.880287"
+  "updated_at": "2026-05-04T06:21:35.121210"
 }

@@ -164,6 +164,10 @@ const RecruiterDashboard: React.FC = () => {
   const [pipelineError, setPipelineError] = useState<string | null>(null);
   const [isManager, setIsManager] = useState(false);
 
+  // Assessment state
+  const [assessments, setAssessments] = useState<Record<string, { status: string; score: number | null; assessment_id: string }>>({});
+  const [sendingAssessment, setSendingAssessment] = useState<string | null>(null);
+
   // Interview scheduling modal
   const [interviewModal, setInterviewModal] = useState<{ candidateId: string; nextStage: string } | null>(null);
   const [interviewForm, setInterviewForm] = useState({

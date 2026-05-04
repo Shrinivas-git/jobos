@@ -314,3 +314,84 @@ def send_interview_email(jd_id: str, candidate_id: str, interview_details: dict)
 
     send_email(email, subject, html)
     logger.info(f"Interview email sent to {email} for candidate {candidate_id}")
+
+
+_STAGE_NOTIFICATIONS = {
+    "shortlist": {
+        "subject": "Good news! You've been shortlisted — {jd_title}",
+        "body": "You have been shortlisted for <strong style=\"color:#f1f5f9\">{jd_title}</strong>. Our recruiter will be in touch soon.",
+        "header": "You've Been Shortlisted",
+        "color": "#4ade80",
+    },
+    "offer": {
+        "subject": "Offer incoming — {jd_title}",
+        "body": "Congratulations! You have received an offer for <strong style=\"color:#f1f5f9\">{jd_title}</strong>. Please expect a call from our team shortly.",
+        "header": "Offer Extended",
+        "color": "#60a5fa",
+    },
+    "joined": {
+        "subject": "Welcome aboard! — {jd_title}",
+        "body": "Congratulations on joining! Wishing you all the best in your new role at <strong style=\"color:#f1f5f9\">{jd_title}</strong>.",
+        "header": "Welcome Aboard",
+        "color": "#a78bfa",
+    },
+}
+
+# interview_1 and interview_final are handled by send_interview_email
+_SKIP_STAGES = {"interview_1", "interview_final"}
+
+
+@celery.task(name="tasks.notification_tasks.send_stage_notification")
+def send_stage_notification(candidate_id: str, jd_id: str, stage: str):
+    """Send candidate email when pipeline stage changes (except interview stages)."""
+    if stage in _SKIP_STAGES:
+        return
+
+    cfg = _STAGE_NOTIFICATIONS.get(stage)
+    if not cfg:
+        return
+
+    db = get_db()
+    candidate = db.candidates.find_one({"candidate_id": candidate_id}, {"email": 1, "name": 1})
+    if not candidate or not candidate.get("email"):
+        logger.warning(f"No email for candidate {candidate_id} — skipping stage notification")
+        return
+
+    jd = db.job_descriptions.find_one({"jd_id": jd_id})
+    jd_title = (jd.get("structured_data", {}).get("title") or jd.get("title", "the role")) if jd else "the role"
+
+    name = candidate.get("name", "Candidate")
+    email = candidate["email"]
+    subject = cfg["subject"].format(jd_title=jd_title)
+    body_html = cfg["body"].format(jd_title=jd_title)
+    header = cfg["header"]
+    color = cfg["color"]
+
+    html = f"""<!DOCTYPE html>
+<html>
+<body style="background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#f1f5f9;margin:0;padding:24px">
+  <div style="max-width:600px;margin:0 auto">
+    <div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px">
+      <h1 style="color:#60a5fa;margin:0 0 4px 0;font-size:22px">JobOS</h1>
+      <p style="color:#94a3b8;margin:0;font-size:12px;text-transform:uppercase;letter-spacing:2px">{header}</p>
+    </div>
+    <div style="background:#1e293b;padding:24px;border-radius:12px">
+      <p style="color:#f1f5f9;margin:0 0 16px 0">Hi {name},</p>
+      <p style="color:#94a3b8;margin:0 0 20px 0;line-height:1.6">{body_html}</p>
+      <div style="background:#0f172a;padding:16px;border-radius:8px;border-left:3px solid {color}">
+        <p style="color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin:0 0 6px 0">Role</p>
+        <p style="color:#f1f5f9;margin:0;font-size:14px;font-weight:600">{jd_title}</p>
+      </div>
+      <p style="color:#64748b;font-size:12px;margin-top:20px">
+        If you have any questions, please reply to this email or contact your recruiter.
+      </p>
+    </div>
+    <p style="color:#334155;font-size:11px;text-align:center;margin-top:24px">
+      JobOS · Recruitment Operating System · Do not reply to this email
+    </p>
+  </div>
+</body>
+</html>"""
+
+    send_email(email, subject, html)
+    logger.info(f"Stage notification '{stage}' sent to {email} for candidate {candidate_id}")

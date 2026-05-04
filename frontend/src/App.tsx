@@ -10,6 +10,10 @@ import CRM from './pages/CRM';
 import Analytics from './pages/Analytics';
 import Matching from './pages/Matching';
 import Admin from './pages/Admin';
+import Assessment from './pages/Assessment';
+
+// Public paths that must not trigger Keycloak login-required redirect
+const _isPublicPath = window.location.pathname.startsWith('/assessment/');
 
 const App: React.FC = () => {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
@@ -20,8 +24,8 @@ const App: React.FC = () => {
     if (initialized.current) return;
     initialized.current = true;
 
-    keycloak.init({ 
-      onLoad: 'login-required', 
+    keycloak.init({
+      onLoad: _isPublicPath ? 'check-sso' : 'login-required',
       checkLoginIframe: false,
       pkceMethod: 'S256'
     })
@@ -44,26 +48,36 @@ const App: React.FC = () => {
     );
   }
 
-  if (!authenticated) {
-    return <div className="flex items-center justify-center h-screen bg-gray-900 text-white">Redirecting to Login...</div>;
-  }
-
   return (
     <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/jobs" element={<Jobs />} />
-          <Route path="/candidates" element={<Candidates />} />
-          <Route path="/documents" element={<Documents />} />
-          <Route path="/crm" element={<CRM />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/matching" element={<Matching />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="*" element={<div className="text-white p-8">Page Not Found</div>} />
-        </Routes>
-      </Layout>
+      <Routes>
+        {/* Public routes — no auth, no layout */}
+        <Route path="/assessment/:id" element={<Assessment />} />
+
+        {/* Auth-gated routes */}
+        <Route path="/*" element={
+          !authenticated ? (
+            <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
+              Redirecting to Login...
+            </div>
+          ) : (
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/jobs" element={<Jobs />} />
+                <Route path="/candidates" element={<Candidates />} />
+                <Route path="/documents" element={<Documents />} />
+                <Route path="/crm" element={<CRM />} />
+                <Route path="/analytics" element={<Analytics />} />
+                <Route path="/matching" element={<Matching />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="*" element={<div className="text-white p-8">Page Not Found</div>} />
+              </Routes>
+            </Layout>
+          )
+        } />
+      </Routes>
     </Router>
   );
 };

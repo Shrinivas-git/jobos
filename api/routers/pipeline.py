@@ -191,6 +191,12 @@ async def advance_stage(
         except Exception:
             pass  # email must never block stage advance
 
+    try:
+        from tasks.notification_tasks import send_stage_notification
+        send_stage_notification.delay(candidate_id, jd_id, next_name)
+    except Exception:
+        pass  # notification must never block stage advance
+
     if next_name == "joined":
         try:
             generate_and_send_invoice.delay(jd_id, candidate_id)

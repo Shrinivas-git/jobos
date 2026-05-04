@@ -3,22 +3,22 @@
   "completeness_score": 83.33333333333334,
   "context_bonus": 0.0,
   "composite_score": 30.283891333333337,
-  "reasoning": "The candidate's resume shows a strong background in programming languages, databases, and machine learning, but lacks relevant experience and skills in frontend development, which is the primary requirement for the Frontend Developer intern role. The candidate's projects and technical skills are more focused on backend development, data analytics, and machine learning, which are not directly applicable to the job description.",
+  "reasoning": "The candidate's background is primarily in Java, Python, and machine learning, with limited exposure to frontend development technologies such as React, Angular, or Vue, which are required for the role. Although the candidate has basic knowledge of HTML, CSS, and JavaScript, it is not sufficient to meet the job requirements.",
   "strengths": [
-    "The candidate has a strong foundation in programming languages, including Java, Python, and C, which demonstrates their ability to learn and adapt to new technologies.",
-    "The candidate's experience with database management systems, including SQL and DBMS, is a valuable skill that can be applied to various aspects of software development.",
-    "The candidate's project on uncertainty-aware fire detection system showcases their ability to work on complex projects and apply machine learning concepts to real-world problems.",
-    "The candidate's certification in Cisco Certified Support Technician \u2013 Networking demonstrates their interest in networking and IT fundamentals.",
-    "The candidate's experience with Git, Jupyter Notebook, and VS Code shows their familiarity with popular development tools and platforms."
+    "The candidate has a strong foundation in programming languages, including Java and Python, which demonstrates their ability to learn and adapt to new technologies.",
+    "The candidate's experience with database management systems, such as SQL and DBMS, is a valuable skill that can be applied to various aspects of software development.",
+    "The candidate's project on uncertainty-aware fire detection system showcases their ability to work on complex projects and apply problem-solving skills.",
+    "The candidate's familiarity with Git, although basic, is a positive aspect as it indicates some experience with version control systems.",
+    "The candidate's academic background, with a CGPA of 8.04, suggests a strong work ethic and dedication to their studies."
   ],
   "gaps": [
-    "The candidate lacks experience in frontend development frameworks such as React, Angular, or Vue, which is a critical requirement for the job description.",
-    "The candidate's resume does not mention any experience with responsive design, Bootstrap, or Tailwind CSS, which are essential skills for a frontend developer.",
-    "The candidate's projects do not demonstrate any experience with REST API integration, which is a key aspect of frontend development.",
-    "The candidate's resume does not show any evidence of experience with cross-browser compatibility, debugging, or optimization, which are important skills for a frontend developer.",
-    "The candidate's lack of experience in UI/UX design principles and DOM manipulation is a significant gap, as these skills are crucial for creating dynamic and interactive user interfaces."
+    "The candidate lacks experience with frontend frameworks such as React, Angular, or Vue, which are essential for the role.",
+    "The candidate has limited knowledge of responsive design and cross-browser compatibility, which are critical aspects of frontend development.",
+    "The candidate's experience with REST API integration is not mentioned, which is a key requirement for the role.",
+    "The candidate's understanding of UI/UX principles is basic, which may not be sufficient to create visually appealing and user-friendly interfaces.",
+    "The candidate's experience with debugging and testing is not explicitly mentioned, which is an important aspect of frontend development."
   ],
   "recommendation": "reject",
   "status": "pass_2_complete",
-  "updated_at": "2026-05-04T05:29:58.436771"
+  "updated_at": "2026-05-04T06:21:36.802843"
 }
