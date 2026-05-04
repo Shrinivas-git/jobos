@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ClipboardList, CheckCircle, XCircle, ChevronDown, ChevronUp, Users,
-  Clock, AlertTriangle, ArrowRight,
+  Clock, AlertTriangle, ArrowRight, Calendar, X,
 } from 'lucide-react';
 import keycloak from '../keycloak';
 import {
@@ -164,6 +164,14 @@ const RecruiterDashboard: React.FC = () => {
   const [pipelineError, setPipelineError] = useState<string | null>(null);
   const [isManager, setIsManager] = useState(false);
 
+  // Interview scheduling modal
+  const [interviewModal, setInterviewModal] = useState<{ candidateId: string; nextStage: string } | null>(null);
+  const [interviewForm, setInterviewForm] = useState({
+    date: '', time: '', mode: 'online' as 'online' | 'in-person',
+    meeting_link: '', location: '', duration: '1hour', notes: '',
+  });
+  const [interviewSubmitting, setInterviewSubmitting] = useState(false);
+
   // Prevents stale results from a superseded JD click arriving after a newer one.
   const pendingJdRef = useRef<string>('');
 
@@ -244,12 +252,12 @@ const RecruiterDashboard: React.FC = () => {
     }
   };
 
-  const advanceStage = async (jdId: string, candidateId: string) => {
+  const advanceStage = async (jdId: string, candidateId: string, body: object = {}) => {
     try {
       const res = await fetch(`${API}/pipeline/advance/${jdId}/${candidateId}`, {
         method: 'POST',
         headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
+        body: JSON.stringify(body),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       await loadPipeline(jdId);
@@ -257,6 +265,44 @@ const RecruiterDashboard: React.FC = () => {
       setPipelineError('Advance failed: ' + e.message);
     }
   };
+
+  const handleAdvanceClick = (jdId: string, record: PipelineRecord) => {
+    const stageIdx = STAGE_ORDER.indexOf(record.current_stage);
+    const nextStage = STAGE_ORDER[stageIdx + 1];
+    if (nextStage === 'interview_1' || nextStage === 'interview_final') {
+      setInterviewForm({ date: '', time: '', mode: 'online', meeting_link: '', location: '', duration: '1hour', notes: '' });
+      setInterviewModal({ candidateId: record.candidate_id, nextStage });
+    } else {
+      advanceStage(jdId, record.candidate_id);
+    }
+  };
+
+  const submitInterviewAdvance = async () => {
+    if (!interviewModal) return;
+    setInterviewSubmitting(true);
+    try {
+      await advanceStage(selectedJdId, interviewModal.candidateId, {
+        next_stage: interviewModal.nextStage,
+        interview_details: {
+          date: interviewForm.date,
+          time: interviewForm.time,
+          mode: interviewForm.mode,
+          meeting_link: interviewForm.mode === 'online' ? interviewForm.meeting_link : undefined,
+          location: interviewForm.mode === 'in-person' ? interviewForm.location : undefined,
+          duration: interviewForm.duration,
+          notes: interviewForm.notes || undefined,
+        },
+      });
+      setInterviewModal(null);
+    } finally {
+      setInterviewSubmitting(false);
+    }
+  };
+
+  const interviewFormValid =
+    !!interviewForm.date &&
+    !!interviewForm.time &&
+    (interviewForm.mode === 'online' ? !!interviewForm.meeting_link : !!interviewForm.location);
 
   const requestExtension = async (jdId: string, candidateId: string) => {
     const form = extensionForms[candidateId];
@@ -769,7 +815,7 @@ const RecruiterDashboard: React.FC = () => {
                     ) : (
                       <>
                         <button
-                          onClick={() => advanceStage(selectedJdId, record.candidate_id)}
+                          onClick={() => handleAdvanceClick(selectedJdId, record)}
                           className="flex items-center space-x-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-colors"
                         >
                           <ArrowRight size={12} />
@@ -956,6 +1002,131 @@ const RecruiterDashboard: React.FC = () => {
 
           {activeTab === 'pipeline' && renderPipelineTab()}
         </>
+      )}
+
+      {/* Interview scheduling modal */}
+      {interviewModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#1e293b] border border-slate-700/50 rounded-2xl p-8 w-full max-w-lg shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-600/20 rounded-xl">
+                  <Calendar className="text-blue-400" size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Schedule Interview</h3>
+                  <p className="text-xs text-slate-400">
+                    {STAGE_LABELS[interviewModal.nextStage]} — {candidateNames[interviewModal.candidateId] || interviewModal.candidateId}
+                  </p>
+                </div>
+              </div>
+              <button onClick={() => setInterviewModal(null)} className="text-slate-500 hover:text-white transition-colors">
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">Date <span className="text-red-400">*</span></label>
+                  <input
+                    type="date"
+                    value={interviewForm.date}
+                    onChange={e => setInterviewForm(f => ({ ...f, date: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">Time <span className="text-red-400">*</span></label>
+                  <input
+                    type="time"
+                    value={interviewForm.time}
+                    onChange={e => setInterviewForm(f => ({ ...f, time: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">Mode <span className="text-red-400">*</span></label>
+                  <select
+                    value={interviewForm.mode}
+                    onChange={e => setInterviewForm(f => ({ ...f, mode: e.target.value as 'online' | 'in-person' }))}
+                    className="w-full px-3 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="online">Online</option>
+                    <option value="in-person">In-person</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">Duration</label>
+                  <select
+                    value={interviewForm.duration}
+                    onChange={e => setInterviewForm(f => ({ ...f, duration: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="30min">30 minutes</option>
+                    <option value="45min">45 minutes</option>
+                    <option value="1hour">1 hour</option>
+                  </select>
+                </div>
+              </div>
+
+              {interviewForm.mode === 'online' ? (
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">Meeting Link <span className="text-red-400">*</span></label>
+                  <input
+                    type="url"
+                    placeholder="https://meet.google.com/..."
+                    value={interviewForm.meeting_link}
+                    onChange={e => setInterviewForm(f => ({ ...f, meeting_link: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">Location <span className="text-red-400">*</span></label>
+                  <input
+                    type="text"
+                    placeholder="Office address or room"
+                    value={interviewForm.location}
+                    onChange={e => setInterviewForm(f => ({ ...f, location: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-bold text-slate-300 mb-1.5">Notes for candidate <span className="text-slate-500">(optional)</span></label>
+                <textarea
+                  placeholder="Any preparation tips, documents to bring, etc."
+                  value={interviewForm.notes}
+                  onChange={e => setInterviewForm(f => ({ ...f, notes: e.target.value }))}
+                  rows={3}
+                  className="w-full px-3 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={submitInterviewAdvance}
+                disabled={!interviewFormValid || interviewSubmitting}
+                className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/40 text-white font-semibold text-sm rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                {interviewSubmitting ? 'Scheduling...' : 'Confirm & Advance'}
+              </button>
+              <button
+                onClick={() => setInterviewModal(null)}
+                disabled={interviewSubmitting}
+                className="flex-1 py-2.5 bg-slate-700/50 hover:bg-slate-700 text-slate-300 font-semibold text-sm rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

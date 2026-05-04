@@ -236,3 +236,81 @@ def notify_candidate_document_access(
 
     send_email(candidate["email"], subject, html)
     logger.info(f"Document access notification sent to {candidate['email']} for {doc_id}")
+
+
+@celery.task(name="tasks.notification_tasks.send_interview_email")
+def send_interview_email(jd_id: str, candidate_id: str, interview_details: dict):
+    """Send interview schedule confirmation email to candidate."""
+    logger.info(f"send_interview_email: {candidate_id} for JD {jd_id}")
+    db = get_db()
+
+    candidate = db.candidates.find_one({"candidate_id": candidate_id}, {"email": 1, "name": 1})
+    if not candidate or not candidate.get("email"):
+        logger.warning(f"No email for candidate {candidate_id} — skipping interview email")
+        return
+
+    jd = db.job_descriptions.find_one({"jd_id": jd_id})
+    jd_title = (jd.get("structured_data", {}).get("title") or jd.get("title", "Job Role")) if jd else "Job Role"
+
+    name = candidate.get("name", "Candidate")
+    email = candidate["email"]
+
+    date = interview_details.get("date", "")
+    time = interview_details.get("time", "")
+    mode = interview_details.get("mode", "online")
+    meeting_link = interview_details.get("meeting_link") or ""
+    location = interview_details.get("location") or ""
+    notes = interview_details.get("notes") or ""
+    duration_map = {"30min": "30 minutes", "45min": "45 minutes", "1hour": "1 hour"}
+    duration_label = duration_map.get(interview_details.get("duration", "1hour"), "1 hour")
+
+    mode_row = ""
+    if mode == "online" and meeting_link:
+        mode_row = f'<p style="color:#94a3b8;margin:4px 0;font-size:13px">Meeting Link: <a href="{meeting_link}" style="color:#60a5fa">{meeting_link}</a></p>'
+    elif mode == "in-person" and location:
+        mode_row = f'<p style="color:#94a3b8;margin:4px 0;font-size:13px">Location: <span style="color:#f1f5f9">{location}</span></p>'
+
+    notes_block = ""
+    if notes:
+        notes_block = f"""
+        <div style="background:#0f172a;padding:16px;border-radius:8px;margin-top:16px">
+          <p style="color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px 0">Notes from Recruiter</p>
+          <p style="color:#94a3b8;margin:0;font-size:13px">{notes}</p>
+        </div>"""
+
+    subject = f"[JobOS] Interview Scheduled — {jd_title}"
+    html = f"""<!DOCTYPE html>
+<html>
+<body style="background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#f1f5f9;margin:0;padding:24px">
+  <div style="max-width:600px;margin:0 auto">
+    <div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px">
+      <h1 style="color:#60a5fa;margin:0 0 4px 0;font-size:22px">JobOS</h1>
+      <p style="color:#94a3b8;margin:0;font-size:12px;text-transform:uppercase;letter-spacing:2px">Interview Scheduled</p>
+    </div>
+    <div style="background:#1e293b;padding:24px;border-radius:12px">
+      <p style="color:#f1f5f9;margin:0 0 16px 0">Hi {name},</p>
+      <p style="color:#94a3b8;margin:0 0 20px 0">
+        Your interview for <strong style="color:#f1f5f9">{jd_title}</strong> has been scheduled. Please find the details below.
+      </p>
+      <div style="background:#0f172a;padding:16px;border-radius:8px;margin-bottom:16px">
+        <p style="color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin:0 0 12px 0">Interview Details</p>
+        <p style="color:#94a3b8;margin:4px 0;font-size:13px">Date: <span style="color:#f1f5f9">{date}</span></p>
+        <p style="color:#94a3b8;margin:4px 0;font-size:13px">Time: <span style="color:#f1f5f9">{time}</span></p>
+        <p style="color:#94a3b8;margin:4px 0;font-size:13px">Duration: <span style="color:#f1f5f9">{duration_label}</span></p>
+        <p style="color:#94a3b8;margin:4px 0;font-size:13px">Mode: <span style="color:#f1f5f9">{"Online" if mode == "online" else "In-person"}</span></p>
+        {mode_row}
+      </div>
+      {notes_block}
+      <p style="color:#64748b;font-size:12px;margin-top:20px 0 0 0">
+        Please ensure you are available at the scheduled time. Reply to this email if you need to reschedule.
+      </p>
+    </div>
+    <p style="color:#334155;font-size:11px;text-align:center;margin-top:24px">
+      JobOS · Recruitment Operating System · Do not reply to this email
+    </p>
+  </div>
+</body>
+</html>"""
+
+    send_email(email, subject, html)
+    logger.info(f"Interview email sent to {email} for candidate {candidate_id}")

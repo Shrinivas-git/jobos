@@ -107,8 +107,22 @@ async def list_pipeline_for_jd(
     return [_serialize(d) for d in docs]
 
 
+_INTERVIEW_STAGES = {"interview_1", "interview_final"}
+
+
+class InterviewDetails(BaseModel):
+    date: str
+    time: str
+    mode: str                        # "online" | "in-person"
+    meeting_link: Optional[str] = None
+    location: Optional[str] = None
+    duration: str                    # "30min" | "45min" | "1hour"
+    notes: Optional[str] = None
+
+
 class AdvanceBody(BaseModel):
     next_stage: Optional[str] = None
+    interview_details: Optional[InterviewDetails] = None
 
 
 @router.post("/advance/{jd_id}/{candidate_id}")
@@ -151,7 +165,10 @@ async def advance_stage(
         raise HTTPException(status_code=500, detail="Inconsistent state: current stage missing from stages array")
 
     stages[cur_idx]["completed_at"] = now
-    stages.append(_build_stage(next_name, int(sla_map.get(next_name, 72)), now))
+    new_stage = _build_stage(next_name, int(sla_map.get(next_name, 72)), now)
+    if body.interview_details and next_name in _INTERVIEW_STAGES:
+        new_stage["interview_details"] = body.interview_details.model_dump()
+    stages.append(new_stage)
 
     db.pipeline_stages.update_one(
         {"_id": doc["_id"]},
@@ -166,6 +183,13 @@ async def advance_stage(
             create_auto_task(db, t_type, desc, owner, jd_id, candidate_id, priority, due_h)
         except Exception:
             pass  # task creation must never block pipeline advance
+
+    if body.interview_details and next_name in _INTERVIEW_STAGES:
+        try:
+            from tasks.notification_tasks import send_interview_email
+            send_interview_email.delay(jd_id, candidate_id, body.interview_details.model_dump())
+        except Exception:
+            pass  # email must never block stage advance
 
     if next_name == "joined":
         try:
