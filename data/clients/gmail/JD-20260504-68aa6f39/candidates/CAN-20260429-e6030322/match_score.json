@@ -1,24 +1,24 @@
 {
-  "fitment_score": 60.0,
+  "fitment_score": 70.0,
   "completeness_score": 100.0,
   "context_bonus": 5.0,
-  "composite_score": 61.205786,
-  "reasoning": "The candidate has some relevant skills such as React.js, HTML5, CSS3, and experience with REST APIs, but lacks extensive experience in frontend development and has a stronger background in backend development and data science.",
+  "composite_score": 67.705786,
+  "reasoning": "The candidate has some relevant experience and skills in frontend development, particularly with React.js, and has worked on various projects that demonstrate their ability to build user-facing features and integrate with backend APIs. However, their primary experience and skills are in backend development and data science, which may require additional training or adaptation to fit the frontend developer intern role.",
   "strengths": [
-    "The candidate has experience with React.js, as seen in their project AI-Driven Speech Clarity Enhancement System, where they built a FastAPI and React-based application.",
-    "They have a strong foundation in programming languages such as Python and Java, with experience in building scalable RESTful APIs using FastAPI and Flask.",
-    "The candidate has worked on several projects, including a BookMyShow clone using the MERN stack, demonstrating their ability to develop full-stack applications.",
-    "They have experience with Git and have a GitHub profile, indicating familiarity with version control systems.",
-    "The candidate has a certification in AI Foundations and has worked on machine learning models using Scikit-learn, demonstrating their ability to learn and apply new technologies."
+    "The candidate has experience with React.js and has built several projects using it, including the AI-Driven Speech Clarity Enhancement System and the BookMyShow Clone.",
+    "They have a strong foundation in programming languages, including Python, Java, and JavaScript, which is relevant to the role.",
+    "The candidate has experience with frontend development frameworks and tools, including HTML5, CSS3, and Git, which is a plus for the role.",
+    "They have a good understanding of software engineering principles and have worked on several projects that demonstrate their ability to design and develop software systems.",
+    "The candidate has a strong academic background, with a Master's degree in Computer Applications and a Bachelor's degree in Computer Applications, which provides a solid foundation for their technical skills."
   ],
   "gaps": [
-    "The candidate lacks extensive experience in frontend development, with most of their experience focused on backend development and data science.",
-    "They do not have experience with Bootstrap/Tailwind CSS, which is a required skill for the job.",
-    "The candidate's experience with cross-browser compatibility and debugging is not explicitly mentioned in their resume.",
-    "They do not have experience with ES6+, which is a required skill for the job.",
-    "The candidate's portfolio does not demonstrate a strong focus on frontend development, with most of their projects focusing on backend development and data science."
+    "The candidate's primary experience and skills are in backend development and data science, which may require additional training or adaptation to fit the frontend developer intern role.",
+    "They lack direct experience with some of the required skills, such as Bootstrap/Tailwind CSS and ES6+, which may require additional learning or training.",
+    "The candidate's experience with REST API integration is mostly from a backend development perspective, which may not directly translate to frontend development requirements.",
+    "They may require additional training or mentorship to develop a deeper understanding of frontend development best practices and principles.",
+    "The candidate's portfolio could benefit from more examples of frontend development projects, particularly those that demonstrate their ability to build responsive and visually appealing web pages."
   ],
   "recommendation": "hold",
   "status": "pass_2_complete",
-  "updated_at": "2026-05-04T06:21:35.121210"
+  "updated_at": "2026-05-04T06:39:14.231409"
 }

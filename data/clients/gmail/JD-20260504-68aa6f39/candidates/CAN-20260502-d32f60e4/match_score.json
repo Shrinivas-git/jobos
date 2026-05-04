@@ -1,24 +1,24 @@
 {
-  "fitment_score": 60.0,
+  "fitment_score": 40.0,
   "completeness_score": 100.0,
   "context_bonus": 0.0,
-  "composite_score": 56.363126,
-  "reasoning": "The candidate has some relevant technical skills such as JavaScript, HTML, and CSS, and has worked on projects that demonstrate their ability to design and develop systems. However, their experience is limited to internships and personal projects, and they lack direct experience with frontend frameworks like React, which is a key requirement for the job.",
+  "composite_score": 43.363126,
+  "reasoning": "The candidate lacks direct experience in frontend development with React.js and has limited exposure to HTML, CSS, and JavaScript in personal projects, which are essential requirements for the Frontend Developer intern role. However, the candidate demonstrates some relevant skills and has experience with programming languages, databases, and tools, which could be beneficial with additional training and guidance.",
   "strengths": [
-    "The candidate has a strong foundation in programming languages, including JavaScript, which is a key requirement for the job.",
-    "They have experience with databases, including MongoDB, which is relevant to the job's requirement for REST API integration.",
-    "The candidate has worked on projects that demonstrate their ability to design and develop systems, such as the Student Database Management System.",
-    "They have certifications in AWS and Cisco, which demonstrate their ability to learn and adapt to new technologies.",
-    "The candidate has a profile on LeetCode, which suggests that they are actively working on improving their coding skills."
+    "The candidate has experience with programming languages, including JavaScript, which is a key requirement for the role.",
+    "The candidate has worked on personal projects, such as the Student Database Management System, Metrimony Website, and Chat Bot, which demonstrate their ability to design and develop applications.",
+    "The candidate has certifications in AWS and Cisco, which shows their enthusiasm for learning and staying updated with industry trends.",
+    "The candidate has experience with databases, including MySQL and MongoDB, which could be beneficial for data integration and management.",
+    "The candidate has a strong educational background, with a Master of Computer Applications degree and a Bachelor of Computer Applications degree, which provides a solid foundation in computer science concepts."
   ],
   "gaps": [
-    "The candidate lacks direct experience with frontend frameworks like React, which is a key requirement for the job.",
-    "They do not have experience with Bootstrap or Tailwind CSS, which are specific requirements for the job.",
-    "The candidate's experience is limited to internships and personal projects, which may not be equivalent to full-time work experience.",
-    "They do not have a clear understanding of DOM manipulation, which is a key concept in frontend development.",
-    "The candidate's experience with cross-browser compatibility and debugging is not clearly demonstrated in their resume."
+    "The candidate lacks direct experience with React.js, which is a key requirement for the role, and has limited exposure to frontend development.",
+    "The candidate's portfolio does not demonstrate a strong focus on frontend development, with most projects utilizing Python and Django, which may not be directly applicable to the role.",
+    "The candidate's experience with HTML, CSS, and JavaScript is limited to personal projects, and they may require additional training and guidance to meet the role's requirements.",
+    "The candidate's resume does not demonstrate experience with REST API integration, cross-browser compatibility, or debugging, which are essential skills for a Frontend Developer intern.",
+    "The candidate's resume does not provide evidence of their problem-solving skills, communication skills, or ability to work in a team, which are crucial for success in the role."
   ],
   "recommendation": "hold",
   "status": "pass_2_complete",
-  "updated_at": "2026-05-04T06:21:38.140212"
+  "updated_at": "2026-05-04T06:39:17.632932"
 }

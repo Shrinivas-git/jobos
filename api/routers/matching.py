@@ -109,6 +109,21 @@ async def record_candidate_action(
     )
     if body.action == "shortlist":
         upsert_initial_stage(db, jd_id, candidate_id, "shortlist")
+    if body.action == "reject":
+        rejected = list(db.candidate_pools.find(
+            {"jd_id": jd_id, "status": "rejected"},
+            {"action_reason": 1}
+        ))
+        reason_counts: dict = {}
+        for r in rejected:
+            rsn = r.get("action_reason") or "Unknown"
+            reason_counts[rsn] = reason_counts.get(rsn, 0) + 1
+        flagged = next((rsn for rsn, cnt in reason_counts.items() if cnt >= 3), None)
+        if flagged:
+            db.job_descriptions.update_one(
+                {"jd_id": jd_id},
+                {"$set": {"quality_flag": flagged, "quality_flag_at": datetime.utcnow()}}
+            )
     return {"ok": True}
 
 

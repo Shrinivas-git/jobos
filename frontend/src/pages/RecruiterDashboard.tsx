@@ -223,6 +223,16 @@ const RecruiterDashboard: React.FC = () => {
     setError(null);
     setPipelineRecords([]);
     setPipelineError(null);
+
+    try {
+      const res = await fetch(`${API}/matching/results/${jdId}`, { headers: getAuthHeaders() });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (pendingJdRef.current !== jdId) return;
+      setResults(Array.isArray(data) ? data : []);
+    } catch {
+      // silently ignore — empty results state already set above
+    }
   };
 
   const loadPipeline = async (jdId: string) => {
@@ -236,6 +246,8 @@ const RecruiterDashboard: React.FC = () => {
       const data: PipelineRecord[] = await res.json();
       setPipelineRecords(data);
       setExtensionForms({});
+      const asmtRes = await fetch(`${API}/assessments/by-jd/${jdId}`, { headers: getAuthHeaders() });
+      if (asmtRes.ok) setAssessments(await asmtRes.json());
       if (managerRole) {
         const bRes = await fetch(`${API}/pipeline/breaches`, { headers: getAuthHeaders() });
         if (bRes.ok) setBreaches(await bRes.json());
@@ -816,6 +828,49 @@ const RecruiterDashboard: React.FC = () => {
                           <ArrowRight size={12} />
                           <span>Advance Stage</span>
                         </button>
+                        {/* Assessment badge or Send Assessment button */}
+                        {(() => {
+                          const asmt = assessments[record.candidate_id];
+                          if (asmt?.status === 'completed') {
+                            return (
+                              <span className="px-3 py-2 text-[10px] font-bold rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                                Assessment: {asmt.score}/100
+                              </span>
+                            );
+                          }
+                          if (asmt?.status === 'pending') {
+                            return (
+                              <span className="px-3 py-2 text-[10px] font-bold rounded-lg bg-slate-700/50 text-slate-400 border border-slate-600/50">
+                                Assessment Sent
+                              </span>
+                            );
+                          }
+                          return (
+                            <button
+                              disabled={sendingAssessment === record.candidate_id}
+                              onClick={async () => {
+                                setSendingAssessment(record.candidate_id);
+                                try {
+                                  const r = await fetch(`${API}/assessments/generate/${selectedJdId}/${record.candidate_id}`, {
+                                    method: 'POST', headers: getAuthHeaders(),
+                                  });
+                                  if (r.ok) {
+                                    const d = await r.json();
+                                    setAssessments(prev => ({
+                                      ...prev,
+                                      [record.candidate_id]: { status: 'pending', score: null, assessment_id: d.assessment_id },
+                                    }));
+                                  }
+                                } finally {
+                                  setSendingAssessment(null);
+                                }
+                              }}
+                              className="flex items-center space-x-1.5 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/40 disabled:opacity-40 text-blue-400 text-[10px] font-bold rounded-lg border border-blue-500/20 transition-colors"
+                            >
+                              {sendingAssessment === record.candidate_id ? '…' : 'Send Assessment'}
+                            </button>
+                          );
+                        })()}
                         {!hasPendingExt && (
                           <button
                             onClick={() => setExtensionForms(prev => ({

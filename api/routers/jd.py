@@ -47,6 +47,8 @@ class JDResponse(BaseModel):
     source: str
     uploaded_by: Optional[str] = None
     structured_data: Optional[dict] = None
+    quality_flag: Optional[str] = None
+    quality_flag_at: Optional[datetime] = None
 
     class Config:
         populate_by_name = True

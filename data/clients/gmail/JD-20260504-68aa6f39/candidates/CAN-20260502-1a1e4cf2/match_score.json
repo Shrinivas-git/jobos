@@ -1,24 +1,24 @@
 {
-  "fitment_score": 20.0,
+  "fitment_score": 30.0,
   "completeness_score": 83.33333333333334,
   "context_bonus": 0.0,
-  "composite_score": 30.283891333333337,
-  "reasoning": "The candidate's background is primarily in Java, Python, and machine learning, with limited exposure to frontend development technologies such as React, Angular, or Vue, which are required for the role. Although the candidate has basic knowledge of HTML, CSS, and JavaScript, it is not sufficient to meet the job requirements.",
+  "composite_score": 36.78389133333334,
+  "reasoning": "The candidate's resume showcases a strong foundation in programming languages, databases, and machine learning, but lacks specific experience and skills in frontend development, which is the primary requirement for the Frontend Developer intern role. The candidate's experience is more geared towards backend development, database management, and machine learning, making them a less suitable fit for this role.",
   "strengths": [
-    "The candidate has a strong foundation in programming languages, including Java and Python, which demonstrates their ability to learn and adapt to new technologies.",
-    "The candidate's experience with database management systems, such as SQL and DBMS, is a valuable skill that can be applied to various aspects of software development.",
-    "The candidate's project on uncertainty-aware fire detection system showcases their ability to work on complex projects and apply problem-solving skills.",
-    "The candidate's familiarity with Git, although basic, is a positive aspect as it indicates some experience with version control systems.",
-    "The candidate's academic background, with a CGPA of 8.04, suggests a strong work ethic and dedication to their studies."
+    "The candidate has a strong educational background in Master of Computer Applications (MCA) with a CGPA of 8.04, demonstrating their academic capabilities.",
+    "The candidate has hands-on experience with programming languages such as Java, Python, and C, which is a plus for any development role.",
+    "The candidate has experience with HTML, CSS, and JavaScript, which are essential skills for frontend development, although they are not the primary focus of their experience.",
+    "The candidate has worked on projects that demonstrate their problem-solving skills, such as the Uncertainty-Aware Fire Detection System, which showcases their ability to apply machine learning concepts to real-world problems.",
+    "The candidate has a basic understanding of Git, which is a essential tool for version control in software development."
   ],
   "gaps": [
-    "The candidate lacks experience with frontend frameworks such as React, Angular, or Vue, which are essential for the role.",
-    "The candidate has limited knowledge of responsive design and cross-browser compatibility, which are critical aspects of frontend development.",
-    "The candidate's experience with REST API integration is not mentioned, which is a key requirement for the role.",
-    "The candidate's understanding of UI/UX principles is basic, which may not be sufficient to create visually appealing and user-friendly interfaces.",
-    "The candidate's experience with debugging and testing is not explicitly mentioned, which is an important aspect of frontend development."
+    "The candidate lacks experience with React.js, which is a specific requirement for the Frontend Developer intern role, and has no mention of working with frameworks like React, Angular, or Vue.",
+    "The candidate has no experience with responsive design, Bootstrap, or Tailwind CSS, which are essential skills for creating visually appealing and responsive web pages.",
+    "The candidate has no experience with REST API integration, which is a crucial aspect of frontend development, and has no mention of working with APIs.",
+    "The candidate lacks experience with cross-browser compatibility and debugging, which are essential skills for ensuring that web applications work seamlessly across different browsers and devices.",
+    "The candidate has no experience working with frontend-specific tools and technologies, such as DOM manipulation, ES6+, or Basic UI/UX understanding, which are critical for frontend development."
   ],
   "recommendation": "reject",
   "status": "pass_2_complete",
-  "updated_at": "2026-05-04T06:21:36.802843"
+  "updated_at": "2026-05-04T06:39:15.938181"
 }

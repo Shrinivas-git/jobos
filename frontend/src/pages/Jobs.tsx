@@ -518,7 +518,13 @@ const Jobs: React.FC = () => {
                   </div>
                   
                   <h5 className="font-bold text-white group-hover:text-blue-400 transition-colors mb-2 truncate pr-4">{jd.title}</h5>
-                  
+
+                  {jd.quality_flag && (
+                    <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-yellow-500/10 border border-yellow-500/30 rounded-lg mt-2 mb-2">
+                      <span className="text-yellow-400 text-xs font-bold">⚠ Review JD — {jd.quality_flag}</span>
+                    </div>
+                  )}
+
                   <div className="flex flex-wrap gap-2 mt-auto">
                     <div className="flex items-center space-x-1.5 bg-slate-900 px-2 py-1 rounded-lg border border-slate-800">
                       <span className="text-[9px] font-black text-slate-500 uppercase">{jd.jd_id}</span>
