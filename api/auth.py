@@ -38,22 +38,20 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
                 }
         
         if rsa_key:
-            # Relaxed validation for local development environments
             payload = jwt.decode(
                 token,
                 rsa_key,
                 algorithms=["RS256"],
                 options={
                     "verify_aud": False,
-                    "verify_iss": False,
-                    "verify_at_hash": False
+                    "verify_at_hash": False,
+                    "leeway": 30,  # 30s clock skew tolerance
                 }
             )
-            
-            # Simple manual issuer validation (ensures token is from our realm)
-            iss = payload.get("iss", "")
-            if REALM not in iss:
-                 raise HTTPException(status_code=401, detail="Invalid issuer")
+
+            expected_iss = f"{KEYCLOAK_URL}/realms/{REALM}"
+            if payload.get("iss") != expected_iss:
+                raise HTTPException(status_code=401, detail="Invalid issuer")
                  
             return payload
         else:

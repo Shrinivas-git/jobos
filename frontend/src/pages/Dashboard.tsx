@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import keycloak from '../keycloak';
 import { Users, Globe, Activity, Clock, CheckCircle2, UserCheck, Edit2, Save, X } from 'lucide-react';
 import RecruiterDashboard from './RecruiterDashboard';
-import { getMyProfile, updateMyProfile, CandidateProfile } from '../utils/api';
+import { getMyProfile, updateMyProfile, CandidateProfile, API, getAuthHeaders, getUnreadCount } from '../utils/api';
 
 const KNOWN_ROLES = ['admin', 'manager', 'recruiter', 'hod', 'candidate', 'account_manager', 'senior_recruiter', 'junior_recruiter', 'intern'];
 
@@ -30,6 +30,23 @@ const Dashboard: React.FC = () => {
   const roles = keycloak.tokenParsed?.realm_access?.roles || [];
   const filteredRoles = roles.filter(r => KNOWN_ROLES.includes(r));
   const role = primaryRole(roles);
+  const [stats, setStats] = useState({ candidates: 0, activeJDs: 0, systemEvents: 0 });
+
+  useEffect(() => {
+    if (role !== 'admin' && role !== 'manager') return;
+    const headers = getAuthHeaders();
+    Promise.all([
+      fetch(`${API}/candidates/`, { headers }).then(r => r.json()),
+      fetch(`${API}/jobs/`, { headers }).then(r => r.json()),
+      getUnreadCount(),
+    ]).then(([cands, jobs, events]) => {
+      setStats({
+        candidates: Array.isArray(cands) ? cands.length : 0,
+        activeJDs: Array.isArray(jobs) ? jobs.filter((j: any) => j.status === 'active').length : 0,
+        systemEvents: events,
+      });
+    }).catch(() => {});
+  }, [role]);
 
   useEffect(() => {
     if (role === 'candidate') {
@@ -295,9 +312,9 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatCard title="Total Candidates" value="1,248" icon={<Users size={24} />} trend="+12%" color="blue" />
-        <StatCard title="Active JDs" value="42" icon={<Globe size={24} />} trend="+3" color="emerald" />
-        <StatCard title="System Events" value="45.2k" icon={<Activity size={24} />} trend="+5.4k" color="amber" />
+        <StatCard title="Total Candidates" value={stats.candidates.toLocaleString()} icon={<Users size={24} />} color="blue" />
+        <StatCard title="Active JDs" value={String(stats.activeJDs)} icon={<Globe size={24} />} color="emerald" />
+        <StatCard title="System Events" value={stats.systemEvents.toLocaleString()} icon={<Activity size={24} />} color="amber" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

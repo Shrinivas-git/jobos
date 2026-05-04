@@ -75,9 +75,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   
   const navItems = [
     { label: 'Dashboard', icon: <LayoutDashboard size={18} />, path: '/dashboard', roles: ['candidate', 'recruiter', 'manager', 'hod', 'admin'] },
-    { label: 'Job Requirements', icon: <Briefcase size={18} />, path: '/jobs', roles: ['recruiter', 'manager', 'hod', 'admin'] },
-    { label: 'Candidate Pool', icon: <Users size={18} />, path: '/candidates', roles: ['recruiter', 'manager', 'admin'] },
-    { label: 'Document Vault', icon: <FileText size={18} />, path: '/documents', roles: ['candidate', 'recruiter', 'manager', 'hod', 'admin'] },
+    { label: 'Job Requirements', icon: <Briefcase size={18} />, path: '/jobs', roles: ['recruiter', 'hod', 'admin'] },
+    { label: 'Candidate Pool', icon: <Users size={18} />, path: '/candidates', roles: ['recruiter', 'admin'] },
+    { label: 'Document Vault', icon: <FileText size={18} />, path: '/documents', roles: ['candidate', 'recruiter', 'hod', 'admin'] },
     { label: 'Communications', icon: <MessageSquare size={18} />, path: '/crm', roles: ['recruiter', 'manager', 'admin'] },
     { label: 'Matching Engine', icon: <Zap size={18} />, path: '/matching', roles: ['recruiter', 'manager', 'admin'] },
     { label: 'Analytics', icon: <BarChart3 size={18} />, path: '/analytics', roles: ['manager', 'admin', 'hod'] },

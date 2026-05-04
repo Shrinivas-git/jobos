@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Header
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 import logging
 import os
@@ -487,3 +487,59 @@ async def upload_resume(
     except Exception as e:
         print(f"Error processing resume: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ── DPDP: Consent & Right-to-Erasure ─────────────────────────────────────────
+
+@router.post("/{candidate_id}/consent")
+async def record_consent(
+    candidate_id: str,
+    user: dict = Depends(check_role(["candidate", "recruiter", "admin"])),
+):
+    """Record DPDP consent for a candidate."""
+    db = get_db()
+    result = db.candidates.update_one(
+        {"candidate_id": candidate_id},
+        {"$set": {
+            "consent_given": True,
+            "consent_at": datetime.now(timezone.utc),
+            "consent_actor": user.get("sub"),
+        }}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Candidate not found")
+    return {"status": "consent recorded", "candidate_id": candidate_id}
+
+
+@router.delete("/{candidate_id}/erase")
+async def erase_candidate(
+    candidate_id: str,
+    user: dict = Depends(check_role(["admin"])),
+):
+    """Right-to-erasure: anonymise all PII fields for a candidate (admin only)."""
+    db = get_db()
+    erased = "[ERASED]"
+    result = db.candidates.update_one(
+        {"candidate_id": candidate_id},
+        {"$set": {
+            "name": erased,
+            "email": f"{candidate_id}@erased.invalid",
+            "phone": erased,
+            "resume_url": erased,
+            "resume_text": erased,
+            "file_paths": [],
+            "skills": [],
+            "education": [],
+            "projects": [],
+            "achievements": [],
+            "certifications": [],
+            "languages": [],
+            "location": erased,
+            "college": erased,
+            "erased_at": datetime.now(timezone.utc),
+            "erased_by": user.get("sub"),
+        }}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Candidate not found")
+    return {"status": "candidate erased", "candidate_id": candidate_id}
