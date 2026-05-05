@@ -34,6 +34,17 @@ export interface MatchResult {
   preferred_company_type?: string[];
   preferred_team_size?: string;
   jd_role_type?: string;
+  scoring_factors?: Array<{ factor: string; impact: string; reason: string }>;
+  hard_filters_passed?: boolean;
+  hard_filter_failures?: string[];
+  role_level_detected?: string;
+  role_level_match?: string;
+  tool_currency?: string;
+  cv_narrative_style?: string;
+  availability_signal?: string;
+  rare_assets?: string[];
+  self_reported_unverified?: string[];
+  interview_flags?: string[];
 }
 
 export type CandidateLookup = Record<string, string>;

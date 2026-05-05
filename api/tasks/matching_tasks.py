@@ -173,6 +173,16 @@ def run_pass_2(jd_id: str):
             "gaps": evaluation.get("gaps"),
             "recommendation": evaluation.get("recommendation"),
             "scoring_factors": evaluation.get("scoring_factors", []),
+            "hard_filters_passed": evaluation.get("hard_filters_passed", True),
+            "hard_filter_failures": evaluation.get("hard_filter_failures", []),
+            "role_level_detected": evaluation.get("role_level_detected", "Unknown"),
+            "role_level_match": evaluation.get("role_level_match", "Unknown"),
+            "tool_currency": evaluation.get("tool_currency", "None"),
+            "cv_narrative_style": evaluation.get("cv_narrative_style", "Unknown"),
+            "availability_signal": evaluation.get("availability_signal", "Unknown"),
+            "rare_assets": evaluation.get("rare_assets", []),
+            "self_reported_unverified": evaluation.get("self_reported_unverified", []),
+            "interview_flags": evaluation.get("interview_flags", []),
             "status": "pass_2_complete",
             "updated_at": datetime.now()
         }

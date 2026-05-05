@@ -162,7 +162,7 @@ def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> di
     try:
         response = ai_client.chat.completions.create(
             model=REASON_MODEL,
-            max_tokens=1536,
+            max_tokens=2048,
             messages=[
                 {
                     "role": "system",
@@ -192,7 +192,17 @@ def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> di
                         "  - College: if JD college_exclusion contains candidate college, subtract 10 points; else if JD college_preference is set and candidate college matches any preferred college, add 5 points\n"
                         "- scoring_factors: list of exactly 5 objects, one per factor above, in this order: Notice Period, Location, Experience Gap, Gender, College.\n"
                         "  Each object: {\"factor\": \"<name>\", \"impact\": \"<+0 or -5 or -10>\", \"reason\": \"<one sentence>\"}\n"
-                        "  Use \"+0\" when no penalty applies. Always include all 5 regardless of impact.\n\n"
+                        "  Use \"+0\" when no penalty applies. Always include all 5 regardless of impact.\n"
+                        "- hard_filters_passed: boolean. True only if candidate passes ALL three hard filters: (1) notice_period within JD limit if specified, (2) location matches JD if work_structure is In-office, (3) experience_years >= half of JD relevant_experience.\n"
+                        "- hard_filter_failures: list of strings naming each hard filter that failed (e.g. \"Notice period too long\", \"Location mismatch\", \"Experience below minimum\"). Empty list if all pass.\n"
+                        "- role_level_detected: string. The actual operating level of the candidate based on their responsibilities and seniority. One of: \"Junior\", \"Mid-level\", \"Senior\", \"Lead\", \"Manager\", \"Director\".\n"
+                        "- role_level_match: string. Compare role_level_detected against the JD level field. One of: \"Match\", \"Over-qualified\", \"Under-qualified\".\n"
+                        "- tool_currency: string. Are the candidate's primary tools and frameworks still actively used in the industry today? One of: \"Current\" (tools are modern and in active use), \"Previous\" (tools are older or being phased out in the industry), \"None\" (cannot assess from resume).\n"
+                        "- cv_narrative_style: string. How is the CV written? One of: \"Achievement-focused\" (uses metrics, outcomes, quantified impact), \"Task-focused\" (describes duties and responsibilities without outcomes), \"Mixed\".\n"
+                        "- availability_signal: string. When can the candidate realistically start? Based on stated notice period or explicit availability mention. Examples: \"Immediate\", \"2 weeks\", \"30 days\", \"60 days\", \"90 days\", \"Unknown\".\n"
+                        "- rare_assets: list of up to 3 strings. Unique or rare qualifications that most candidates at this level would not have — niche certifications, rare domain expertise, unusual or highly specialised tech stacks, or high-signal industry achievements. Empty list if none found.\n"
+                        "- self_reported_unverified: list of up to 3 strings. Claims in the resume that appear impressive but cannot be independently verified from the document content alone — e.g. large revenue impact claims without metrics, leadership claims without team size evidence, unverified awards. Empty list if none identified.\n"
+                        "- interview_flags: list of up to 5 strings. Specific questions or topics a recruiter should probe during the interview based on observed inconsistencies, unexplained gaps, or vague claims. Each string is a short actionable probe (e.g. \"Ask about the 2-year gap between Company A and B\", \"Probe actual hands-on depth with Kubernetes\").\n\n"
                         "JSON OUTPUT:"
                     )
                 }
@@ -206,6 +216,26 @@ def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> di
             result["context_bonus"] = 0
         if "scoring_factors" not in result:
             result["scoring_factors"] = []
+        if "hard_filters_passed" not in result:
+            result["hard_filters_passed"] = True
+        if "hard_filter_failures" not in result:
+            result["hard_filter_failures"] = []
+        if "role_level_detected" not in result:
+            result["role_level_detected"] = "Unknown"
+        if "role_level_match" not in result:
+            result["role_level_match"] = "Unknown"
+        if "tool_currency" not in result:
+            result["tool_currency"] = "None"
+        if "cv_narrative_style" not in result:
+            result["cv_narrative_style"] = "Unknown"
+        if "availability_signal" not in result:
+            result["availability_signal"] = "Unknown"
+        if "rare_assets" not in result:
+            result["rare_assets"] = []
+        if "self_reported_unverified" not in result:
+            result["self_reported_unverified"] = []
+        if "interview_flags" not in result:
+            result["interview_flags"] = []
         return result
     except Exception as e:
         logger.error(f"Groq Pass 2 reasoning failed: {e}")
@@ -216,7 +246,17 @@ def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> di
             "gaps": [],
             "recommendation": "hold",
             "context_bonus": 0,
-            "scoring_factors": []
+            "scoring_factors": [],
+            "hard_filters_passed": True,
+            "hard_filter_failures": [],
+            "role_level_detected": "Unknown",
+            "role_level_match": "Unknown",
+            "tool_currency": "None",
+            "cv_narrative_style": "Unknown",
+            "availability_signal": "Unknown",
+            "rare_assets": [],
+            "self_reported_unverified": [],
+            "interview_flags": []
         }
 
 

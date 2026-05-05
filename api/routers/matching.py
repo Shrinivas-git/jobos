@@ -30,6 +30,17 @@ class MatchingResultResponse(BaseModel):
     preferred_company_type: List[str] = [] # From JD preferences
     preferred_team_size: str = "Any" # From JD preferences
     jd_role_type: str = "Any" # From JD preferences
+    scoring_factors: Optional[List[dict]] = None
+    hard_filters_passed: Optional[bool] = None
+    hard_filter_failures: Optional[List[str]] = None
+    role_level_detected: Optional[str] = None
+    role_level_match: Optional[str] = None
+    tool_currency: Optional[str] = None
+    cv_narrative_style: Optional[str] = None
+    availability_signal: Optional[str] = None
+    rare_assets: Optional[List[str]] = None
+    self_reported_unverified: Optional[List[str]] = None
+    interview_flags: Optional[List[str]] = None
     created_at: datetime
     updated_at: datetime
 

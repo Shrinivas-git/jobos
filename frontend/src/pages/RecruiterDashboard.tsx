@@ -149,6 +149,7 @@ const RecruiterDashboard: React.FC = () => {
   const [candidateNames, setCandidateNames] = useState<CandidateLookup>({});
   const [localActions, setLocalActions] = useState<Record<string, LocalAction>>({});
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [expandedFlagIds, setExpandedFlagIds] = useState<Set<string>>(new Set());
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState('');
   const [loading, setLoading] = useState(true);
@@ -479,6 +480,42 @@ const RecruiterDashboard: React.FC = () => {
 
           {recommendationBadge(result.recommendation)}
 
+          {/* Intelligence summary badges — always visible */}
+          {(result.role_level_detected || result.tool_currency || result.availability_signal) && (
+            <div className="flex flex-wrap items-center gap-1.5">
+              {result.role_level_detected && result.role_level_match && result.role_level_match !== 'Unknown' && (
+                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${
+                  result.role_level_match === 'Match'
+                    ? 'bg-emerald-500/15 border-emerald-500/20 text-emerald-400'
+                    : result.role_level_match === 'Over-qualified'
+                      ? 'bg-yellow-500/15 border-yellow-500/20 text-yellow-400'
+                      : 'bg-red-500/15 border-red-500/20 text-red-400'
+                }`}>
+                  {result.role_level_detected} · {result.role_level_match}
+                </span>
+              )}
+              {result.tool_currency && result.tool_currency !== 'None' && result.tool_currency !== 'Unknown' && (
+                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${
+                  result.tool_currency === 'Current'
+                    ? 'bg-blue-500/15 border-blue-500/20 text-blue-400'
+                    : 'bg-slate-600/30 border-slate-500/20 text-slate-400'
+                }`}>
+                  Tools: {result.tool_currency}
+                </span>
+              )}
+              {result.cv_narrative_style && result.cv_narrative_style !== 'Unknown' && (
+                <span className="text-[9px] px-1.5 py-0.5 rounded border bg-slate-700/30 border-slate-600/20 text-slate-500">
+                  {result.cv_narrative_style}
+                </span>
+              )}
+              {result.availability_signal && result.availability_signal !== 'Unknown' && (
+                <span className="text-[9px] italic text-slate-500">
+                  Avail: {result.availability_signal}
+                </span>
+              )}
+            </div>
+          )}
+
           {result.strengths && result.strengths.length > 0 && (
             <div>
               <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-1">Strengths</p>
@@ -550,6 +587,62 @@ const RecruiterDashboard: React.FC = () => {
                   );
                 })}
               </div>
+            </div>
+          )}
+
+          {/* Rare assets — purple badges */}
+          {expanded && result.rare_assets && result.rare_assets.length > 0 && (
+            <div className="border-t border-slate-700/50 pt-3 space-y-2">
+              <p className="text-[10px] font-bold text-purple-400 uppercase tracking-widest">Rare Assets</p>
+              <div className="flex flex-wrap gap-1.5">
+                {result.rare_assets.map((asset, i) => (
+                  <span key={i} className="text-[10px] px-2 py-1 rounded-lg border bg-purple-500/10 border-purple-500/20 text-purple-300">
+                    {asset}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Interview flags — collapsible */}
+          {expanded && result.interview_flags && result.interview_flags.length > 0 && (
+            <div className="border-t border-slate-700/50 pt-3 space-y-2">
+              <button
+                onClick={() => setExpandedFlagIds(prev => {
+                  const next = new Set(prev);
+                  next.has(result.candidate_id) ? next.delete(result.candidate_id) : next.add(result.candidate_id);
+                  return next;
+                })}
+                className="flex items-center space-x-1 text-[10px] font-bold text-amber-500 hover:text-amber-400 uppercase tracking-widest transition-colors"
+              >
+                <span>Probe in Interview ({result.interview_flags.length})</span>
+                {expandedFlagIds.has(result.candidate_id) ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+              </button>
+              {expandedFlagIds.has(result.candidate_id) && (
+                <ul className="space-y-1">
+                  {result.interview_flags.map((flag, i) => (
+                    <li key={i} className="flex items-start space-x-1.5 text-[10px] text-amber-300/80">
+                      <span className="shrink-0 mt-0.5 text-amber-500">›</span>
+                      <span>{flag}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
+          {/* Unverified claims — amber section */}
+          {expanded && result.self_reported_unverified && result.self_reported_unverified.length > 0 && (
+            <div className="border-t border-slate-700/50 pt-3 space-y-2">
+              <p className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Unverified Claims</p>
+              <ul className="space-y-1">
+                {result.self_reported_unverified.map((claim, i) => (
+                  <li key={i} className="flex items-start space-x-1.5 text-[10px] text-amber-300/70">
+                    <span className="shrink-0 mt-0.5 text-amber-500">!</span>
+                    <span>{claim}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 
