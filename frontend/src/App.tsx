@@ -32,6 +32,15 @@ const App: React.FC = () => {
       .then((auth) => {
         setAuthenticated(auth);
         setLoading(false);
+
+        // Refresh token 60 s before expiry; log out if refresh fails
+        keycloak.onTokenExpired = () => {
+          keycloak.updateToken(60).catch(() => keycloak.logout());
+        };
+        // Proactive check every 60 s — catches cases where onTokenExpired fires late
+        setInterval(() => {
+          keycloak.updateToken(60).catch(() => keycloak.logout());
+        }, 60000);
       })
       .catch((err) => {
         console.error("Authenticated Failed", err);
