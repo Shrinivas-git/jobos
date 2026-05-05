@@ -172,6 +172,7 @@ def run_pass_2(jd_id: str):
             "strengths": evaluation.get("strengths"),
             "gaps": evaluation.get("gaps"),
             "recommendation": evaluation.get("recommendation"),
+            "scoring_factors": evaluation.get("scoring_factors", []),
             "status": "pass_2_complete",
             "updated_at": datetime.now()
         }

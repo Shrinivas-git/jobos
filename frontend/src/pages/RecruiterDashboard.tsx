@@ -524,6 +524,35 @@ const RecruiterDashboard: React.FC = () => {
             </>
           )}
 
+          {expanded && (result as any).scoring_factors?.length > 0 && (
+            <div className="border-t border-slate-700/50 pt-3 space-y-2">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Scoring Factors</p>
+              <div className="flex flex-wrap gap-2">
+                {(result as any).scoring_factors.map((sf: { factor: string; impact: string; reason: string }, i: number) => {
+                  const negative = sf.impact.startsWith('-') && sf.impact !== '-0';
+                  return (
+                    <div
+                      key={i}
+                      className={`px-2.5 py-1.5 rounded-lg border ${
+                        negative
+                          ? 'bg-red-500/10 border-red-500/20'
+                          : 'bg-emerald-500/10 border-emerald-500/20'
+                      }`}
+                    >
+                      <div className={`flex items-center space-x-1.5 text-[10px] font-bold ${negative ? 'text-red-400' : 'text-emerald-400'}`}>
+                        <span>{sf.factor}</span>
+                        <span className="font-black opacity-80">{sf.impact}</span>
+                      </div>
+                      <p className={`text-[9px] mt-0.5 font-normal leading-snug ${negative ? 'text-red-300/70' : 'text-emerald-300/70'}`}>
+                        {sf.reason}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {expanded && (
             <div className="border-t border-slate-700/50 pt-3 space-y-2">
               <div className="flex items-center justify-between">

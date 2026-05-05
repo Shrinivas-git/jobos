@@ -155,7 +155,7 @@ def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> di
     try:
         response = ai_client.chat.completions.create(
             model=REASON_MODEL,
-            max_tokens=1024,
+            max_tokens=1536,
             messages=[
                 {
                     "role": "system",
@@ -167,7 +167,7 @@ def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> di
                         f"Evaluate the following candidate resume against the job description above.\n\n"
                         f"CANDIDATE RESUME:\n---\n{resume_text[:12000]}\n---\n\n"
                         "Return ONLY a valid JSON object. No markdown. Be objective and critical.\n"
-                        "- fitment_score: integer 0-100 (base fitment without contextual bonus)\n"
+                        "- fitment_score: integer 0-100. Apply the additional scoring factors below before returning this value.\n"
                         "- reasoning: one concise paragraph\n"
                         "- strengths: list of exactly 5 strings, each 1-2 sentences with specific evidence from the resume explaining why it is a strength\n"
                         "- gaps: list of exactly 5 strings, each 1-2 sentences explaining what is missing and why it matters for this role\n"
@@ -176,7 +176,16 @@ def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> di
                         "  +5 if candidate's company_types includes any type from JD preferred_company_type\n"
                         "  +5 if candidate's avg_team_size matches JD preferred_team_size\n"
                         "  +5 if candidate's role_type matches JD role_type\n"
-                        "  (If JD has 'Any' or no preference for a field, do not apply that bonus)\n\n"
+                        "  (If JD has 'Any' or no preference for a field, do not apply that bonus)\n"
+                        "- Additional scoring factors (subtract from fitment_score before returning it):\n"
+                        "  - Notice period: if candidate notice_period exceeds JD max_notice_period, subtract 5 points\n"
+                        "  - Location: if JD work_structure is In-office and candidate location does not match JD location, subtract 5 points\n"
+                        "  - Experience gap: if candidate experience_years is less than half of JD relevant_experience, subtract 10 points\n"
+                        "  - Gender: if JD gender_preference is not Any and does not match candidate gender, subtract 5 points\n"
+                        "  - College: if JD college_exclusion contains candidate college, subtract 10 points\n"
+                        "- scoring_factors: list of exactly 5 objects, one per factor above, in this order: Notice Period, Location, Experience Gap, Gender, College.\n"
+                        "  Each object: {\"factor\": \"<name>\", \"impact\": \"<+0 or -5 or -10>\", \"reason\": \"<one sentence>\"}\n"
+                        "  Use \"+0\" when no penalty applies. Always include all 5 regardless of impact.\n\n"
                         "JSON OUTPUT:"
                     )
                 }
@@ -187,6 +196,8 @@ def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> di
         result = _parse_json_response(text)
         if "context_bonus" not in result:
             result["context_bonus"] = 0
+        if "scoring_factors" not in result:
+            result["scoring_factors"] = []
         return result
     except Exception as e:
         logger.error(f"Groq Pass 2 reasoning failed: {e}")
@@ -196,7 +207,8 @@ def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> di
             "strengths": [],
             "gaps": [],
             "recommendation": "hold",
-            "context_bonus": 0
+            "context_bonus": 0,
+            "scoring_factors": []
         }
 
 
