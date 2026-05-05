@@ -5,7 +5,6 @@ import re
 import json
 import logging
 import time
-from groq import Groq
 import anthropic
 from typing import List
 from sentence_transformers import SentenceTransformer
@@ -20,36 +19,26 @@ except Exception as e:
     logger.error(f"Failed to load local embedding model: {e}")
     embedding_model = None
 
-# Initialize Groq client
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-if GROQ_API_KEY:
-    ai_client = Groq(api_key=GROQ_API_KEY)
-else:
-    logger.warning("GROQ_API_KEY not found in environment variables.")
-    ai_client = None
-
-# Initialize Anthropic client (used for Pass 2 reasoning only)
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 if ANTHROPIC_API_KEY:
-    anthropic_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    ai_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 else:
     logger.warning("ANTHROPIC_API_KEY not found in environment variables.")
-    anthropic_client = None
+    ai_client = None
 
-FAST_MODEL = "llama-3.1-8b-instant"
-REASON_MODEL = "llama-3.3-70b-versatile"
-CLAUDE_REASON_MODEL = "claude-sonnet-4-6"
+FAST_MODEL = "claude-haiku-4-5-20251001"
+REASON_MODEL = "claude-sonnet-4-6"
 
 
-def _call_groq(model: str, prompt: str, max_tokens: int = 2048) -> str:
+def _call_claude(model: str, prompt: str, max_tokens: int = 2048) -> str:
     if not ai_client:
-        raise RuntimeError("Groq client not initialized — GROQ_API_KEY missing.")
-    response = ai_client.chat.completions.create(
+        raise RuntimeError("Anthropic client not initialized — ANTHROPIC_API_KEY missing.")
+    response = ai_client.messages.create(
         model=model,
         max_tokens=max_tokens,
         messages=[{"role": "user", "content": prompt}]
     )
-    return response.choices[0].message.content.strip()
+    return response.content[0].text.strip()
 
 
 def _parse_json_response(text: str) -> dict:
@@ -97,11 +86,11 @@ Raw JD Text:
 JSON Output:"""
 
     try:
-        text = _call_groq(FAST_MODEL, prompt)
-        logger.info(f"Groq JD extraction response (first 200 chars): {text[:200]}")
+        text = _call_claude(FAST_MODEL, prompt)
+        logger.info(f"Claude JD extraction response (first 200 chars): {text[:200]}")
         return _parse_json_response(text)
     except Exception as e:
-        logger.error(f"Error extracting JD data with Groq: {e}")
+        logger.error(f"Error extracting JD data with Claude: {e}")
         return {
             "title": "Extraction Failed",
             "level": "Unknown",
@@ -137,10 +126,10 @@ Structured Data:
 JSON Output:"""
 
     try:
-        text = _call_groq(FAST_MODEL, prompt)
+        text = _call_claude(FAST_MODEL, prompt)
         return _parse_json_response(text)
     except Exception as e:
-        logger.error(f"Error generating JD formats with Groq: {e}")
+        logger.error(f"Error generating JD formats with Claude: {e}")
         return {
             "internal": f"# {structured_data.get('title')}\nDetails extraction failed.",
             "short": f"Role: {structured_data.get('title')}",
@@ -161,17 +150,17 @@ def generate_embedding(text: str) -> List[float]:
 
 def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> dict:
     """
-    Pass 2: Uses Groq (reason model) to perform deep reasoning on a candidate's fitment for a JD.
+    Pass 2: Uses Claude (reason model) to perform deep reasoning on a candidate's fitment for a JD.
     Includes contextual bonus scoring based on company type, team size, and role type alignment.
     """
-    if not anthropic_client:
+    if not ai_client:
         raise RuntimeError("Anthropic client not initialized — ANTHROPIC_API_KEY missing.")
 
     jd_text = json.dumps(jd_structured_data, indent=2)
 
     try:
-        response = anthropic_client.messages.create(
-            model=CLAUDE_REASON_MODEL,
+        response = ai_client.messages.create(
+            model=REASON_MODEL,
             max_tokens=2048,
             system=f"You are an expert senior technical recruiter.\n\nJOB DESCRIPTION FOR THIS EVALUATION:\n{jd_text}",
             messages=[
@@ -249,7 +238,7 @@ def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> di
             result["interview_flags"] = []
         return result
     except Exception as e:
-        logger.error(f"Groq Pass 2 reasoning failed: {e}")
+        logger.error(f"Claude Pass 2 reasoning failed: {e}")
         return {
             "fitment_score": 0,
             "reasoning": "AI evaluation failed.",
@@ -387,8 +376,8 @@ RESUME TEXT TO PARSE:
 JSON OUTPUT:"""
 
     try:
-        text = _call_groq(FAST_MODEL, prompt)
-        logger.info(f"Groq resume extraction response (first 200 chars): {text[:200]}")
+        text = _call_claude(FAST_MODEL, prompt)
+        logger.info(f"Claude resume extraction response (first 200 chars): {text[:200]}")
         ai_data = _parse_json_response(text)
 
         for key in ["name", "skills", "experience_years", "location", "notice_period", "gender", "college",
@@ -405,7 +394,7 @@ JSON OUTPUT:"""
             extracted_data["companies_switched"] = ai_data["companies_switched"]
 
     except Exception as e:
-        logger.error(f"Groq resume parsing failed, using regex fallback: {e}")
-        logger.error(f"Groq raw response: {locals().get('text', '(call failed before response)')}")
+        logger.error(f"Claude resume parsing failed, using regex fallback: {e}")
+        logger.error(f"Claude raw response: {locals().get('text', '(call failed before response)')}")
 
     return extracted_data
