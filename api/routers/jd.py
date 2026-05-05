@@ -66,22 +66,27 @@ async def upload_jd(
     title: str = Form(...),
     client_email: str = Form(...),
     file: UploadFile = File(...),
+    num_positions: int = Form(default=1),
+    role_type: str = Form(default="Any"),
+    preferred_company_type: List[str] = Form(default=[]),
+    college_preference: str = Form(default=""),
+    college_exclusion: str = Form(default=""),
     user: dict = Depends(check_role(["recruiter", "manager", "hod", "admin"]))
 ):
     try:
         # 1. Find or create client
         client = find_or_create_client(client_email)
-        
+
         # 2. Generate JD-ID
         jd_id = generate_jd_id()
-        
+
         # 3. Create folder structure
         paths = create_jd_folder_structure(client['slug'], jd_id)
-        
+
         # 4. Save raw file
         content = await file.read()
         file_path = save_raw_jd_content(paths['raw_path'], file.filename, content)
-        
+
         # 5. Store metadata in MongoDB
         db = get_db()
         jd_data = {
@@ -93,7 +98,12 @@ async def upload_jd(
             "source": "web_form_upload",
             "uploaded_by": user.get("preferred_username"),
             "status": "received",
-            "created_at": datetime.now()
+            "created_at": datetime.now(),
+            "num_positions": num_positions,
+            "role_type": role_type,
+            "preferred_company_type": preferred_company_type,
+            "college_preference": college_preference,
+            "college_exclusion": college_exclusion
         }
         db.job_descriptions.insert_one(jd_data)
         

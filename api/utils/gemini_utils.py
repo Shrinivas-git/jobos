@@ -182,7 +182,7 @@ def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> di
                         "  - Location: if JD work_structure is In-office and candidate location does not match JD location, subtract 5 points\n"
                         "  - Experience gap: if candidate experience_years is less than half of JD relevant_experience, subtract 10 points\n"
                         "  - Gender: if JD gender_preference is not Any and does not match candidate gender, subtract 5 points\n"
-                        "  - College: if JD college_exclusion contains candidate college, subtract 10 points\n"
+                        "  - College: if JD college_exclusion contains candidate college, subtract 10 points; else if JD college_preference is set and candidate college matches any preferred college, add 5 points\n"
                         "- scoring_factors: list of exactly 5 objects, one per factor above, in this order: Notice Period, Location, Experience Gap, Gender, College.\n"
                         "  Each object: {\"factor\": \"<name>\", \"impact\": \"<+0 or -5 or -10>\", \"reason\": \"<one sentence>\"}\n"
                         "  Use \"+0\" when no penalty applies. Always include all 5 regardless of impact.\n\n"

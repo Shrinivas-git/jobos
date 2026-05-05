@@ -89,6 +89,11 @@ const Jobs: React.FC = () => {
     formData.append('title', title);
     formData.append('client_email', clientEmail);
     formData.append('file', file);
+    formData.append('num_positions', numPositions.toString());
+    formData.append('role_type', roleType);
+    preferredCompanyType.forEach(t => formData.append('preferred_company_type', t));
+    formData.append('college_preference', collegePreference);
+    formData.append('college_exclusion', collegeExclusion);
 
     try {
       await axios.post(`${API}/jd/upload`, formData, {
@@ -206,20 +211,94 @@ const Jobs: React.FC = () => {
             </div>
 
             {mode === 'upload' ? (
-              <div className="animate-in fade-in duration-300">
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">JD Attachment</label>
-                <div className="relative group">
-                  <input
-                    type="file"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                    required
-                  />
-                  <div className={`w-full border-2 border-dashed ${file ? 'border-blue-500 bg-blue-500/5' : 'border-slate-700 group-hover:border-slate-600'} rounded-xl p-10 text-center transition-all`}>
-                    <FileText size={40} className={`mx-auto mb-3 ${file ? 'text-blue-400' : 'text-slate-600'}`} />
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-tight">
-                      {file ? file.name : 'Click or drag PDF/DOCX'}
-                    </p>
+              <div className="space-y-5 animate-in fade-in duration-300">
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">JD Attachment</label>
+                  <div className="relative group">
+                    <input
+                      type="file"
+                      onChange={(e) => setFile(e.target.files?.[0] || null)}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      required
+                    />
+                    <div className={`w-full border-2 border-dashed ${file ? 'border-blue-500 bg-blue-500/5' : 'border-slate-700 group-hover:border-slate-600'} rounded-xl p-10 text-center transition-all`}>
+                      <FileText size={40} className={`mx-auto mb-3 ${file ? 'text-blue-400' : 'text-slate-600'}`} />
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-tight">
+                        {file ? file.name : 'Click or drag PDF/DOCX'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Preferred Company Type</label>
+                  <div className="grid grid-cols-2 gap-y-2 gap-x-4">
+                    {['Fintech', 'Edtech', 'Ecommerce', 'Healthcare', 'Product', 'Services', 'Startup', 'Large Enterprise', 'Any'].map((option) => (
+                      <label key={option} className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={preferredCompanyType.includes(option)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setPreferredCompanyType([...preferredCompanyType, option]);
+                            } else {
+                              setPreferredCompanyType(preferredCompanyType.filter(t => t !== option));
+                            }
+                          }}
+                          className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-0"
+                        />
+                        <span className="text-sm text-slate-300">{option}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Preferred Colleges</label>
+                    <input
+                      type="text"
+                      value={collegePreference}
+                      onChange={(e) => setCollegePreference(e.target.value)}
+                      placeholder="e.g. IIT, NIT, BITS"
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Restricted Colleges</label>
+                    <input
+                      type="text"
+                      value={collegeExclusion}
+                      onChange={(e) => setCollegeExclusion(e.target.value)}
+                      placeholder="e.g. XYZ College"
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Positions</label>
+                    <input
+                      type="number"
+                      value={numPositions}
+                      onChange={(e) => setNumPositions(parseInt(e.target.value) || 1)}
+                      min="1"
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Role Type</label>
+                    <select
+                      value={roleType}
+                      onChange={(e) => setRoleType(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                    >
+                      <option value="Any">Any</option>
+                      <option value="Individual Contributor">Individual Contributor</option>
+                      <option value="50% IC + 50% Management">50% IC + 50% Management</option>
+                      <option value="Team Lead">Team Lead</option>
+                    </select>
                   </div>
                 </div>
               </div>

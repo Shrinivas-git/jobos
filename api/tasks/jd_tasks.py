@@ -53,7 +53,15 @@ def process_jd_task(jd_id: str):
             
             logger.info(f"Extracting structured data from {raw_file}...")
             structured_data = extract_jd_data(raw_text)
-            
+
+            # Manual college fields from upload form override AI-extracted values
+            manual_college_pref = jd_record.get("college_preference", "")
+            manual_college_excl = jd_record.get("college_exclusion", "")
+            if manual_college_pref:
+                structured_data["college_preference"] = manual_college_pref
+            if manual_college_excl:
+                structured_data["college_exclusion"] = manual_college_excl
+
             # Save jd.json
             with open(os.path.join(jd_path, "jd.json"), "w") as f:
                 json.dump(structured_data, f, indent=2)
