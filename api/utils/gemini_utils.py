@@ -4,6 +4,7 @@ os.environ["HF_DATASETS_OFFLINE"] = "1"
 import re
 import json
 import logging
+import time
 from groq import Groq
 from typing import List
 from sentence_transformers import SentenceTransformer
@@ -46,7 +47,13 @@ def _parse_json_response(text: str) -> dict:
         text = text.split("```json")[1].split("```")[0].strip()
     elif "```" in text:
         text = text.split("```")[1].split("```")[0].strip()
-    return json.loads(text)
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        match = re.search(r'\{.*\}', text, re.DOTALL)
+        if match:
+            return json.loads(match.group())
+        raise
 
 
 def extract_jd_data(raw_text: str) -> dict:
@@ -192,6 +199,7 @@ def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str) -> di
             ]
         )
         text = response.choices[0].message.content.strip()
+        time.sleep(2)
         logger.info(f"Groq Pass 2 response (first 200 chars): {text[:200]}")
         result = _parse_json_response(text)
         if "context_bonus" not in result:
