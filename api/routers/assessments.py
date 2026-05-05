@@ -11,7 +11,7 @@ from typing import List, Optional
 
 from auth import check_role
 from utils.client_utils import get_db
-from utils.gemini_utils import _call_groq, FAST_MODEL, REASON_MODEL
+from utils.gemini_utils import _call_claude, FAST_MODEL, REASON_MODEL
 from utils.email_utils import send_email
 
 logger = logging.getLogger(__name__)
@@ -116,7 +116,7 @@ Respond with ONLY a JSON array of 5 question strings. No explanation, no numberi
 Example format: ["Question 1 text?", "Question 2 text?", "Question 3 text?", "Question 4 text?", "Question 5 text?"]"""
 
     try:
-        raw = _call_groq(FAST_MODEL, prompt, max_tokens=1024)
+        raw = _call_claude(FAST_MODEL, prompt, max_tokens=1024)
         questions = _parse_questions(raw)
     except Exception as e:
         logger.error(f"Groq question generation failed: {e}")
@@ -218,7 +218,7 @@ Respond ONLY with valid JSON in this exact format:
 {{"score": <integer 0-100>, "rationale": "<2-3 sentence explanation of the score>"}}"""
 
     try:
-        raw = _call_groq(REASON_MODEL, scoring_prompt, max_tokens=512)
+        raw = _call_claude(REASON_MODEL, scoring_prompt, max_tokens=512)
         text = raw.strip()
         if "```json" in text:
             text = text.split("```json")[1].split("```")[0].strip()

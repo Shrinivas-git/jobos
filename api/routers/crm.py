@@ -8,7 +8,7 @@ import logging
 from auth import check_role
 from utils.client_utils import get_db
 from utils.email_utils import send_email
-from utils.gemini_utils import _call_groq, _parse_json_response, REASON_MODEL
+from utils.gemini_utils import _call_claude, _parse_json_response, REASON_MODEL
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +89,7 @@ Return ONLY a valid JSON object with exactly these two keys:
 JSON OUTPUT:"""
 
     try:
-        text = _call_groq(REASON_MODEL, prompt, max_tokens=1024)
+        text = _call_claude(REASON_MODEL, prompt, max_tokens=1024)
         parsed = _parse_json_response(text)
         subject = parsed.get("subject") or f"Exciting opportunity: {jd_title}"
         body = parsed.get("body") or (
