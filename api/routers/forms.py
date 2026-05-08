@@ -5,7 +5,11 @@ from pydantic import BaseModel
 from auth import check_role
 from utils.client_utils import get_db
 from utils.google_forms_utils import save_video_file, get_video_storage_path
+from utils.email_utils import send_email
 from tasks.video_analysis_tasks import analyze_video_resume as analyze_video_task
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/forms", tags=["forms"])
 
