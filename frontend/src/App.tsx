@@ -89,7 +89,7 @@ const App: React.FC = () => {
                 <Route path="/form-responses" element={<FormResponses />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/invoices" element={
-                  keycloak.tokenParsed?.realm_access?.roles?.some((r: string) => ['manager','admin'].includes(r))
+                  keycloak.tokenParsed?.realm_access?.roles?.some((r: string) => ['recruiter','manager','admin'].includes(r))
                     ? <Invoices />
                     : <Navigate to="/dashboard" replace />
                 } />
