@@ -14,6 +14,10 @@ const Matching: React.FC = () => {
   const [selectedJdId, setSelectedJdId] = useState<string>('');
   const [results, setResults] = useState<MatchResult[]>([]);
   const [candidateNames, setCandidateNames] = useState<CandidateLookup>({});
+  const [allCandidates, setAllCandidates] = useState<{ candidate_id: string; name?: string }[]>([]);
+  const [selectedCandidates, setSelectedCandidates] = useState<Set<string>>(new Set());
+  const [showCandidateSelector, setShowCandidateSelector] = useState(false);
+  const [candidateFilter, setCandidateFilter] = useState('');
   const [loadingJds, setLoadingJds] = useState(true);
   const [running, setRunning] = useState(false);
   const [polling, setPolling] = useState(false);
@@ -35,6 +39,7 @@ const Matching: React.FC = () => {
         const candData: { candidate_id: string; name?: string }[] = await candRes.json();
 
         setJds(jdData);
+        setAllCandidates(candData);
 
         const lookup: CandidateLookup = {};
         candData.forEach(c => { lookup[c.candidate_id] = c.name || c.candidate_id; });
@@ -70,6 +75,8 @@ const Matching: React.FC = () => {
     setExpandedRows(new Set());
     setRunMessage(null);
     setError(null);
+    setSelectedCandidates(new Set());
+    setCandidateFilter('');
     if (jd_id) await fetchResults(jd_id);
   };
 
@@ -79,13 +86,18 @@ const Matching: React.FC = () => {
     setError(null);
     setRunMessage(null);
     try {
+      const body = selectedCandidates.size > 0
+        ? { candidate_ids: Array.from(selectedCandidates) }
+        : {};
       const res = await fetch(`${API}/matching/run/${selectedJdId}`, {
         method: 'POST',
-        headers: getAuthHeaders(),
+        headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setRunMessage('Matching triggered. Pass 1 running — results will appear below as they complete.');
       setPolling(true);
+      setSelectedCandidates(new Set());
       pollResults(selectedJdId);
     } catch (e: any) {
       setError('Failed to trigger matching: ' + e.message);
@@ -125,6 +137,25 @@ const Matching: React.FC = () => {
     return `${Math.floor(secs / 3600)}h ago`;
   };
 
+  const handleSelectAll = () => {
+    setSelectedCandidates(new Set(allCandidates.map(c => c.candidate_id)));
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedCandidates(new Set());
+  };
+
+  const toggleCandidate = (candidate_id: string) => {
+    const next = new Set(selectedCandidates);
+    next.has(candidate_id) ? next.delete(candidate_id) : next.add(candidate_id);
+    setSelectedCandidates(next);
+  };
+
+  const filteredCandidates = allCandidates.filter(c => {
+    const name = c.name?.toLowerCase() || c.candidate_id.toLowerCase();
+    return name.includes(candidateFilter.toLowerCase());
+  });
+
   const visible = results.slice(0, displayCount);
   const hasMore = results.length > displayCount;
   const pass2Done = results.some(r => r.status === 'pass_2_complete');
@@ -148,32 +179,129 @@ const Matching: React.FC = () => {
         {loadingJds ? (
           <div className="text-slate-400 text-sm">Loading job descriptions...</div>
         ) : (
-          <div className="flex items-center space-x-4">
-            <select
-              value={selectedJdId}
-              onChange={e => handleJdChange(e.target.value)}
-              className="flex-1 bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-violet-500"
-            >
-              <option value="">— Choose a JD —</option>
-              {jds.map(jd => (
-                <option key={jd.jd_id} value={jd.jd_id}>
-                  {jd.title} ({jd.jd_id}) — {jd.status}
-                </option>
-              ))}
-            </select>
-            <button
-              onClick={handleRunMatching}
-              disabled={!selectedJdId || running || polling}
-              className="px-6 py-3 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl transition-colors flex items-center space-x-2"
-            >
-              {(running || polling) ? (
-                <RefreshCw size={14} className="animate-spin" />
-              ) : (
-                <Zap size={14} />
-              )}
-              <span>{running ? 'Triggering…' : polling ? 'Running…' : 'Run Matching'}</span>
-            </button>
-          </div>
+          <>
+            <div className="flex items-center space-x-4">
+              <select
+                value={selectedJdId}
+                onChange={e => handleJdChange(e.target.value)}
+                className="flex-1 bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-violet-500"
+              >
+                <option value="">— Choose a JD —</option>
+                {jds.map(jd => (
+                  <option key={jd.jd_id} value={jd.jd_id}>
+                    {jd.title} ({jd.jd_id}) — {jd.status}
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={handleRunMatching}
+                disabled={!selectedJdId || running || polling}
+                title={selectedCandidates.size === 0 ? 'Select candidates before running matching' : ''}
+                className="px-6 py-3 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl transition-colors flex items-center space-x-2"
+              >
+                {(running || polling) ? (
+                  <RefreshCw size={14} className="animate-spin" />
+                ) : (
+                  <Zap size={14} />
+                )}
+                <span>{running ? 'Triggering…' : polling ? 'Running…' : 'Run Matching'}</span>
+              </button>
+            </div>
+
+            {/* Candidate Selection */}
+            {selectedJdId && (
+              <div className="flex items-center space-x-2 px-4 py-3 bg-slate-900/50 border border-slate-700/30 rounded-xl">
+                <span className="text-sm text-slate-400">
+                  {selectedCandidates.size === 0
+                    ? '📋 Select candidates to match'
+                    : `✓ ${selectedCandidates.size} candidate${selectedCandidates.size !== 1 ? 's' : ''} selected`}
+                </span>
+                <button
+                  onClick={() => setShowCandidateSelector(!showCandidateSelector)}
+                  className="ml-auto px-3 py-1.5 text-xs font-bold bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
+                >
+                  {showCandidateSelector ? 'Hide' : 'Choose Candidates'}
+                </button>
+                {selectedCandidates.size > 0 && (
+                  <button
+                    onClick={() => setSelectedCandidates(new Set())}
+                    className="px-2 py-1.5 text-xs font-bold text-slate-500 hover:text-red-400 transition-colors"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Candidate Selector Modal */}
+            {selectedJdId && showCandidateSelector && (
+              <div className="border border-slate-700/30 rounded-xl bg-slate-900/50 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <input
+                    type="text"
+                    placeholder="Search candidates..."
+                    value={candidateFilter}
+                    onChange={e => setCandidateFilter(e.target.value)}
+                    className="flex-1 bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-violet-500"
+                  />
+                  <div className="flex items-center space-x-2 ml-3">
+                    <button
+                      onClick={handleSelectAll}
+                      className="px-3 py-1.5 text-xs font-bold bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 rounded-lg border border-blue-500/20 transition-colors"
+                    >
+                      Select All
+                    </button>
+                    <button
+                      onClick={handleDeselectAll}
+                      className="px-3 py-1.5 text-xs font-bold bg-slate-700/50 hover:bg-slate-700 text-slate-400 rounded-lg transition-colors"
+                    >
+                      Deselect All
+                    </button>
+                  </div>
+                </div>
+
+                <div className="max-h-64 overflow-y-auto space-y-1.5">
+                  {filteredCandidates.length === 0 ? (
+                    <div className="text-center py-4 text-slate-500 text-sm">No candidates found</div>
+                  ) : (
+                    filteredCandidates.map(c => (
+                      <label
+                        key={c.candidate_id}
+                        className="flex items-center space-x-3 p-2 hover:bg-slate-800/50 rounded-lg cursor-pointer transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedCandidates.has(c.candidate_id)}
+                          onChange={() => toggleCandidate(c.candidate_id)}
+                          className="rounded w-4 h-4 bg-slate-700 border-slate-600 text-violet-600 focus:ring-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-white truncate">{c.name || c.candidate_id}</p>
+                          <p className="text-xs text-slate-500">{c.candidate_id}</p>
+                        </div>
+                      </label>
+                    ))
+                  )}
+                </div>
+
+                <div className="flex items-center justify-end space-x-2 pt-2 border-t border-slate-700/30">
+                  <button
+                    onClick={() => setShowCandidateSelector(false)}
+                    className="px-4 py-2 text-xs font-bold bg-slate-700/50 hover:bg-slate-700 text-slate-400 rounded-lg transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => setShowCandidateSelector(false)}
+                    disabled={selectedCandidates.size === 0}
+                    className="px-4 py-2 text-xs font-bold bg-violet-600 hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+                  >
+                    OK ({selectedCandidates.size})
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {/* Status banners */}

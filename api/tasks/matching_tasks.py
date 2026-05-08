@@ -23,26 +23,33 @@ def calculate_completeness_score(candidate: dict) -> float:
     return (filled / len(fields)) * 100
 
 @celery.task(name="tasks.matching_tasks.run_matching")
-def run_matching(jd_id: str):
+def run_matching(jd_id: str, candidate_ids: list = None):
     """
     Pass 1: Speed Layer
     Uses Qdrant cosine similarity to filter the top-N candidates from the internal pool.
+    If candidate_ids provided, only matches those specific candidates.
     """
-    logger.info(f"Starting Pass 1 matching for JD: {jd_id}")
+    logger.info(f"Starting Pass 1 matching for JD: {jd_id}, filter: {len(candidate_ids) if candidate_ids else 'all'} candidates")
     db = get_db()
-    
+
     # 1. Get JD Vector
     jd_vector = get_jd_vector(jd_id)
     if not jd_vector:
         logger.error(f"JD vector not found for {jd_id}")
         return {"error": "JD vector not found"}
-        
+
     # 2. Search Qdrant for top candidates
     p_threshold, k_threshold = get_matching_thresholds()
     # Search for more than k_threshold to account for filtering, up to a reasonable cap
-    results = search_resumes_by_vector(jd_vector, limit=50) 
-    
-    # 3. Filter and Format Results based on P-threshold
+    results = search_resumes_by_vector(jd_vector, limit=50)
+
+    # 3. Filter by candidate_ids if specified
+    if candidate_ids:
+        candidate_id_set = set(candidate_ids)
+        results = [r for r in results if r.payload.get("candidate_id") in candidate_id_set]
+        logger.info(f"Filtered to {len(results)} candidates from provided list")
+
+    # 4. Filter and Format Results based on P-threshold
     matches = []
     rank = 1
     for res in results:
@@ -50,7 +57,7 @@ def run_matching(jd_id: str):
         if score < p_threshold:
             logger.info(f"Candidate {res.payload.get('candidate_id')} below p_threshold ({score} < {p_threshold})")
             continue
-            
+
         payload = res.payload
         candidate_id = payload.get("candidate_id")
         

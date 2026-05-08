@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Body
 from typing import List, Literal, Optional
 from datetime import datetime
 from pydantic import BaseModel
@@ -58,10 +58,17 @@ class MatchingResultResponse(BaseModel):
         populate_by_name = True
         arbitrary_types_allowed = True
 
+class MatchingRequest(BaseModel):
+    candidate_ids: Optional[List[str]] = None
+
 @router.post("/run/{jd_id}")
-async def trigger_matching(jd_id: str, user: dict = Depends(check_role(["recruiter", "manager", "admin"]))):
-    """Triggers the full matching process (Pass 1 & Pass 2) for a specific JD."""
-    run_matching.delay(jd_id)
+async def trigger_matching(
+    jd_id: str,
+    body: MatchingRequest = Body(default=MatchingRequest()),
+    user: dict = Depends(check_role(["recruiter", "manager", "admin"]))
+):
+    """Triggers the full matching process (Pass 1 & Pass 2) for a specific JD. Optionally filter by candidate_ids."""
+    run_matching.delay(jd_id, candidate_ids=body.candidate_ids)
     return {"message": f"Matching process triggered for {jd_id}", "jd_id": jd_id}
 
 @router.post("/pass2/{jd_id}")
