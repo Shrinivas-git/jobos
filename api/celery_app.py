@@ -17,6 +17,8 @@ celery = Celery(
         'tasks.feedback_tasks',
         'tasks.retention_tasks',
         'tasks.invoice_tasks',
+        'tasks.video_analysis_tasks',
+        'tasks.reminder_tasks',
     ]
 )
 
@@ -45,5 +47,13 @@ celery.conf.beat_schedule = {
     "check-overdue-invoices": {
         "task": "tasks.invoice_tasks.check_overdue_invoices",
         "schedule": crontab(hour=8, minute=0),  # Daily at 8am UTC
+    },
+    "send-pending-reminders-morning": {
+        "task": "tasks.reminder_tasks.process_pending_responses",
+        "schedule": crontab(hour=9, minute=0),  # Daily at 9am UTC
+    },
+    "send-pending-reminders-evening": {
+        "task": "tasks.reminder_tasks.process_pending_responses",
+        "schedule": crontab(hour=17, minute=0),  # Daily at 5pm UTC
     },
 }

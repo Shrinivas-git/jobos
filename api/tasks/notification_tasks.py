@@ -700,3 +700,120 @@ def send_stage_notification(candidate_id: str, jd_id: str, stage: str):
 
     send_email(email, subject, html)
     logger.info(f"Stage notification '{stage}' sent to {email} for candidate {candidate_id}")
+
+
+@celery.task(name="tasks.notification_tasks.notify_form_submitted")
+def notify_form_submitted(jd_id: str, candidate_id: str, form_response: dict):
+    """
+    Notify recruiter that a candidate has submitted the video resume form
+    """
+    try:
+        db = get_db()
+
+        # Get candidate and JD details
+        candidate = db.candidates.find_one({"candidate_id": candidate_id})
+        jd = db.job_descriptions.find_one({"jd_id": jd_id})
+
+        if not candidate or not jd:
+            logger.warning(f"Candidate or JD not found for form notification")
+            return
+
+        candidate_name = candidate.get("name", candidate_id)
+        jd_title = jd.get("title", jd_id)
+
+        # Get recruiters/managers to notify
+        recruiters = list(db.users.find({
+            "realm_access.roles": {"$in": ["recruiter", "manager", "admin"]}
+        }, {"email": 1, "preferred_username": 1}))
+
+        # Build email HTML
+        video_status = "✓ Uploaded" if form_response.get("video_resume_path") else "✗ Missing"
+        html = f"""<!DOCTYPE html>
+<html>
+<body style="background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#f1f5f9;margin:0;padding:24px">
+  <div style="max-width:600px;margin:0 auto">
+    <div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px">
+      <h1 style="color:#60a5fa;margin:0 0 4px 0;font-size:22px">JobOS</h1>
+      <p style="color:#94a3b8;margin:0;font-size:12px;text-transform:uppercase;letter-spacing:2px">Form Submission</p>
+    </div>
+    <div style="background:#1e293b;padding:24px;border-radius:12px">
+      <h2 style="color:#4ade80;margin:0 0 20px 0;font-size:18px">📋 Form Submitted Successfully</h2>
+
+      <div style="background:#0f172a;padding:16px;border-radius:8px;margin-bottom:16px">
+        <p style="color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px 0">Candidate</p>
+        <p style="color:#f1f5f9;font-size:16px;font-weight:600;margin:0">{candidate_name}</p>
+        <p style="color:#64748b;font-size:12px;margin:4px 0 0 0">{candidate_id}</p>
+      </div>
+
+      <div style="background:#0f172a;padding:16px;border-radius:8px;margin-bottom:16px">
+        <p style="color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px 0">Role</p>
+        <p style="color:#f1f5f9;font-size:16px;font-weight:600;margin:0">{jd_title}</p>
+        <p style="color:#64748b;font-size:12px;margin:4px 0 0 0">{jd_id}</p>
+      </div>
+
+      <div style="background:#0f172a;padding:16px;border-radius:8px;margin-bottom:20px">
+        <p style="color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin:0 0 12px 0">Form Details</p>
+
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <p style="color:#94a3b8;font-size:13px;margin:0">Aadhar: </p>
+          <p style="color:#f1f5f9;font-size:13px;margin:0">{form_response.get('aadhar', '—')}</p>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <p style="color:#94a3b8;font-size:13px;margin:0">LinkedIn: </p>
+          <p style="color:#60a5fa;font-size:13px;margin:0"><a href="{form_response.get('linkedin_url', '#')}" style="color:#60a5fa">{form_response.get('linkedin_url', '—')[:40]}</a></p>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <p style="color:#94a3b8;font-size:13px;margin:0">Telegram: </p>
+          <p style="color:#f1f5f9;font-size:13px;margin:0">{form_response.get('telegram_handle', '—')}</p>
+        </div>
+
+        <div style="display:flex;justify-content:space-between">
+          <p style="color:#94a3b8;font-size:13px;margin:0">Video Resume: </p>
+          <p style="color:#4ade80;font-size:13px;margin:0;font-weight:600">{video_status}</p>
+        </div>
+      </div>
+
+      <p style="color:#94a3b8;margin:0;line-height:1.6">
+        The candidate's form has been submitted and is ready for review.
+        {' Video analysis is in progress.' if form_response.get('video_resume_path') else ''}
+      </p>
+    </div>
+    <p style="color:#334155;font-size:11px;text-align:center;margin-top:24px">
+      JobOS · Recruitment Operating System
+    </p>
+  </div>
+</body>
+</html>"""
+
+        # Send to all recruiters
+        for recruiter in recruiters:
+            email = recruiter.get("email")
+            if email:
+                subject = f"📋 Form Submitted: {candidate_name} - {jd_title}"
+                send_email(email, subject, html)
+                logger.info(f"Form submission notification sent to {email}")
+
+        # Store in-app notification
+        notification = {
+            "notification_id": str(uuid.uuid4()),
+            "type": "form_submitted",
+            "recipient_roles": ["recruiter", "manager", "admin"],
+            "title": f"Form Submitted: {candidate_name}",
+            "body": f"Candidate {candidate_name} submitted the video resume form for {jd_title}",
+            "data": {
+                "jd_id": jd_id,
+                "jd_title": jd_title,
+                "candidate_id": candidate_id,
+                "candidate_name": candidate_name,
+                "has_video": bool(form_response.get("video_resume_path"))
+            },
+            "is_read": False,
+            "created_at": datetime.utcnow()
+        }
+        db.notifications.insert_one(notification)
+        logger.info(f"Form submission notification stored: {notification['notification_id']}")
+
+    except Exception as e:
+        logger.error(f"Failed to notify form submission: {e}")

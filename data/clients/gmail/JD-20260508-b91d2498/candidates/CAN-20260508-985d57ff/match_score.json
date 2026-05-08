@@ -1,0 +1,117 @@
+{
+  "fitment_score": 58.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.625,
+  "must_have_breakdown": [
+    {
+      "skill": "Source code management skills",
+      "status": "Partial",
+      "evidence": "Git is listed under 'Requirements & Tracking' tools but used in a validation/test context, not as a software developer managing codebases."
+    },
+    {
+      "skill": "GIT knowledge",
+      "status": "Partial",
+      "evidence": "Git appears in the tools section, but no evidence of active branching, merging, or repo management in a development integration role."
+    },
+    {
+      "skill": "Ability to define branching strategy",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Software coding knowledge - C",
+      "status": "Partial",
+      "evidence": "Resume states 'Embedded C code understanding for white-box testing' \u2014 reading/understanding code for coverage analysis, not authoring or integrating production C code."
+    },
+    {
+      "skill": "Whitebox testing skills",
+      "status": "Met",
+      "evidence": "Led white-box unit and integration validation planning targeting C0, C1, and MC/DC coverage goals across multiple ADAS vehicle generations."
+    },
+    {
+      "skill": "Continuous integration testing experience",
+      "status": "Partial",
+      "evidence": "Led migration of 2500+ ADAS automation scenarios into HIL automation framework for regression, but no direct mention of CI/CD pipelines (Jenkins, GitLab CI, etc.)."
+    },
+    {
+      "skill": "Team collaboration",
+      "status": "Met",
+      "evidence": "Offshore SPOC coordinating multi-team validation execution across offshore and onsite Japan stakeholders for 3.25 years."
+    },
+    {
+      "skill": "Effective communication",
+      "status": "Met",
+      "evidence": "Prepared weekly KPIs, dashboards, and validation status reports for customer and management reviews; JLPT N4 Japanese proficiency for direct client coordination."
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [
+    {
+      "name": "ISTQB Certified Tester Foundation Level",
+      "tier": "Foundational"
+    },
+    {
+      "name": "JLPT N4 Japanese Language Proficiency",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 49.75,
+  "reasoning": "Borderline \u2014 hold pending clarification on CI pipeline hands-on depth and actual Git usage scope. This candidate is a strong ADAS white-box validation lead with 7.5 years of deep V&V experience, ISO 26262 artifacts, and coverage governance \u2014 but the JD is hiring a RADAR Software Integrator, not a validation lead. The role demands someone who writes and integrates C code, owns branching strategy in Git, and drives CI pipelines (Jenkins/GitLab CI type tooling). This candidate reads C code for coverage analysis and uses Git as a tracking tool, not as a developer or integrator. The branching strategy requirement is entirely absent from the resume. The white-box testing competency is the strongest alignment point, and team coordination is credible and evidenced. However, the core integration and software development angle is mismatched. If the hiring team can confirm that 'Software Integrator' here means validation-side CI automation and the C requirement is read-level, she becomes a borderline-to-shortlist candidate. As written, the role signals a developer-integration profile she does not match.",
+  "strengths": [
+    "WHITE-BOX TESTING DEPTH: Led coverage governance for ADAS C0, C1, and MC/DC validation across multi-ECU platforms, authored unreachable-code justifications for audit readiness, and acted as quality-gate reviewer \u2014 this is exactly the white-box rigor the JD demands.",
+    "ADAS AUTOMATION SCALE: Drove migration of 2500+ ADAS HIL automation scenarios into a regression framework, demonstrating hands-on CI-adjacent automation leadership and structured test execution at program scale.",
+    "OFFSHORE COORDINATION & COMMUNICATION: Served as offshore SPOC with 3.25 years onsite Japan coordination, preparing KPIs and dashboards for management and customer reviews \u2014 strong evidence of the communication and collaboration requirements."
+  ],
+  "gaps": [
+    "NO CI/CD PIPELINE OWNERSHIP: The JD explicitly requires continuous integration testing experience, implying Jenkins, GitLab CI, or equivalent pipeline tooling. The candidate's automation experience is HIL-framework-based scenario migration \u2014 there is no evidence of defining, configuring, or maintaining CI pipelines, which is a core integrator function.",
+    "NO GIT BRANCHING STRATEGY OR C CODING PROFICIENCY: The role requires defining branching strategies and C software coding knowledge. The candidate lists Git as a tracking tool and describes Embedded C as 'understanding for white-box testing' only \u2014 neither qualifies for a Software Integrator who owns source code management and integration builds."
+  ],
+  "recommendation": "hold",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated in resume and no JD maximum specified \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate is based in India (TCS India) and JD is In-office Chennai \u2014 no explicit location mismatch detectable from resume, no penalty applied."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 7.5+ years total experience against a 4-year relevant experience requirement \u2014 well above the minimum threshold."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in JD \u2014 no penalty applied."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Lead",
+  "role_level_match": "Over-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Current",
+  "cv_narrative_style": "Unknown",
+  "availability_signal": "Unknown",
+  "availability_reason": "",
+  "alternative_role_fit": "",
+  "rare_assets": [],
+  "self_reported_unverified": [],
+  "interview_flags": [],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-08T09:47:35.006343"
+}

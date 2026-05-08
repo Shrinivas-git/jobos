@@ -67,7 +67,11 @@
       "Bash(Get-Content C:\\\\staging\\\\jobos\\\\tasks\\\\TASK-023-analytics-dashboards.md)",
       "Bash(Get-Content C:\\\\staging\\\\jobos\\\\tasks\\\\TASK-024-admin-config-ui.md)",
       "Bash(grep -E \"\\(\\\\.py|\\\\.tsx|\\\\.ts|\\\\.jsx|\\\\.js\\)$\")",
-      "Bash(docker restart api *)"
+      "Bash(docker restart api *)",
+      "Bash(npm run *)",
+      "WebSearch",
+      "Bash(xargs grep -l \"telegram\\\\|TG\\\\|bot\")",
+      "Bash(grep -E \"\\\\.py$\")"
     ]
   }
 }
