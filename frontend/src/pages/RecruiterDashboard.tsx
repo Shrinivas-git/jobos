@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ClipboardList, CheckCircle, XCircle, ChevronDown, ChevronUp, Users,
-  Clock, AlertTriangle, ArrowRight, Calendar, X,
+  Clock, AlertTriangle, ArrowRight, Calendar, X, Mail,
 } from 'lucide-react';
 import keycloak from '../keycloak';
 import {
@@ -224,6 +224,9 @@ const RecruiterDashboard: React.FC = () => {
   // Response history modal
   const [responseHistoryModal, setResponseHistoryModal] = useState<{ candidateId: string; candidateName: string } | null>(null);
 
+  // Send form modal
+  const [sendingFormId, setSendingFormId] = useState<string | null>(null);
+
   // Prevents stale results from a superseded JD click arriving after a newer one.
   const pendingJdRef = useRef<string>('');
 
@@ -325,6 +328,22 @@ const RecruiterDashboard: React.FC = () => {
       await loadPipeline(jdId);
     } catch (e: any) {
       setPipelineError('Advance failed: ' + e.message);
+    }
+  };
+
+  const handleSendFormLink = async (jdId: string, candidateId: string, candidateName: string) => {
+    setSendingFormId(candidateId);
+    try {
+      const res = await fetch(`${API}/forms/send-form-link/${jdId}/${candidateId}`, {
+        method: 'POST',
+        headers: getAuthHeaders()
+      });
+      if (!res.ok) throw new Error('Failed to send form link');
+      alert(`Form link sent to ${candidateName}!`);
+    } catch (err: any) {
+      alert(`Error: ${err.message}`);
+    } finally {
+      setSendingFormId(null);
     }
   };
 
@@ -1397,11 +1416,19 @@ const RecruiterDashboard: React.FC = () => {
                           </button>
                         )}
                         <button
+                          onClick={() => handleSendFormLink(selectedJdId, record.candidate_id, candidateNames[record.candidate_id] || record.candidate_id)}
+                          disabled={sendingFormId === record.candidate_id}
+                          className="flex items-center space-x-1.5 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 text-xs font-bold rounded-lg border border-blue-500/20 transition-colors disabled:opacity-40"
+                        >
+                          <Mail size={12} />
+                          <span>{sendingFormId === record.candidate_id ? 'Sending...' : 'Send Form Link'}</span>
+                        </button>
+                        <button
                           onClick={() => setResponseHistoryModal({
                             candidateId: record.candidate_id,
                             candidateName: candidateNames[record.candidate_id] || record.candidate_id,
                           })}
-                          className="flex items-center space-x-1.5 px-3 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg border border-slate-600/50 transition-colors ml-auto"
+                          className="flex items-center space-x-1.5 px-3 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg border border-slate-600/50 transition-colors"
                         >
                           <Clock size={12} />
                           <span>View Response History</span>

@@ -186,6 +186,99 @@ async def get_form_submission_stats(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.post("/send-form-link/{jd_id}/{candidate_id}")
+async def send_form_link(
+    jd_id: str,
+    candidate_id: str,
+    user: dict = Depends(check_role(["recruiter", "manager", "admin"]))
+):
+    """
+    Send the form submission link to a candidate via email
+    This is the initial email that invites them to fill out the form
+    """
+    try:
+        db = get_db()
+
+        # Get candidate and JD details
+        candidate = db.candidates.find_one({"candidate_id": candidate_id})
+        jd = db.job_descriptions.find_one({"jd_id": jd_id})
+
+        if not candidate or not jd:
+            raise HTTPException(status_code=404, detail="Candidate or JD not found")
+
+        candidate_name = candidate.get("name", candidate_id)
+        candidate_email = candidate.get("email")
+        jd_title = jd.get("title", jd_id)
+
+        if not candidate_email:
+            raise HTTPException(status_code=400, detail="Candidate email not found")
+
+        # Build form link (frontend URL)
+        form_link = f"http://localhost:3000/form/{jd_id}/{candidate_id}"
+
+        # Send email to candidate
+        subject = f"Video Resume Form - {jd_title}"
+        html = f"""<!DOCTYPE html>
+<html>
+<body style="background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#f1f5f9;margin:0;padding:24px">
+  <div style="max-width:600px;margin:0 auto">
+    <div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px">
+      <h1 style="color:#60a5fa;margin:0 0 4px 0;font-size:22px">JobOS</h1>
+      <p style="color:#94a3b8;margin:0;font-size:12px;text-transform:uppercase;letter-spacing:2px">Video Resume Form</p>
+    </div>
+    <div style="background:#1e293b;padding:24px;border-radius:12px">
+      <p style="color:#f1f5f9;margin:0 0 16px 0;font-size:15px">Hi {candidate_name},</p>
+      <p style="color:#94a3b8;margin:0 0 20px 0;line-height:1.6">
+        Thank you for your interest in the position of <strong style="color:#f1f5f9">{jd_title}</strong>.
+      </p>
+      <p style="color:#94a3b8;margin:0 0 20px 0;line-height:1.6">
+        We would love to learn more about you! Please fill out the brief form below and submit a short video resume (1-2 minutes).
+      </p>
+      <p style="color:#94a3b8;margin:0 0 24px 0;line-height:1.6">
+        <strong style="color:#f1f5f9">Form Details:</strong><br>
+        • Aadhar Number<br>
+        • LinkedIn Profile<br>
+        • Alternate Phone Number<br>
+        • Telegram Handle (optional)<br>
+        • Video Resume (MP4, Max 5 min)
+      </p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{form_link}"
+           style="display:inline-block;padding:14px 32px;background:#2563eb;color:#ffffff;text-decoration:none;border-radius:10px;font-weight:700;font-size:14px;letter-spacing:0.5px">
+          Submit Your Video Resume
+        </a>
+      </div>
+      <p style="color:#64748b;font-size:12px;margin:0;text-align:center">
+        Or copy this link: <span style="color:#60a5fa">{form_link}</span>
+      </p>
+      <p style="color:#94a3b8;margin:20px 0 0 0;line-height:1.6;font-size:13px">
+        If you have any questions, please don't hesitate to reach out.
+      </p>
+    </div>
+    <p style="color:#334155;font-size:11px;text-align:center;margin-top:24px">
+      JobOS · Recruitment Operating System
+    </p>
+  </div>
+</body>
+</html>"""
+
+        send_email(candidate_email, subject, html)
+        logger.info(f"Form submission link sent to {candidate_email} for {candidate_id}")
+
+        return {
+            "status": "success",
+            "message": f"Form link sent to {candidate_name} ({candidate_email})",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        import logging
+        logging.error(f"Error sending form link: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.post("/resend-notification/{jd_id}/{candidate_id}")
 async def resend_form_notification(
     jd_id: str,
