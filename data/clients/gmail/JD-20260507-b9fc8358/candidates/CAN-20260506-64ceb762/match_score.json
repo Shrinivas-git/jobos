@@ -1,0 +1,139 @@
+{
+  "fitment_score": 2.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "System engineering principles",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Knowledge of ASPICE",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ISO26262",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "System Requirements writing and System Architecture Design",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System (End User function) and Product knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience on system service function (Diagnostics, Flashability, FOTA, etc) development",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "CAN/LIN/Ethernet/LVDS",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Embedded System",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Basic Functional Safety and Cyber Security knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience in RADAR function validation (HIL and vehicle environment)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Requirement management tools DOORs, Code Beamer and Configuration management tools such as CoreALM",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Modeling tool Catia Magic",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [],
+  "composite_score": 3.1666666666666665,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Transport Manager (corporate employee logistics) with 10+ years in facilities and vendor management. The JD demands a Senior System Radar Function Owner with deep RADAR system engineering expertise, ASPICE/ISO26262 compliance knowledge, embedded systems development, automotive communication protocols (CAN/LIN/Ethernet), and HIL validation experience. Not a single must-have skill is present in this resume. There is zero overlap with automotive systems engineering. Do not engage this candidate for this role under any circumstances.",
+  "strengths": [
+    "OPERATIONAL SCALE: Managed end-to-end transportation operations for 2000+ employees across multiple large corporates (Microsoft, Novartis), demonstrating high-volume operational ownership \u2014 irrelevant to this JD but shows managerial capability.",
+    "CAREER PROGRESSION: Promoted four levels (Executive to Deputy Manager) at Microsoft India over 7 years, indicating performance-driven growth and stakeholder trust \u2014 again, entirely outside the automotive systems engineering domain required here.",
+    "VENDOR AND BUDGET MANAGEMENT: Demonstrated budget forecasting, accruals management, and procurement collaboration across multiple blue-chip clients \u2014 valuable in facilities roles but carries zero transferable value for a RADAR function owner position."
+  ],
+  "gaps": [
+    "ZERO AUTOMOTIVE/RADAR DOMAIN EXPERIENCE: The candidate has no exposure to automotive systems engineering, RADAR technology, embedded systems, ASPICE, ISO26262, or any related automotive standard \u2014 this is a complete domain mismatch that cannot be bridged through any screening or verification step.",
+    "NO TECHNICAL ENGINEERING BACKGROUND: The candidate holds only a Diploma in Computer Science (2012) with no engineering practice evidence; the JD requires system architecture design, requirements writing in DOORs/CodeBeamer, and HIL validation \u2014 skills that are entirely absent from this profile."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated and JD specifies no maximum \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires In-office presence in Chennai; candidate is based in Hyderabad (Beeramguda)."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 10+ years total experience, well above the minimum threshold of 2 years (half of 4 relevant years required)."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is Any \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD \u2014 no penalty applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch"
+  ],
+  "role_level_detected": "Manager",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "None",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Available now",
+  "availability_reason": "Current role at Novartis started May 2025 but resume is active; no notice period stated \u2014 availability unclear, defaulting to unknown but listed as current.",
+  "alternative_role_fit": "Transport Manager / Facilities Manager",
+  "rare_assets": [],
+  "self_reported_unverified": [
+    "Claims management of 2000+ employees transport at both Microsoft and Novartis \u2014 scale figures are not independently verifiable from document content.",
+    "Multiple promotions at Microsoft (Executive to Deputy Manager) cited as performance-based \u2014 no supporting documentation or metrics provided to validate promotion criteria."
+  ],
+  "interview_flags": [
+    "This candidate should not be interviewed for this role \u2014 confirm whether they applied to the correct job posting before any outreach.",
+    "If candidate claims any automotive or engineering background verbally, probe for specific project names, standards worked on, and tools used \u2014 resume provides zero supporting evidence.",
+    "Clarify the Nov 2024 to Feb 2025 gap between Northern Tools and TJX roles.",
+    "Clarify the May 2025 TJX exit and immediate Novartis start \u2014 overlapping timelines need explanation.",
+    "If repurposing this candidate for a facilities/transport role internally, probe actual budget ownership size and whether the Deputy Manager title involved direct reports."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:27:25.150169"
+}

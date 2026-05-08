@@ -1,0 +1,43 @@
+{
+  "_meta": {
+    "source": "github",
+    "jd_id": "JD-2026-TEST",
+    "fetched_at": "2026-05-08T06:33:00.529455",
+    "index": 23
+  },
+  "profile": {
+    "login": "bharadwajyas",
+    "id": 28229264,
+    "node_id": "MDQ6VXNlcjI4MjI5MjY0",
+    "avatar_url": "https://avatars.githubusercontent.com/u/28229264?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/bharadwajyas",
+    "html_url": "https://github.com/bharadwajyas",
+    "followers_url": "https://api.github.com/users/bharadwajyas/followers",
+    "following_url": "https://api.github.com/users/bharadwajyas/following{/other_user}",
+    "gists_url": "https://api.github.com/users/bharadwajyas/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/bharadwajyas/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/bharadwajyas/subscriptions",
+    "organizations_url": "https://api.github.com/users/bharadwajyas/orgs",
+    "repos_url": "https://api.github.com/users/bharadwajyas/repos",
+    "events_url": "https://api.github.com/users/bharadwajyas/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/bharadwajyas/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false,
+    "name": "Yash Bharadwaj",
+    "company": "cyberwarfarelabs",
+    "blog": "https://cyberwarfare.live",
+    "location": "Bengaluru, Karnataka",
+    "email": null,
+    "hireable": null,
+    "bio": "Yash Bharadwaj, Technical Architect at CyberWarFare R&D Pvt. Ltd.\r\n\r\nLoves to work on offensive trade-crafts",
+    "twitter_username": "flopyash",
+    "public_repos": 195,
+    "public_gists": 42,
+    "followers": 32,
+    "following": 22,
+    "created_at": "2017-04-30T17:51:05Z",
+    "updated_at": "2026-04-09T04:00:11Z"
+  }
+}

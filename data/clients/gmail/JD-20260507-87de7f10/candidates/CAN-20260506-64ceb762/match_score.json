@@ -1,0 +1,114 @@
+{
+  "fitment_score": 2.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MISRA coding guidelines",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Autosar experience",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR Algo development",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [],
+  "composite_score": 3.1666666666666665,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Transport Operations Manager with 10+ years in employee fleet logistics, vendor management, and facilities coordination. The JD demands an embedded software developer with C programming, MISRA, Autosar, RTOS, and RADAR systems expertise. Not a single technical skill from the JD appears anywhere in this resume. The candidate's background in employee transportation at Microsoft and Novartis shares no overlap with automotive embedded systems or ADAS/RADAR development. Do not proceed \u2014 this is a complete domain mismatch, not a gap that can be bridged.",
+  "strengths": [
+    "OPERATIONS SCALE: Managed end-to-end employee transportation for 2000+ employees across major corporate campuses including Microsoft India R&D and Novartis \u2014 demonstrates large-scale operational management capability, though entirely irrelevant to this embedded SW role.",
+    "CAREER PROGRESSION: Promoted four times within a single engagement at Microsoft India (Executive to Deputy Manager over ~7 years), signalling consistent performance and stakeholder trust \u2014 but in a completely unrelated domain.",
+    "VENDOR & BUDGET MANAGEMENT: Prepared budgets, forecasts, and QBR/MOR reports while managing multi-vendor procurement coordination \u2014 transferable soft skills only, with zero relevance to embedded C/Autosar development."
+  ],
+  "gaps": [
+    "ZERO EMBEDDED SOFTWARE SKILLS: The candidate has no C programming, MISRA, Autosar, RTOS, or any embedded/automotive software experience whatsoever. Every single technical must-have for this role is missing \u2014 this is a complete domain disqualification, not a partial gap.",
+    "WRONG DOMAIN \u2014 TRANSPORT OPERATIONS vs AUTOMOTIVE ENGINEERING: This candidate manages employee commute logistics, not automotive software. There is no path from facilities/transport management to RADAR algorithm development or ADAS systems without a full career restart."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated and JD has no maximum specified \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office presence in Chennai; candidate is based in Hyderabad (Beeramguda)."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 10+ years total experience, well above the minimum threshold \u2014 no penalty on experience volume alone."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD specifies 'Any' gender preference \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college exclusion or preference specified in JD \u2014 no penalty applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch \u2014 candidate is in Hyderabad, JD requires in-office in Chennai"
+  ],
+  "role_level_detected": "Manager",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "None",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Available now",
+  "availability_reason": "Most recent role at TJX ended May 2025 and current role at Novartis is listed as May 2025\u2013Present, suggesting active employment \u2014 however the role change pattern and resume submission indicate potential openness; treat as requiring notice period clarification.",
+  "alternative_role_fit": "Transport/Facilities Manager or Corporate Operations Manager",
+  "rare_assets": [],
+  "self_reported_unverified": [
+    "Claims promotion from Executive to Deputy Manager at Microsoft over 7 years \u2014 no corroborating performance metrics or team size data provided.",
+    "'Successfully completed business transition of employees from one office location to another' \u2014 vague claim with no quantified scope or outcome."
+  ],
+  "interview_flags": [
+    "Do not interview \u2014 reject at screening stage due to complete domain mismatch with embedded automotive software development.",
+    "If mistakenly advanced, ask: 'Do you have any background in C programming or embedded systems?' to immediately confirm the mismatch.",
+    "Clarify how this resume was submitted against an embedded SW Developer JD \u2014 possible recruiter pipeline error or candidate applying to wrong role.",
+    "If retention pipeline exists, probe whether candidate has any interest in retraining into software operations or DevOps support roles.",
+    "Confirm current employment status \u2014 resume shows overlapping short tenures (TJX Feb\u2013May 2025 and Novartis May 2025\u2013Present) which may indicate instability."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:00:56.313606"
+}

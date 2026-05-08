@@ -16,6 +16,7 @@ celery = Celery(
         'tasks.pipeline_tasks',
         'tasks.feedback_tasks',
         'tasks.retention_tasks',
+        'tasks.invoice_tasks',
     ]
 )
 
@@ -40,5 +41,9 @@ celery.conf.beat_schedule = {
     "check-retention-clock": {
         "task": "tasks.retention_tasks.check_retention_clock",
         "schedule": crontab(hour=0, minute=0),  # Daily at midnight UTC
+    },
+    "check-overdue-invoices": {
+        "task": "tasks.invoice_tasks.check_overdue_invoices",
+        "schedule": crontab(hour=8, minute=0),  # Daily at 8am UTC
     },
 }

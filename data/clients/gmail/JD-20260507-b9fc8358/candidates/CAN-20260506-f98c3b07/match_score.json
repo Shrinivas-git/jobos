@@ -1,0 +1,151 @@
+{
+  "fitment_score": 4.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "System engineering principles",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Knowledge of ASPICE and ISO26262",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "System Requirements writing and System Architecture Design",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System (End User function) and Product knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience on system service function (Diagnostics, Flashability, FOTA, etc) development",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "CAN/LIN/Ethernet/LVDS communication protocols",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Embedded System experience",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Basic Functional Safety and Cyber Security knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience in RADAR function validation (HIL and vehicle environment)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Requirement management tools DOORs/Code Beamer and configuration management tools such as CoreALM",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Modeling tool Catia Magic",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 3,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 8,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Advanced Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 11.333333333333332,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Salesforce Platform Manager and DevOps Engineer with 6+ years of enterprise CRM delivery experience across banking and healthcare verticals. The role requires an automotive systems engineer with deep RADAR domain expertise, ASPICE/ISO26262 functional safety knowledge, embedded systems experience, automotive communication protocols (CAN/LIN/Ethernet/LVDS), and hands-on HIL/vehicle validation capability. Not a single must-have skill from the JD is present in this resume. There is zero overlap between Salesforce ecosystem management and automotive radar system engineering. Do not progress this candidate under any circumstances \u2014 this is a fundamental domain mismatch, not a skill gap.",
+  "strengths": [
+    "COPADO CI/CD MASTERY: Managed 50+ end-to-end Salesforce releases at HSBC with zero unplanned production outages over 18 months across 5 environments \u2014 exceptional release discipline for a CRM DevOps role.",
+    "ENTERPRISE PLATFORM GOVERNANCE: Established Center of Excellence CI/CD frameworks and release governance SOPs adopted as NTT Data standard across multiple engagements, demonstrating strategic platform ownership beyond individual delivery.",
+    "QUANTIFIED DELIVERY OUTCOMES: Reduced deployment cycle time by 35% at FinSure, production defect escape rate by 30% and deployment time by 25% at CVS Health \u2014 strong evidence of measurable operational impact."
+  ],
+  "gaps": [
+    "ZERO AUTOMOTIVE/RADAR DOMAIN KNOWLEDGE: The entire resume is Salesforce CRM and DevOps \u2014 there is no evidence of embedded systems, RADAR product knowledge, ASPICE, ISO26262, CAN/LIN/Ethernet protocols, or any automotive systems engineering experience. This is a disqualifying domain mismatch.",
+    "NO SYSTEMS ENGINEERING OR FUNCTIONAL SAFETY BACKGROUND: The role requires requirements writing (DOORs/CodeBeamer), system architecture design, HIL validation, and functional safety \u2014 none of which appear anywhere in this candidate's profile. There is no remedial path without a complete career pivot."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period specified in resume and no JD maximum stated \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office presence in Chennai; candidate is based in Hyderabad, India \u2014 location mismatch."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 6+ years total experience, which exceeds half of the 4-year relevant experience requirement \u2014 no penalty on raw years alone."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college exclusion or preference specified in JD \u2014 no penalty applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch \u2014 candidate is in Hyderabad, role requires in-office presence in Chennai"
+  ],
+  "role_level_detected": "Senior",
+  "role_level_match": "Match",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Achievement-focused",
+  "availability_signal": "Available now",
+  "availability_reason": "Latest role listed end date as March 2026 \u2014 candidate appears to be between roles or recently concluded an engagement.",
+  "alternative_role_fit": "Senior Salesforce Platform Manager / Salesforce DevOps Lead",
+  "rare_assets": [
+    "Salesforce Premier Support escalation experience at HSBC \u2014 direct enterprise-tier vendor engagement is uncommon at this career level.",
+    "CoE framework establishment adopted as NTT Data standard across multiple global engagements \u2014 demonstrates org-wide platform influence beyond project scope."
+  ],
+  "self_reported_unverified": [
+    "Claim of 'zero unplanned production outages over 18 months' at HSBC \u2014 a strong outcome claim with no third-party corroboration or incident log reference.",
+    "'Zero-finding compliance audits' across all internal and external banking audits \u2014 impressive but entirely self-reported with no audit body or report cited.",
+    "CoE framework 'adopted as the standard across NTT Data Salesforce engagements' \u2014 organisational adoption claim without evidence of formal sign-off or scale of adoption."
+  ],
+  "interview_flags": [
+    "Probe why a B.Com graduate is in a highly technical platform engineering role \u2014 clarify self-taught path and any formal technical training beyond Salesforce certifications.",
+    "Ask whether candidate has any exposure to automotive, embedded systems, or safety-critical engineering \u2014 confirm zero overlap before closing the file.",
+    "Verify the end date of March 2026 on current role \u2014 unusual future date; confirm whether actively employed, on notice, or already available.",
+    "Probe actual depth of 'architecture' work \u2014 distinguish between configuring Copado pipelines versus true system architecture design decisions.",
+    "Clarify team size managed or led \u2014 'delivered knowledge transfer to 10+ developers' is the only people-leadership signal; confirm whether this was formal management or informal mentoring."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:28:35.934381"
+}

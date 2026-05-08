@@ -1,0 +1,24 @@
+{
+  "fitment_score": 80.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 73.1676406,
+  "reasoning": "The candidate's experience in Salesforce platform management, CI/CD pipeline management, and release governance aligns with the job requirements. However, there are some gaps in their experience with specific Salesforce technologies and certifications.",
+  "strengths": [
+    "The candidate has hands-on experience with Copado, a key requirement for the job, and has successfully managed Copado-driven Salesforce deployments.",
+    "They have a strong background in Agile/Scrum methodologies and have participated in Scrum ceremonies, which is essential for the role.",
+    "The candidate has experience with Git-based version control and has managed end-to-end Salesforce CI/CD deployments using Copado Source Format (SFP) and Metadata Format.",
+    "They have a proven track record of reducing deployment time by 30% through streamlined Copado-driven release processes, demonstrating their ability to optimize release management.",
+    "The candidate has experience with environment refresh activities and has conducted post-deployment validation, which is crucial for ensuring production stability."
+  ],
+  "gaps": [
+    "The candidate lacks experience with Salesforce multi-tenant architecture, which is a key requirement for the job.",
+    "They do not have experience with Visualforce, Apex, or Lightning frameworks, which are essential skills for the role.",
+    "The candidate is missing certifications such as Salesforce Certified Development Lifecycle and Deployment Designer and Salesforce Certified Platform App Builder/Admin, which are preferred for the job.",
+    "There is no mention of the candidate's experience with Data Cloud, which is a required skill for the role.",
+    "The candidate's experience is mostly limited to telecom and technology domains, and it is unclear if they have experience working in other industries."
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T12:45:00.080299"
+}

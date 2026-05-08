@@ -1,0 +1,172 @@
+{
+  "fitment_score": 8.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.06666666666666667,
+  "must_have_breakdown": [
+    {
+      "skill": "Python (3.x)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Django",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Flask",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "FastAPI",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MySQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "PostgreSQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MongoDB",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "SQLite",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Git / GitHub / Bitbucket",
+      "status": "Partial",
+      "evidence": "Resume lists Git and GitHub usage across multiple engagements, but only in the context of Salesforce DX and Copado pipelines, not Python projects."
+    },
+    {
+      "skill": "Docker",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Jenkins",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "HTML5 / CSS3 / JavaScript",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RESTful APIs / JSON",
+      "status": "Partial",
+      "evidence": "Candidate references REST and SOAP API integration within Salesforce LWC context, not Python-based API development."
+    },
+    {
+      "skill": "OOP / Data Structures / Algorithms",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Unit Testing (PyTest / Unittest)",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 9,
+  "cert_tier_bonus": 2,
+  "outcome_bonus": 3,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 7,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Advanced Administrator",
+      "tier": "Expert"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 17.916666666666668,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Senior Salesforce Platform Manager with 6+ years of Salesforce-specific experience (Apex, LWC, Copado, Salesforce DX) \u2014 they have zero evidence of Python development, Django/Flask/FastAPI, Python-based databases, Docker, Jenkins, or AI/ML model training, all of which are core requirements for this Junior Python Developer role. The single partial credits for Git and REST APIs are Salesforce-context only and do not transfer. The recruiter's additional requirement for Python projects and AI model training makes this an even harder miss \u2014 nothing in this resume touches either. Do not shortlist. Redirect this candidate to Salesforce-focused roles at the Senior or Lead level instead.",
+  "strengths": [
+    "SALESFORCE CI/CD MASTERY: Managed 50+ end-to-end Salesforce releases at HSBC using Copado across 5 environments with zero unplanned production outages over 18 months \u2014 but this is entirely irrelevant to the Python Developer role.",
+    "ENTERPRISE DELIVERY SCALE: Oversaw 20+ concurrent development streams at CVS Health and reduced production defect escape rate by 30% and deployment time by 25% \u2014 strong DevOps pedigree, wrong technology stack.",
+    "GOVERNANCE AND COMPLIANCE DEPTH: Established CoE frameworks and release governance SOPs adopted as NTT Data standards across engagements \u2014 senior-level impact, but zero applicability to a Junior Python back-end role."
+  ],
+  "gaps": [
+    "NO PYTHON OR BACK-END DEVELOPMENT EXPERIENCE: The candidate has no evidence of Python (3.x), Django, Flask, FastAPI, PyTest, or any Python-adjacent technology anywhere in their resume \u2014 this is the foundational requirement for the role and it is completely absent.",
+    "NO AI/ML MODEL TRAINING: The recruiter explicitly requires Python projects with AI model training experience; this candidate has no machine learning, data science, or AI tooling mentioned anywhere \u2014 a total mismatch with the hiring intent."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period specified in the resume and JD has no stated maximum \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires In-office in Bangalore; candidate is based in Hyderabad, India \u2014 location mismatch."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "JD requires 0 relevant experience so no minimum threshold to breach \u2014 no penalty applied."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is Any \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD \u2014 no penalty applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch"
+  ],
+  "role_level_detected": "Senior",
+  "role_level_match": "Over-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Achievement-focused",
+  "availability_signal": "Available now",
+  "availability_reason": "Latest role end-date is listed as March 2026 \u2014 candidate appears to be between engagements currently.",
+  "alternative_role_fit": "Senior Salesforce Platform Manager / Salesforce DevOps Lead",
+  "rare_assets": [
+    "Copado expert-level CI/CD orchestration with 50+ managed Salesforce releases and zero production outages at HSBC \u2014 highly rare at this depth.",
+    "Salesforce Premier Support escalation experience at HSBC for a global banking CRM \u2014 very few practitioners operate at this level.",
+    "Federated development architecture across multi-region parallel teams with zero metadata collision incidents \u2014 niche enterprise Salesforce governance capability."
+  ],
+  "self_reported_unverified": [
+    "Claim of 'zero unplanned production outages over 18 months' at HSBC \u2014 a strong claim with no independent audit reference or third-party validation cited.",
+    "CoE framework 'adopted as the standard across NTT Data Salesforce engagements' \u2014 scope and formal adoption process are unverifiable from the resume alone.",
+    "'Reducing team escalations by 50% within 3 months' \u2014 impactful metric but no baseline data or measurement methodology provided."
+  ],
+  "interview_flags": [
+    "Candidate has a B.Com degree from Osmania University \u2014 probe how they transitioned into a technical Salesforce platform role and what foundational technical training they underwent.",
+    "Six-year tenure at NTT Data in a single employer context \u2014 probe whether the multi-client experience reflects genuine independent delivery or managed account work with heavy senior oversight.",
+    "Resume claims Expert-level Copado proficiency but only holds Copado Fundamentals I certification \u2014 probe why no advanced Copado certification has been pursued despite years of claimed expert use.",
+    "All REST/SOAP API experience is Salesforce-context only \u2014 probe if there is any general web API development experience outside the Salesforce platform.",
+    "Recruiter requires Python and AI model training \u2014 directly ask if candidate has any personal projects, coursework, or side work involving Python or ML, even if not on the resume."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:56:44.023675"
+}

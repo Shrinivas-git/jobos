@@ -1,0 +1,43 @@
+{
+  "_meta": {
+    "source": "github",
+    "jd_id": "JD-2026-TEST",
+    "fetched_at": "2026-05-08T06:33:00.534690",
+    "index": 28
+  },
+  "profile": {
+    "login": "lokeshsoni",
+    "id": 27202916,
+    "node_id": "MDQ6VXNlcjI3MjAyOTE2",
+    "avatar_url": "https://avatars.githubusercontent.com/u/27202916?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/lokeshsoni",
+    "html_url": "https://github.com/lokeshsoni",
+    "followers_url": "https://api.github.com/users/lokeshsoni/followers",
+    "following_url": "https://api.github.com/users/lokeshsoni/following{/other_user}",
+    "gists_url": "https://api.github.com/users/lokeshsoni/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/lokeshsoni/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/lokeshsoni/subscriptions",
+    "organizations_url": "https://api.github.com/users/lokeshsoni/orgs",
+    "repos_url": "https://api.github.com/users/lokeshsoni/repos",
+    "events_url": "https://api.github.com/users/lokeshsoni/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/lokeshsoni/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false,
+    "name": "Lokesh Soni",
+    "company": null,
+    "blog": "https://www.linkedin.com/in/lokeshsonii/",
+    "location": "Bengaluru, Karnataka, India",
+    "email": null,
+    "hireable": null,
+    "bio": "A Data Architect by profession, problem solver by heart, born to yashodanand, a happy husband 👫🥰😬✌🏻 and parenting one 👶🏻",
+    "twitter_username": "lokeshsonii",
+    "public_repos": 172,
+    "public_gists": 13,
+    "followers": 29,
+    "following": 158,
+    "created_at": "2017-04-10T09:45:45Z",
+    "updated_at": "2026-05-02T13:26:25Z"
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "fitment_score": 3.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MISRA coding guidelines",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Autosar experience",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR system knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR algo development",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 9,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 3,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 8,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Advanced Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 12.25,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Salesforce Platform Manager and DevOps Engineer with 6+ years in CRM release orchestration, Apex development, and CI/CD pipelines. The JD demands an embedded SW Developer with C programming, MISRA guidelines, Autosar, RTOS, and RADAR/ADAS domain expertise \u2014 none of which appear anywhere in this resume. Not a single must-have skill is met. There is zero overlap between the candidate's Salesforce ecosystem background and the automotive/embedded systems context of this role. Do not shortlist; move on to next candidate.",
+  "strengths": [
+    "SALESFORCE DEVOPS MASTERY: Managed 50+ end-to-end releases at HSBC using Copado across 5 environments with zero unplanned production outages over 18 months \u2014 high-signal delivery record, but entirely irrelevant to this embedded systems role.",
+    "ENTERPRISE PLATFORM GOVERNANCE: Established CoE frameworks, federated branching strategies, and release governance SOPs adopted as NTT Data standards across multiple healthcare, banking, and retail engagements \u2014 strong leadership signal, wrong domain.",
+    "QUANTIFIED PRODUCTION OUTCOMES: Demonstrated measurable impact including 35% reduction in deployment cycle time, 30% reduction in production defect escape rate, and 50% reduction in team escalations \u2014 impressive achievement record that belongs in a Salesforce hiring process, not here."
+  ],
+  "gaps": [
+    "NO EMBEDDED/AUTOMOTIVE DOMAIN EXPERIENCE: The role requires C programming with MISRA compliance, Autosar, and RTOS \u2014 this candidate has never worked in embedded systems, automotive software, or safety-critical development. This is a complete domain mismatch, not a skill gap.",
+    "NO RADAR OR ADAS KNOWLEDGE: RADAR system knowledge and ADAS exposure are listed as critical differentiators for this role. The candidate's entire career is in Salesforce CRM platforms with no signal of electronics, signal processing, or sensor-based system development."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period specified in the resume; latest role ended March 2026, candidate appears available now."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires In-office in Chennai; candidate is based in Hyderabad, India \u2014 location mismatch."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 6+ years total experience, which exceeds half of the 4-year relevant experience threshold."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is Any; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college exclusion or preference specified in the JD; no penalty or bonus applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch"
+  ],
+  "role_level_detected": "Senior",
+  "role_level_match": "Match",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Achievement-focused",
+  "availability_signal": "Available now",
+  "availability_reason": "Latest role at NTT Data ended March 2026 \u2014 candidate is currently between engagements.",
+  "alternative_role_fit": "Senior Salesforce Platform Manager / Salesforce DevOps Lead",
+  "rare_assets": [
+    "Zero-finding compliance audit record across all internal and external banking audits at HSBC over 18 months using Copado governance.",
+    "CoE framework established for Salesforce release management adopted as NTT Data standard across multiple global engagements.",
+    "Multi-region federated branching strategy architecture for a global banking platform with zero metadata collision incidents."
+  ],
+  "self_reported_unverified": [
+    "Claim of 'zero unplanned production outages over 18 months' at HSBC is high-stakes and unverified \u2014 no incident log or external reference provided.",
+    "Claim that CoE framework was 'adopted as the standard across NTT Data Salesforce engagements' is broad and cannot be verified from the resume alone.",
+    "50% reduction in team escalations within 3 months at FinSure \u2014 impactful metric but no baseline or measurement methodology cited."
+  ],
+  "interview_flags": [
+    "Probe why a Salesforce specialist is applying to an embedded C/RTOS/Autosar role \u2014 is this an accidental application or a deliberate pivot attempt?",
+    "If pivot is intentional, ask what foundational C or embedded systems training they have pursued outside their professional experience.",
+    "Verify the 'zero production outages over 18 months' claim at HSBC \u2014 ask for specifics on the most critical incident they prevented or resolved.",
+    "Clarify the B.Com educational background versus a technical degree \u2014 how did they transition into software development roles without an engineering foundation?",
+    "Ask about any exposure, even academic or hobbyist, to embedded systems, automotive software, or safety-critical coding standards like MISRA."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:02:22.747251"
+}

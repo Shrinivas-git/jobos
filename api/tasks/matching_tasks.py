@@ -66,9 +66,9 @@ def run_matching(jd_id: str):
         }
         matches.append(match_record)
         
-        # Save/Upsert to candidate_pools
+        # Save/Upsert to candidate_pools — never downgrade a pass_2_complete record
         db.candidate_pools.update_one(
-            {"jd_id": jd_id, "candidate_id": candidate_id},
+            {"jd_id": jd_id, "candidate_id": candidate_id, "status": {"$ne": "pass_2_complete"}},
             {"$set": match_record},
             upsert=True
         )
@@ -129,9 +129,10 @@ def run_pass_2(jd_id: str):
     
     client_slug = client.get("slug", "unknown") if client else "unknown"
 
-    # 2. Fetch candidates from Pass 1
-    # We take top 20 from Pass 1 to process
-    pass_1_matches = list(db.candidate_pools.find({"jd_id": jd_id}).sort("rank", 1).limit(20))
+    # 2. Fetch candidates from Pass 1 — skip any already pass_2_complete
+    pass_1_matches = list(db.candidate_pools.find(
+        {"jd_id": jd_id, "status": {"$ne": "pass_2_complete"}}
+    ).sort("rank", 1).limit(20))
     
     if not pass_1_matches:
         logger.warning(f"No Pass 1 matches found for {jd_id}")
@@ -142,73 +143,160 @@ def run_pass_2(jd_id: str):
     for match in pass_1_matches:
         candidate_id = match["candidate_id"]
         logger.info(f"Evaluating candidate {candidate_id} for JD {jd_id}...")
-        
-        # Fetch full candidate record
-        candidate = db.candidates.find_one({"candidate_id": candidate_id})
-        if not candidate or not candidate.get("resume_text"):
-            logger.warning(f"Resume text missing for candidate {candidate_id}")
+
+        try:
+            # Fetch full candidate record
+            candidate = db.candidates.find_one({"candidate_id": candidate_id})
+            if not candidate or not candidate.get("resume_text"):
+                logger.warning(f"Resume text missing for candidate {candidate_id} — marking pass_2_skipped")
+                db.candidate_pools.update_one(
+                    {"jd_id": jd_id, "candidate_id": candidate_id},
+                    {"$set": {
+                        "status": "pass_2_skipped",
+                        "skip_reason": "resume_text_missing",
+                        "updated_at": datetime.now()
+                    }}
+                )
+                continue
+
+            # Call Claude reasoning
+            recruiter_notes = jd.get("recruiter_notes") or None
+            evaluation = evaluate_candidate_fitment(structured_jd, candidate["resume_text"], recruiter_notes)
+
+            # Calculate completeness (display-only, no longer in composite)
+            completeness = calculate_completeness_score(candidate)
+
+            # Component scores
+            fitment_score = float(evaluation.get("fitment_score", 0))
+            cosine_score = float(match.get("match_score", 0)) * 100  # Normalize to 0-100 (Pass-1 gate only; not in composite)
+            context_bonus = float(evaluation.get("context_bonus", 0))
+            must_have_coverage_ratio = float(evaluation.get("must_have_coverage_ratio", 0.0))
+            must_have_pct = must_have_coverage_ratio * 100  # 0-100
+            rare_assets = evaluation.get("rare_assets", []) or []
+            rare_asset_bonus = min(len(rare_assets) * 3, 9)  # 0-9
+
+            # Certification tier bonus: Expert=+2, Mentor=+4 (Mentor is peer-recognised, very rare), capped at +8
+            certs_assessed = evaluation.get("certifications_assessed", []) or []
+            cert_tier_bonus = min(
+                sum(4 if (c.get("tier") or "").lower() == "mentor" else 2
+                    for c in certs_assessed
+                    if (c.get("tier") or "").lower() in ("expert", "mentor")),
+                8
+            )
+
+            # Quantified outcomes bonus: 0/1/3 based on count
+            outcomes_count = int(evaluation.get("quantified_outcomes_count", 0) or 0)
+            if outcomes_count >= 5:
+                outcome_bonus = 3
+            elif outcomes_count >= 1:
+                outcome_bonus = 1
+            else:
+                outcome_bonus = 0  # 0-3
+
+            # Emerging tech bonus: +3 if candidate has Agentforce or Data Cloud exposure
+            # These are explicitly called out in the JD and rare among candidates
+            emerging_keywords = {"agentforce", "data cloud"}
+            candidate_skills_lower = {s.lower() for s in (candidate.get("structured_data") or {}).get("skills", [])}
+            rare_assets_lower = {r.lower() for r in rare_assets}
+            emerging_tech_bonus = 3 if emerging_keywords & (candidate_skills_lower | rare_assets_lower) else 0
+
+            # Composite (cosine dropped from formula; now Pass-1 gate only):
+            # 75% fitment + 10% must-have + 5% rare-asset + 5% cert tier + 5% outcomes + emerging tech bonus
+            composite_score = (
+                (fitment_score * 0.75)
+                + (must_have_pct * 0.10)
+                + ((rare_asset_bonus / 9.0 * 100) * 0.05 if rare_asset_bonus else 0)
+                + ((cert_tier_bonus / 8.0 * 100) * 0.05 if cert_tier_bonus else 0)
+                + ((outcome_bonus / 3.0 * 100) * 0.05 if outcome_bonus else 0)
+                + emerging_tech_bonus
+            )
+
+            # Adjustments
+            role_level_match = evaluation.get("role_level_match", "Unknown")
+            tool_currency = evaluation.get("tool_currency", "None")
+            key_tool_recency = evaluation.get("key_tool_recency", "Never")
+            hard_filters_passed = evaluation.get("hard_filters_passed", True)
+
+            if role_level_match == "Mismatch":
+                composite_score -= 10
+            if tool_currency == "Previous":
+                composite_score -= 5
+            if key_tool_recency == "Stale":
+                composite_score -= 5
+            if hard_filters_passed is False:
+                composite_score = min(composite_score, 35)
+
+            # Clamp to [0, 100]
+            composite_score = max(0.0, min(100.0, composite_score))
+
+            match_update = {
+                "fitment_score": fitment_score,
+                "completeness_score": completeness,
+                "context_bonus": context_bonus,
+                "must_have_coverage_ratio": must_have_coverage_ratio,
+                "must_have_breakdown": evaluation.get("must_have_breakdown", []),
+                "rare_asset_bonus": rare_asset_bonus,
+                "cert_tier_bonus": cert_tier_bonus,
+                "outcome_bonus": outcome_bonus,
+                "emerging_tech_bonus": emerging_tech_bonus,
+                "quantified_outcomes_count": outcomes_count,
+                "certifications_assessed": certs_assessed,
+                "composite_score": composite_score,
+                "reasoning": evaluation.get("reasoning"),
+                "strengths": evaluation.get("strengths"),
+                "gaps": evaluation.get("gaps"),
+                "recommendation": evaluation.get("recommendation"),
+                "scoring_factors": evaluation.get("scoring_factors", []),
+                "hard_filters_passed": hard_filters_passed,
+                "hard_filter_failures": evaluation.get("hard_filter_failures", []),
+                "role_level_detected": evaluation.get("role_level_detected", "Unknown"),
+                "role_level_match": role_level_match,
+                "tool_currency": tool_currency,
+                "key_tool_recency": key_tool_recency,
+                "cv_narrative_style": evaluation.get("cv_narrative_style", "Unknown"),
+                "availability_signal": evaluation.get("availability_signal", "Unknown"),
+                "availability_reason": evaluation.get("availability_reason", ""),
+                "alternative_role_fit": evaluation.get("alternative_role_fit", ""),
+                "rare_assets": rare_assets,
+                "self_reported_unverified": evaluation.get("self_reported_unverified", []),
+                "interview_flags": evaluation.get("interview_flags", []),
+                "status": "pass_2_complete",
+                "updated_at": datetime.now()
+            }
+
+            # Update MongoDB
+            db.candidate_pools.update_one(
+                {"jd_id": jd_id, "candidate_id": candidate_id},
+                {"$set": match_update}
+            )
+
+            # Write to filesystem (match_score.json and pointer.json)
+            pointer_data = {
+                "candidate_id": candidate_id,
+                "vector_id": str(candidate.get("vector_id", "")),
+                "file_path": candidate.get("file_paths", [""])[0] if candidate.get("file_paths") else ""
+            }
+
+            save_candidate_match_results(
+                client_slug,
+                jd_id,
+                candidate_id,
+                match_update,
+                pointer_data
+            )
+
+            evaluated_count += 1
+        except Exception as eval_err:
+            logger.exception(f"Pass 2 failed for candidate {candidate_id}: {eval_err}")
+            db.candidate_pools.update_one(
+                {"jd_id": jd_id, "candidate_id": candidate_id},
+                {"$set": {
+                    "status": "pass_2_failed",
+                    "skip_reason": str(eval_err)[:300],
+                    "updated_at": datetime.now()
+                }}
+            )
             continue
-            
-        # Call Gemini reasoning
-        evaluation = evaluate_candidate_fitment(structured_jd, candidate["resume_text"])
-
-        # Calculate completeness
-        completeness = calculate_completeness_score(candidate)
-
-        # Composite score calculation (Section 6.1)
-        # Weighting: 65% Gemini, 20% Cosine (Pass 1), 10% Completeness, 5% Context Bonus
-        fitment_score = float(evaluation.get("fitment_score", 0))
-        cosine_score = float(match.get("match_score", 0)) * 100 # Normalize to 0-100
-        context_bonus = float(evaluation.get("context_bonus", 0))
-
-        composite_score = (fitment_score * 0.65) + (cosine_score * 0.2) + (completeness * 0.1) + (context_bonus * 0.05)
-        
-        match_update = {
-            "fitment_score": fitment_score,
-            "completeness_score": completeness,
-            "context_bonus": context_bonus,
-            "composite_score": composite_score,
-            "reasoning": evaluation.get("reasoning"),
-            "strengths": evaluation.get("strengths"),
-            "gaps": evaluation.get("gaps"),
-            "recommendation": evaluation.get("recommendation"),
-            "scoring_factors": evaluation.get("scoring_factors", []),
-            "hard_filters_passed": evaluation.get("hard_filters_passed", True),
-            "hard_filter_failures": evaluation.get("hard_filter_failures", []),
-            "role_level_detected": evaluation.get("role_level_detected", "Unknown"),
-            "role_level_match": evaluation.get("role_level_match", "Unknown"),
-            "tool_currency": evaluation.get("tool_currency", "None"),
-            "cv_narrative_style": evaluation.get("cv_narrative_style", "Unknown"),
-            "availability_signal": evaluation.get("availability_signal", "Unknown"),
-            "rare_assets": evaluation.get("rare_assets", []),
-            "self_reported_unverified": evaluation.get("self_reported_unverified", []),
-            "interview_flags": evaluation.get("interview_flags", []),
-            "status": "pass_2_complete",
-            "updated_at": datetime.now()
-        }
-        
-        # Update MongoDB
-        db.candidate_pools.update_one(
-            {"jd_id": jd_id, "candidate_id": candidate_id},
-            {"$set": match_update}
-        )
-        
-        # Write to filesystem (match_score.json and pointer.json)
-        pointer_data = {
-            "candidate_id": candidate_id,
-            "vector_id": str(candidate.get("vector_id", "")),
-            "file_path": candidate.get("file_paths", [""])[0] if candidate.get("file_paths") else ""
-        }
-        
-        save_candidate_match_results(
-            client_slug, 
-            jd_id, 
-            candidate_id, 
-            match_update, 
-            pointer_data
-        )
-        
-        evaluated_count += 1
         
     # 4. Final Re-ranking based on composite_score
     all_matches = list(db.candidate_pools.find({"jd_id": jd_id}))

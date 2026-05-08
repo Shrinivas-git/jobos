@@ -1,0 +1,24 @@
+{
+  "fitment_score": 80.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 5.0,
+  "composite_score": 71.36232533333333,
+  "reasoning": "The candidate has a strong background in Salesforce development, with experience in Apex, Lightning Web Components, and Copado, which aligns well with the job description. However, the candidate's experience as a platform manager is limited, and there is no direct evidence of experience with federated development strategies or Centers of Excellence.",
+  "strengths": [
+    "The candidate has expertise in Apex, Lightning Web Components, and integrations, which is evident from their experience in designing and delivering scalable Salesforce solutions.",
+    "The candidate has experience with Copado, which is a required skill for the job, and has used it to lead end-to-end Salesforce implementations.",
+    "The candidate has a strong understanding of performance optimization, with experience in indexing, query optimization, and async design, which is crucial for large data volumes.",
+    "The candidate has experience in leading teams and mentoring developers, which is an important aspect of the platform manager role.",
+    "The candidate has a wide range of Salesforce certifications, including Platform Developer, Administrator, and Business Analyst, which demonstrates their expertise in the field."
+  ],
+  "gaps": [
+    "The candidate lacks direct experience as a platform manager, which is a critical aspect of the job description.",
+    "There is no evidence of the candidate's experience with federated development strategies, which is a key responsibility of the role.",
+    "The candidate's experience with Centers of Excellence is limited, which is an important aspect of the job description.",
+    "The candidate's experience with governor limits and environment management is not explicitly stated, which is a required skill for the job.",
+    "The candidate's experience with release management and testing environments is not well-documented, which is an important aspect of the role."
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T18:38:09.319354"
+}

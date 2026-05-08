@@ -1,0 +1,43 @@
+{
+  "_meta": {
+    "source": "github",
+    "jd_id": "JD-2026-TEST",
+    "fetched_at": "2026-05-08T06:33:00.523639",
+    "index": 19
+  },
+  "profile": {
+    "login": "tusharsadhwani",
+    "id": 43412083,
+    "node_id": "MDQ6VXNlcjQzNDEyMDgz",
+    "avatar_url": "https://avatars.githubusercontent.com/u/43412083?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/tusharsadhwani",
+    "html_url": "https://github.com/tusharsadhwani",
+    "followers_url": "https://api.github.com/users/tusharsadhwani/followers",
+    "following_url": "https://api.github.com/users/tusharsadhwani/following{/other_user}",
+    "gists_url": "https://api.github.com/users/tusharsadhwani/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/tusharsadhwani/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/tusharsadhwani/subscriptions",
+    "organizations_url": "https://api.github.com/users/tusharsadhwani/orgs",
+    "repos_url": "https://api.github.com/users/tusharsadhwani/repos",
+    "events_url": "https://api.github.com/users/tusharsadhwani/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/tusharsadhwani/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false,
+    "name": "Tushar Sadhwani",
+    "company": "@zigindia",
+    "blog": "tush.ar",
+    "location": "Bengaluru, India",
+    "email": null,
+    "hireable": null,
+    "bio": "Python / Zig. Twitter: @tusharisanerd",
+    "twitter_username": "tusharisanerd",
+    "public_repos": 202,
+    "public_gists": 12,
+    "followers": 364,
+    "following": 35,
+    "created_at": "2018-09-19T13:33:35Z",
+    "updated_at": "2026-05-06T17:26:33Z"
+  }
+}

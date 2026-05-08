@@ -1,0 +1,43 @@
+{
+  "_meta": {
+    "source": "github",
+    "jd_id": "JD-2026-TEST",
+    "fetched_at": "2026-05-08T06:33:00.526954",
+    "index": 21
+  },
+  "profile": {
+    "login": "indrareddy12",
+    "id": 148757680,
+    "node_id": "U_kgDOCN3csA",
+    "avatar_url": "https://avatars.githubusercontent.com/u/148757680?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/indrareddy12",
+    "html_url": "https://github.com/indrareddy12",
+    "followers_url": "https://api.github.com/users/indrareddy12/followers",
+    "following_url": "https://api.github.com/users/indrareddy12/following{/other_user}",
+    "gists_url": "https://api.github.com/users/indrareddy12/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/indrareddy12/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/indrareddy12/subscriptions",
+    "organizations_url": "https://api.github.com/users/indrareddy12/orgs",
+    "repos_url": "https://api.github.com/users/indrareddy12/repos",
+    "events_url": "https://api.github.com/users/indrareddy12/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/indrareddy12/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false,
+    "name": "BATHINI  INDRA SENA REDDY",
+    "company": null,
+    "blog": "",
+    "location": "Bengaluru",
+    "email": null,
+    "hireable": null,
+    "bio": "AI/ML Engineer | MLOps & LLMOps\r\nBuilding end-to-end ML systems with continuous training and deployment.\r\nExperience with MLflow, DVC, Airflow, Kubernetes, Helm",
+    "twitter_username": null,
+    "public_repos": 201,
+    "public_gists": 0,
+    "followers": 4,
+    "following": 6,
+    "created_at": "2023-10-23T08:56:09Z",
+    "updated_at": "2026-02-15T18:56:47Z"
+  }
+}

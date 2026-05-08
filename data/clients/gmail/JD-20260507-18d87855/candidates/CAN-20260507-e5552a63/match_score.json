@@ -1,0 +1,108 @@
+{
+  "fitment_score": 72.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.8125,
+  "must_have_breakdown": [
+    {
+      "skill": "Source code management skills",
+      "status": "Met",
+      "evidence": "Candidate explicitly lists expertise in Version Control Systems including PTC Integrity (Windchill/MKS), IQM, and Azure DevOps, and has hands-on experience managing baselines and software releases."
+    },
+    {
+      "skill": "GIT knowledge",
+      "status": "Partial",
+      "evidence": "Azure DevOps is mentioned, and CI/CD in Jenkins is listed, but explicit GIT command-line or repository management experience is not directly stated on the resume."
+    },
+    {
+      "skill": "Ability to define branching strategy",
+      "status": "Met",
+      "evidence": "Resume states 'Responsible for variant handling, Branch Creation & software Configuration' under the Steering project responsibilities."
+    },
+    {
+      "skill": "Software coding knowledge - C",
+      "status": "Met",
+      "evidence": "Proficient in C Programming and Embedded C is listed as a primary skill in the professional summary."
+    },
+    {
+      "skill": "Whitebox testing skills",
+      "status": "Partial",
+      "evidence": "VectorCast is mentioned in tools experience and Unit & Integration Testing is listed, but explicit whitebox/structural testing methodology is not detailed."
+    },
+    {
+      "skill": "Continuous integration testing experience",
+      "status": "Met",
+      "evidence": "Candidate mentions 'Enabling CBT for Continuous Build Test', CI/CD in Jenkins, Azure Pipelines, and supporting teams to identify CI failures."
+    },
+    {
+      "skill": "Team collaboration",
+      "status": "Met",
+      "evidence": "Responsibilities include coordinating integration activity, involving CCB/IA boards, planning and prioritizing deliveries with delivery managers."
+    },
+    {
+      "skill": "Effective communication",
+      "status": "Partial",
+      "evidence": "Cross-functional coordination with delivery managers and customer deliveries is implied, but no specific communication outcomes are detailed."
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [],
+  "composite_score": 62.125,
+  "reasoning": "Shortlist \u2014 verify GIT depth and whitebox testing methodology before moving forward. This candidate brings directly relevant SW Integration experience in automotive embedded systems, with a clear SW Integrator title across two projects and a strong toolchain match (Jenkins CI/CD, Azure Pipelines, branching strategy, VectorCast). The Steering project at ZF India specifically shows RADAR-adjacent integration work \u2014 managing baseline releases, BAT execution, variant handling, and CI failure analysis \u2014 which maps tightly to the role. The two gaps worth probing are explicit GIT usage (Azure DevOps is present but raw GIT proficiency is assumed, not confirmed) and whitebox testing depth (VectorCast is listed but structural testing methodology is vague). The location mismatch (Hyderabad vs Chennai) is a real risk for an in-office role and must be resolved upfront. Experience at 4.2 years meets the JD minimum. Shortlist but gate on relocation willingness and GIT hands-on verification.",
+  "strengths": [
+    "SW INTEGRATION DEPTH: Held explicit 'SW Integrator' and 'Senior SW Integrator' titles across two automotive projects (Bosch/VW-JLR and ZF India/Zeekr), with direct responsibility for baseline releases, BAT execution, CI failure analysis, and variant handling \u2014 this is a role-specific differentiator.",
+    "CI/CD PIPELINE OWNERSHIP: Hands-on experience enabling Continuous Build Test (CBT), managing Azure Pipelines, Jenkins CI/CD, and supporting development teams in identifying CI failures \u2014 directly aligned with the continuous integration testing requirement.",
+    "BRANCHING STRATEGY AND SCM BREADTH: Demonstrated branching and software configuration ownership across multiple VCS tools (Windchill, IQM, Azure DevOps), with build configuration, compilation, and linking process responsibility \u2014 covering the SCM and branching strategy must-haves."
+  ],
+  "gaps": [
+    "GIT NOT EXPLICITLY CONFIRMED: The JD mandates GIT knowledge as a hard requirement, but the resume lists Azure DevOps, Windchill, and IQM with no explicit mention of GIT commands, repositories, or workflows. This is a critical unverified gap that could disqualify the candidate if the project stack is GIT-native.",
+    "LOCATION MISMATCH \u2014 HYDERABAD VS CHENNAI: The role is in-office in Chennai; the candidate is based in Hyderabad. For a medium-urgency single-position hire, relocation unwillingness would immediately remove this candidate from consideration. This must be the first screening question."
+  ],
+  "recommendation": "shortlist",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period is stated in the resume and no JD maximum is specified, so no penalty is applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office work in Chennai but candidate is based in Hyderabad, Telangana \u2014 a clear location mismatch."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 4.2 years of experience, meeting the JD's 4-year relevant experience requirement with no shortfall."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any', so no penalty is applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion is specified in the JD, so no adjustment is made."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Unknown",
+  "role_level_match": "Unknown",
+  "tool_currency": "None",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Unknown",
+  "availability_signal": "Unknown",
+  "availability_reason": "",
+  "alternative_role_fit": "",
+  "rare_assets": [],
+  "self_reported_unverified": [],
+  "interview_flags": [],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:40:24.170134"
+}

@@ -1,0 +1,138 @@
+{
+  "fitment_score": 32.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.2916666666666667,
+  "must_have_breakdown": [
+    {
+      "skill": "System engineering principles",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Knowledge of ASPICE",
+      "status": "Partial",
+      "evidence": "Resume lists ASPICE under methodology and ISO 26262 under standards, but only as a tester following standards \u2014 no system engineering ownership evidenced."
+    },
+    {
+      "skill": "ISO 26262",
+      "status": "Partial",
+      "evidence": "ISO 26262 listed under ISO Protocols and mentioned in skills, but applied in a testing context, not system design or functional safety ownership."
+    },
+    {
+      "skill": "System Requirements writing and System Architecture Design",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System (End User function) and Product knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience on system service function (Diagnostics, Flashability, FOTA, etc) development",
+      "status": "Partial",
+      "evidence": "Candidate validated diagnostics (DTCs, UDS) and FOTA/OTA on Telematics ECUs \u2014 but from a test execution perspective, not system function development or ownership."
+    },
+    {
+      "skill": "CAN/LIN/Ethernet/LVDS",
+      "status": "Partial",
+      "evidence": "CAN, CAN-FD, CAN-TP, and Automotive Ethernet are listed and used in projects; LIN and LVDS are absent."
+    },
+    {
+      "skill": "Embedded System",
+      "status": "Partial",
+      "evidence": "Works with embedded ECUs and HIL bench environments, but no evidence of embedded system design or development experience."
+    },
+    {
+      "skill": "Basic Functional Safety and Cyber Security knowledge",
+      "status": "Partial",
+      "evidence": "ISO 26262 referenced in context of testing compliance; no mention of cybersecurity knowledge anywhere in the resume."
+    },
+    {
+      "skill": "Experience in RADAR function validation (in HIL and vehicle environment)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Requirement management tools DOORs, Code Beamer and Configuration management tools such as CoreALM",
+      "status": "Partial",
+      "evidence": "IBM Rational DOORS is listed and used for traceability; Code Beamer and CoreALM are not mentioned."
+    },
+    {
+      "skill": "Modeling tool Catia Magic",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [],
+  "composite_score": 26.916666666666668,
+  "reasoning": "Reject \u2014 wrong role level and wrong domain. This candidate is a System Test Engineer with 4 years of experience in Infotainment, Telematics, and camera-based ADAS testing \u2014 a profile that is fundamentally misaligned with a Senior System Radar Function Owner role requiring system engineering ownership, RADAR domain expertise, requirements authoring, and architecture design. The two most disqualifying gaps are zero RADAR experience (the core domain of the role) and zero system engineering or architecture background \u2014 this candidate has never written system requirements or designed a system architecture. The only partial signals are familiarity with CAN/Ethernet protocols, ASPICE awareness, and DOORS usage, all in a test execution capacity. With a must-have coverage ratio of 0.21 and no senior-level ownership indicators, this candidate cannot be progressed regardless of pool size.",
+  "strengths": [
+    "HIL AND BENCH TESTING: Hands-on HIL testing using DYNA4 and VT-Studio on ADAS ECUs (Skoda project), with closed-loop validation and fault injection \u2014 useful context but applied as a tester, not a system owner.",
+    "DIAGNOSTICS AND OTA VALIDATION: Validated UDS diagnostics, DTCs, and FOTA/OTA processes on Telematics ECUs (GM Vision X project), demonstrating practical exposure to service functions \u2014 though in a test role, not a development or ownership role.",
+    "COMMUNICATION PROTOCOLS: Hands-on with CAN, CAN-FD, CAN-TP, and Automotive Ethernet in automotive ECU environments, including gateway protocol modification experience \u2014 relevant foundational knowledge but limited to test execution."
+  ],
+  "gaps": [
+    "ZERO RADAR DOMAIN EXPERIENCE: The role title is 'System Radar Function Owner' \u2014 this candidate has worked exclusively on Infotainment, Telematics, and camera/ultrasonic ADAS systems. There is no mention of RADAR sensors, RADAR signal processing, or RADAR end-user functions anywhere in the resume. This is a hard disqualifier.",
+    "NO SYSTEM ENGINEERING OWNERSHIP: The role requires system requirements authoring, architecture design, and function ownership (ASPICE system engineering level). This candidate is a test executor \u2014 they validate others' requirements rather than write them. There is no evidence of Catia Magic, system design, or function ownership at any point in their career."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated in the resume and no JD maximum specified \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate is based in Chennai and the JD requires in-office work in Chennai \u2014 location matches."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 4 years of experience and the JD relevant experience requirement is 4 years \u2014 meets the minimum threshold."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college exclusion or preference specified in the JD \u2014 no penalty or bonus applied."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role listed as 'March 2022 to present' with no stated notice period \u2014 availability cannot be determined without contacting the candidate.",
+  "alternative_role_fit": "ADAS System Test Engineer (Mid-level)",
+  "rare_assets": [],
+  "self_reported_unverified": [
+    "'Led defect tracing efforts' \u2014 claimed as leadership but no team size, scope, or measurable outcome provided to substantiate a leadership claim.",
+    "CAPL scripting 'significantly reducing manual testing time' \u2014 no metric or percentage provided to verify the claimed efficiency improvement.",
+    "Gateway module CAN-to-Ethernet communication format modification \u2014 specific technical claim that would need hands-on verification given the seniority level of the task described."
+  ],
+  "interview_flags": [
+    "Probe whether candidate has any exposure to RADAR sensors or RADAR signal processing \u2014 even academic or peripheral \u2014 given the complete absence in the resume.",
+    "Ask if candidate has ever authored system requirements in DOORS versus using DOORS only for test case traceability \u2014 critical distinction for this role.",
+    "Clarify the extent of 'ASPICE' knowledge \u2014 does candidate understand ASPICE at the system engineering level (SYS.1-SYS.5) or only at the testing process level (SWE.6)?",
+    "Probe the Skoda ADAS project scope \u2014 was candidate responsible for test case creation from system requirements, or executing pre-written test cases from a system team?",
+    "Ask about total experience versus the 4-year figure \u2014 the JD requires 8 years total experience; this candidate appears to have only 4 years in aggregate."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:25:38.492296"
+}

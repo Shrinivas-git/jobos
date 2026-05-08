@@ -1,0 +1,24 @@
+{
+  "fitment_score": 85.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 5.0,
+  "composite_score": 76.31042333333333,
+  "reasoning": "The candidate has extensive experience in Salesforce release management, Copado DevOps, and Salesforce administration, which aligns well with the job requirements. However, the candidate's experience in architecting a modern, federated development strategy and establishing a Center of Excellence is not explicitly mentioned.",
+  "strengths": [
+    "The candidate has over 6.5 years of hands-on experience in Salesforce.com CRM, with expertise in release management, CI/CD pipelines, and DevOps.",
+    "The candidate has experience in managing multiple Salesforce releases per month, resolving deployment failures, and troubleshooting production issues, which demonstrates their ability to handle complex release management tasks.",
+    "The candidate is well-versed in Copado and has experience in implementing it from scratch, designing and managing multiple deployment pipelines, and customizing it with Jira integration and automation workflows.",
+    "The candidate has a strong understanding of Salesforce clouds, including Sales, Service, Marketing, and Communities, and has experience in customizing Salesforce to meet business requirements.",
+    "The candidate has excellent communication and leadership skills, with experience in leading release readiness meetings, coordinating with cross-functional teams, and communicating deployment status to stakeholders."
+  ],
+  "gaps": [
+    "The candidate's experience in architecting a modern, federated development strategy is not explicitly mentioned, which is a key requirement for the role.",
+    "The candidate's experience in establishing a Center of Excellence is not mentioned, which is an important aspect of the job.",
+    "The candidate's experience in managing Governor limits is not explicitly mentioned, which is a critical aspect of Salesforce development.",
+    "The candidate's experience in working with Data Cloud is not mentioned, which is a key requirement for the role.",
+    "The candidate's certifications, such as Salesforce Certified Development Lifecycle and Deployment Designer, are not explicitly mentioned, which is a key requirement for the role."
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T12:44:56.856607"
+}

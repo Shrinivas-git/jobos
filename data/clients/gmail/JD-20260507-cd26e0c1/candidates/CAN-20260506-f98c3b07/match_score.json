@@ -1,0 +1,132 @@
+{
+  "fitment_score": 4.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.07142857142857142,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MISRA coding guidelines",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Autosar experience",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR system knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Team collaboration and effective communication",
+      "status": "Partial",
+      "evidence": "Resume mentions 'Cross-Functional Collaboration' and developer mentorship of 10+ developers, but no embedded/automotive team context."
+    }
+  ],
+  "rare_asset_bonus": 9,
+  "cert_tier_bonus": 2,
+  "outcome_bonus": 3,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 7,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Advanced Administrator",
+      "tier": "Expert"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 14.964285714285715,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Salesforce Platform Manager and DevOps Engineer with 6+ years in CRM release orchestration, Copado, Apex, and LWC. The JD is for a Senior SW Developer requiring deep embedded C, MISRA, Autosar, RTOS, and RADAR domain expertise \u2014 all of which are completely absent from this resume. Not a single line of this candidate's experience touches automotive, embedded systems, or signal processing. The only marginal overlap is soft-skills collaboration, which is insufficient to justify a conversation. Do not shortlist \u2014 this is a domain mismatch, not a skill gap. Move on immediately.",
+  "strengths": [
+    "COPADO RELEASE MASTERY: Managed 50+ end-to-end Salesforce releases at HSBC across 5 environments with zero unplanned production outages over 18 months \u2014 a high-signal production ownership credential, but entirely irrelevant to this embedded C/RTOS role.",
+    "SALESFORCE DEVOPS DEPTH: Expert-level CI/CD pipeline architecture using Copado, Gearset, and Flosum across healthcare, banking, and financial services \u2014 strong in its own domain, zero transferability to automotive embedded development.",
+    "ENTERPRISE SCALE DELIVERY: Reduced deployment cycle time by 35% at FinSure and production defect escape rate by 30% at CVS Health \u2014 quantified outcomes demonstrating senior-level impact, but in a completely unrelated technology stack."
+  ],
+  "gaps": [
+    "ZERO EMBEDDED/AUTOMOTIVE DOMAIN EXPERIENCE: The role mandates C programming, MISRA guidelines, Autosar, and RTOS \u2014 none of these appear anywhere in the resume. This is not a trainable gap at Senior level; it is a fundamental domain mismatch that disqualifies the candidate outright.",
+    "NO RADAR OR ADAS EXPOSURE: The JD lists RADAR system knowledge and ADAS as key requirements. The candidate has no signal processing, radar algorithm, or advanced driver-assistance background \u2014 their entire career is in enterprise CRM SaaS, making this gap unbridgeable for this hiring cycle."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "Latest role end-date is March 2026 \u2014 candidate appears available now, no notice period penalty."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires In-office presence in Chennai; candidate is based in Hyderabad \u2014 location mismatch."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 6+ years total experience, exceeding the minimum threshold of half of the 4-year relevant experience requirement."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college exclusion or preference specified in the JD \u2014 no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch \u2014 candidate is in Hyderabad, role is In-office in Chennai"
+  ],
+  "role_level_detected": "Senior",
+  "role_level_match": "Match",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Achievement-focused",
+  "availability_signal": "Available now",
+  "availability_reason": "Latest role end-date is March 2026 \u2014 candidate is currently between roles.",
+  "alternative_role_fit": "Senior Salesforce DevOps Engineer or Salesforce Platform Manager",
+  "rare_assets": [
+    "Zero-finding compliance audit record across 18 months at HSBC \u2014 a rare production governance credential in enterprise banking Salesforce.",
+    "Federated multi-region branching strategy architecture across parallel global development teams \u2014 uncommon at this level.",
+    "Center of Excellence establishment adopted as NTT Data standard across multiple Salesforce engagements."
+  ],
+  "self_reported_unverified": [
+    "Claim of 'zero unplanned production outages over 18 months' at HSBC \u2014 significant claim with no third-party corroboration or supporting incident log reference.",
+    "Claim of 'zero-finding results on all internal and external banking compliance audits' \u2014 impressive but unverifiable from the resume alone.",
+    "'Adopted as the standard across NTT Data Salesforce engagements' \u2014 broad organisational impact claim with no supporting evidence such as stakeholder sign-off or documented rollout scope."
+  ],
+  "interview_flags": [
+    "Resume end-date is March 2026 \u2014 ask why the candidate left or was exited from NTT Data after 6+ years and what prompted the job search.",
+    "Probe whether the candidate has any embedded C or systems programming background whatsoever, even academic or hobbyist, given the complete absence on the resume.",
+    "Ask about the B.Com degree \u2014 a commerce degree is an unusual background for a senior technical developer; probe how they transitioned and whether any CS fundamentals exist.",
+    "The LinkedIn URL suggests the name 'Pavan Gupta' but the resume header says 'Pavan Gajjala' \u2014 clarify the name discrepancy before any formal submission.",
+    "Verify the scope of 'managing 50+ releases' at HSBC \u2014 probe whether this was solo ownership or part of a larger release management team to assess actual individual accountability."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:05:17.495564"
+}

@@ -1,0 +1,146 @@
+{
+  "fitment_score": 4.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MISRA coding guidelines",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "AUTOSAR experience",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR system knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR algorithm development",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 2,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 2,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Certified Consultant",
+      "tier": "Expert"
+    },
+    {
+      "name": "Gearset Fundamentals Certificate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Flosum Certified Professional",
+      "tier": "Practitioner"
+    }
+  ],
+  "composite_score": 9.25,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Salesforce DevOps Engineer with 5 years of CI/CD pipeline and release management experience. The role requires an embedded software developer with C programming, MISRA guidelines, AUTOSAR, and RTOS for automotive/RADAR systems. Not a single must-have skill from the JD appears anywhere in this resume. The candidate's entire technical stack \u2014 Copado, SFDX, Jenkins, GitHub Actions \u2014 is irrelevant to this automotive embedded role. There is zero domain overlap with ADAS, RADAR, or any embedded systems work. Do not proceed with this application.",
+  "strengths": [
+    "SALESFORCE DEVOPS DEPTH: Five certifications across Copado, Gearset, and Flosum demonstrate genuine multi-tool Salesforce release engineering expertise \u2014 but this is the wrong domain entirely for this JD.",
+    "CI/CD PIPELINE DELIVERY: Quantified 30-40% reduction in deployment time and improved production deployment success rates across enterprise Salesforce environments at TCS and Capgemini \u2014 strong for a Salesforce role, irrelevant here.",
+    "ENTERPRISE DELIVERY TRACK RECORD: Four years at TCS managing end-to-end Salesforce release lifecycle across Dev, QA, UAT, and Production with structured governance \u2014 again, strong signal but in the wrong technology domain."
+  ],
+  "gaps": [
+    "ZERO EMBEDDED/AUTOMOTIVE SKILLS: The candidate has no exposure to C programming, MISRA, AUTOSAR, RTOS, RADAR, or ADAS \u2014 every single must-have for this role is absent. This is a complete domain mismatch, not a gap to bridge.",
+    "WRONG TECHNOLOGY DOMAIN: The candidate is a Salesforce DevOps specialist; this role requires an embedded SW developer for automotive radar systems. There is no transferable technical overlap that would justify even a screening call."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No JD maximum notice period specified; no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate is based in Chennai, matching the JD location requirement."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 5 years total experience, above the 2-year minimum threshold (half of 4 years relevant experience required)."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any'; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD; no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Domain mismatch \u2014 candidate has no embedded C/AUTOSAR/RTOS experience required for this role"
+  ],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at Capgemini is listed as May 2025 to present with no end date or notice period stated.",
+  "alternative_role_fit": "Senior Salesforce DevOps Engineer / Salesforce Release Engineer",
+  "rare_assets": [
+    "Flosum Certified Professional \u2014 niche certification held by very few Salesforce DevOps practitioners globally.",
+    "Multi-tool Salesforce DevOps certification portfolio spanning Copado, Gearset, and Flosum simultaneously \u2014 rare breadth across competing release tools."
+  ],
+  "self_reported_unverified": [
+    "'Best Performer Award' and 'Special Achievement Award' at TCS \u2014 no context on scope, team size, or selection criteria provided.",
+    "30-40% reduction in deployment time claim lacks baseline metrics or independent validation."
+  ],
+  "interview_flags": [
+    "Clarify why this candidate applied for an embedded C/AUTOSAR role given their entire background is Salesforce DevOps \u2014 possible misapplication.",
+    "If any embedded systems exposure exists (even academic via EEE B.Tech), probe whether it was ever applied professionally.",
+    "Ask whether the candidate has any familiarity with automotive software standards like ISO 26262 or ASPICE given EEE degree background.",
+    "Probe the transition from TCS (Jan 2021) to Capgemini (May 2025) \u2014 confirm no embedded work was performed in any capacity.",
+    "Verify if 'Copado Certified Consultant' represents actual client-facing consulting depth or internal project usage."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:01:53.144307"
+}

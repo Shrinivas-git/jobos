@@ -1,0 +1,156 @@
+{
+  "fitment_score": 4.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Salesforce Platform Management or Salesforce Architecture",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Expert-level proficiency with Copado for CI/CD and release orchestration",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Deep understanding of Salesforce multi-tenant architecture",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Governor limits knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Environment management",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Communication skills to translate technical releases into business-friendly roadmaps",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience managing Business Critical production environments",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Working with Salesforce premier support tiers",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Salesforce.com development environment experience",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Custom objects, workflows, triggers, SOQL & SOSL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Best practices and design patterns",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Work independently with minimal supervision",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [
+    {
+      "name": "Cisco Certified Support Technician Networking",
+      "tier": "Foundational"
+    },
+    {
+      "name": "AWS Technical Essentials",
+      "tier": "Foundational"
+    },
+    {
+      "name": "AWS Cloud Practitioner Essentials",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 3.0,
+  "reasoning": "This candidate has no Salesforce experience whatsoever. Their background is in Python, Django, JavaScript, Flask, and MongoDB \u2014 a general web development stack with no overlap with the Salesforce ecosystem. The only professional experience is a 5-month internship at Inspirit Vision in 2024, building a student information management system. There is zero evidence of Salesforce platform knowledge, Copado, CI/CD pipelines, Apex, LWC, SOQL, release management, or any of the core must-have skills for this Senior Salesforce Platform Manager role. This candidate is entirely mismatched for the position.",
+  "strengths": [
+    "The candidate holds AWS certifications (Cloud Practitioner Essentials and Technical Essentials), demonstrating some foundational cloud platform exposure, which is a transferable concept even if not Salesforce-specific.",
+    "The candidate has a Master of Computer Applications (MCA) degree, indicating a formal computer science educational foundation that provides theoretical grounding for enterprise software roles.",
+    "Experience with Python and Django suggests some backend development capability, which is a tangentially related skill area for platform development roles in general.",
+    "The candidate has worked with databases (MySQL, MongoDB), showing basic data management exposure that is a fundamental skill in any enterprise platform context.",
+    "The internship involved collaboration with a UX team and conducting testing, suggesting some exposure to a software development lifecycle, even if at a very junior and non-Salesforce level."
+  ],
+  "gaps": [
+    "No Salesforce experience of any kind: The candidate has never worked in the Salesforce ecosystem, which is the entire domain of this role. There is no mention of Salesforce, Apex, SOQL, SOSL, LWC, Aura, or any Salesforce-related technology anywhere in the resume.",
+    "No Copado or CI/CD pipeline experience: Expert-level Copado proficiency is a core must-have for this role, and the candidate has no mention of CI/CD tools, DevOps pipelines, or release orchestration of any kind.",
+    "Insufficient total experience: The candidate has only a 5-month internship as their professional experience, far below the 5-year minimum required for this Senior-level role.",
+    "No enterprise platform or production environment management experience: The role requires managing Business Critical production environments and Salesforce premier support tiers; the candidate has only built small student management and chatbot projects.",
+    "No architecture or platform management expertise: This is a Senior Salesforce Platform Manager role requiring environment strategy, Center of Excellence design, and federated development governance \u2014 skills entirely absent from this resume."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period specified in the resume and JD does not specify a maximum notice period."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "JD work structure is not specified as In-office, so no location penalty is applied."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "-10",
+      "reason": "Candidate has approximately 5 months of internship experience, which is less than half of the 5-year relevant experience minimum required."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any', so no penalty is applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "JD has no college preference or exclusion specified, so no adjustment is applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Experience below minimum"
+  ],
+  "role_level_detected": "Junior",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Available now",
+  "availability_reason": "Internship ended May 2024 and no current role is listed, indicating the candidate is currently between roles.",
+  "alternative_role_fit": "Junior Python/Web Developer",
+  "rare_assets": [],
+  "self_reported_unverified": [
+    "Claims to have 'designed and developed a comprehensive system' during internship without evidence of scale, users, or adoption metrics.",
+    "Claims 'extensive data collection and analysis' without specifying data volume, tools, or measurable outcomes."
+  ],
+  "interview_flags": [
+    "Ask what prompted the candidate to apply for a Senior Salesforce Platform Manager role given zero Salesforce experience on the resume.",
+    "Probe whether the candidate has any undocumented Salesforce exposure through self-study, online projects, or Trailhead completions not listed on the resume.",
+    "Ask about the gap between the end of the internship (May 2024) and the present \u2014 what has the candidate been doing?",
+    "Clarify the scope of the 'comprehensive system' built at Inspirit Vision \u2014 how many users, what was the architecture, and who maintained it?",
+    "Ask whether the candidate has any experience with enterprise CI/CD tools or release management processes of any kind."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-05T12:18:12.987573"
+}

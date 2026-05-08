@@ -1,0 +1,24 @@
+{
+  "fitment_score": 80.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 5.0,
+  "composite_score": 70.95319213333333,
+  "reasoning": "The candidate has a strong background in Salesforce development and administration, with relevant experience in configuration, customization, and development of Salesforce CRM, which aligns well with the job description. However, there are some gaps in their experience, particularly in managing environments and establishing a Center of Excellence, which are critical responsibilities of the role.",
+  "strengths": [
+    "The candidate has 5.5 years of relevant experience in Salesforce, with a strong focus on configuration, customization, and development of Salesforce CRM, as evident from their work on projects such as Macquarie Group and Google Play Merch.",
+    "They have expertise in Apex programming, including Apex classes, triggers, and validation rules, with experience in writing unit tests and deploying applications using Copado CI/CD Pipelines.",
+    "The candidate has experience working with various Salesforce tools, including Visual Studio Code, salesforce CLI, and Apex Data Loader, demonstrating their ability to work with different technologies.",
+    "They have a strong understanding of Salesforce object Query Language (SOQL) and have worked with Governor Limits to optimize data manipulation, as seen in their projects.",
+    "The candidate has certifications in Salesforce, including Salesforce Certified Platform Developer, Administrator, and App Builder, which demonstrates their commitment to professional development and expertise in the field."
+  ],
+  "gaps": [
+    "The candidate lacks experience in managing environments, which is a critical responsibility of the role, as they have not mentioned working on environment management in their previous projects.",
+    "There is no evidence of the candidate establishing a Center of Excellence, which is a key requirement of the job description, and this gap could impact their ability to perform the role.",
+    "The candidate's experience in release management is limited to using Copado and Roboto, but they have not mentioned managing the full lifecycle of Salesforce releases, which is a key responsibility of the role.",
+    "The candidate has not mentioned working with Data Cloud, which is a key skill required for the role, and this gap could impact their ability to work with data-related tasks.",
+    "The candidate's experience in working with Lightning frameworks, such as Aura and LWC, is limited, and they have not mentioned working with declarative and configuration-driven development, which is a key skill required for the role."
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T12:45:08.551578"
+}

@@ -1,0 +1,74 @@
+{
+  "fitment_score": 72.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 69.0212946,
+  "reasoning": "Neeraj Prasad is a solid Salesforce DevOps Engineer with 5 years of experience, strong Copado expertise backed by multiple certifications, and a clear track record of managing end-to-end release lifecycles at TCS. However, the role is a 'Platform Manager' position requiring leadership, Center of Excellence establishment, business roadmap translation, and oversight of Agentforce and Data Cloud \u2014 none of which appear in the resume. His profile is deeply technical and practitioner-level rather than managerial or strategic, and there is no evidence of team leadership, stakeholder management at an executive level, or experience with Salesforce premier support tiers.",
+  "strengths": [
+    "Expert-level Copado proficiency supported by Copado Fundamentals I & II and Copado Certified Consultant certifications, directly matching the top technical skill requirement of the JD.",
+    "Over 4 years at TCS managing end-to-end Salesforce release lifecycles across Dev, QA, UAT, and Production environments, demonstrating the depth of release management experience the role demands.",
+    "Hands-on experience with deployment governance, quality gates, Checkmarx, and PMD aligns well with the JD's emphasis on release integrity and environment management best practices.",
+    "Breadth of tooling across Copado, Gearset, Flosum, and DevOps Center signals versatility and awareness of the broader Salesforce DevOps ecosystem, valuable for establishing a Center of Excellence.",
+    "Salesforce Certified Administrator credential combined with deep SFDX and metadata API knowledge reflects understanding of Salesforce multi-tenant architecture and org management principles."
+  ],
+  "gaps": [
+    "No evidence of people management, team leadership, or CoE establishment \u2014 the role explicitly requires building a Center of Excellence and enabling product teams, which is a managerial not individual-contributor function.",
+    "Zero mention of Agentforce or Data Cloud, which are specifically called out in the JD as key platforms requiring release management and testing environment support.",
+    "No demonstrated experience translating technical releases into business-friendly roadmaps or communicating with executive or business stakeholders, a core KPI for a Platform Manager.",
+    "No indication of working with Salesforce premier support tiers or managing 'Business Critical' production environments at the scale implied by the JD.",
+    "Current role at Capgemini (May 2025\u2013Present) uses GitHub Actions and Jenkins rather than Copado, raising questions about whether active Copado practitioner skills are being maintained in the most recent engagement."
+  ],
+  "recommendation": "hold",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period is stated in the resume and no maximum notice period is specified in the JD, so no penalty is applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "JD work structure is not specified as In-office, so location mismatch penalty does not apply."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 5 years of experience which meets the JD's 5-year relevant experience requirement, so no penalty applies."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD specifies no gender preference, so no penalty is applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "Candidate attended SRM Institute of Science and Technology, which is neither on the exclusion list nor the preference list, so no adjustment applies."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Unknown",
+  "rare_assets": [
+    "Holds five DevOps tool certifications simultaneously \u2014 Copado Fundamentals I & II, Copado Certified Consultant, Gearset Fundamentals, and Flosum Certified Professional \u2014 a rare multi-tool certification breadth in the Salesforce DevOps space.",
+    "Practical experience across Copado, Gearset, Flosum, and DevOps Center in enterprise settings is uncommon and positions the candidate well for platform advisory roles."
+  ],
+  "self_reported_unverified": [
+    "Claims 30\u201340% reduction in deployment time at Capgemini without specifying baseline metrics, team size, or project scope.",
+    "'Best Performer Award' and 'Special Achievement Award' at TCS are listed without any corroborating detail on the scale of impact or independent validation.",
+    "Claims to have 'improved deployment success rate' without providing before/after data or quantified outcomes."
+  ],
+  "interview_flags": [
+    "Probe actual managerial experience \u2014 has the candidate ever led a team, managed vendors, or been accountable for a platform budget or headcount?",
+    "Ask how they would approach building a Center of Excellence from scratch \u2014 what governance structures, training programs, or tooling standards would they implement?",
+    "Clarify why the current Capgemini role reverted to GitHub Actions/Jenkins rather than Copado \u2014 is Copado expertise being actively maintained?",
+    "Probe experience with Agentforce and Data Cloud \u2014 any exposure at all, even exploratory, given these are specifically mentioned in the JD?",
+    "Ask for a concrete example of translating a complex technical release into a business roadmap presented to non-technical stakeholders."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-05T10:55:44.320664"
+}

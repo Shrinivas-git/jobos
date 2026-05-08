@@ -1,0 +1,191 @@
+{
+  "fitment_score": 3.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "System engineering principles",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Knowledge of ASPICE",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ISO26262",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "System Requirements writing and System Architecture Design",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System (End User function) and Product knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience on system service function (Diagnostics, Flashability, FOTA, etc) development",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "CAN/LIN/Ethernet/LVDS",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Embedded System",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Basic Functional Safety and Cyber Security knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience in RADAR function validation (HIL and vehicle environment)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Requirement management tools DOORs, Code Beamer and Configuration management tools such as CoreALM",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Modeling tool Catia Magic",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 4,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Platform Developer I",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce App Builder",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Business Analyst",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Agentforce Specialist",
+      "tier": "Expert"
+    },
+    {
+      "name": "Salesforce AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Copado AI Certified",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Infosys Agile Certification",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Flosum Professional level Certification",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Flosum Expert level Certification",
+      "tier": "Expert"
+    }
+  ],
+  "composite_score": 8.083333333333332,
+  "reasoning": "Reject \u2014 completely wrong domain. This candidate is a Salesforce Release and DevOps specialist with 7 years of experience in CI/CD pipelines, Copado, Flosum, and Jenkins. The role demands an automotive radar systems engineer with hands-on ASPICE, ISO26262, RADAR function ownership, CAN/LIN/Ethernet communication protocols, embedded systems, HIL validation, and tools like DOORS and Catia Magic. There is zero overlap \u2014 not a single must-have skill is met. The candidate has no automotive, embedded, or safety-critical systems experience whatsoever. Do not shortlist; this application is a domain mismatch and does not warrant any further review time.",
+  "strengths": [
+    "SALESFORCE DEVOPS DEPTH: Hands-on delivery of CI/CD pipelines for enterprise clients including Apple and Philip Morris International using Copado, Flosum, and Jenkins \u2014 relevant in her actual domain but irrelevant to automotive radar.",
+    "CERTIFICATION PORTFOLIO: Holds 11+ active certifications spanning Salesforce Admin, Platform Developer I, Copado Fundamentals I and II, and Flosum Expert \u2014 demonstrating commitment to professional development, though entirely outside automotive systems.",
+    "ENTERPRISE CLIENT EXPOSURE: Delivered Salesforce DevOps solutions for global clients such as Apple and PMI, indicating ability to operate in complex multi-org enterprise environments \u2014 a soft signal only, given the domain mismatch."
+  ],
+  "gaps": [
+    "ZERO AUTOMOTIVE/RADAR DOMAIN EXPERIENCE: The role requires RADAR system function ownership, ISO26262 functional safety, ASPICE compliance, and HIL validation. The candidate has no embedded systems, automotive protocols (CAN/LIN/Ethernet/LVDS), or safety-critical development experience of any kind \u2014 this is a total domain disqualification.",
+    "NO SYSTEMS ENGINEERING TOOLCHAIN KNOWLEDGE: The JD mandates DOORS or CodeBeamer for requirements management and Catia Magic for modeling. The candidate's toolchain is entirely Salesforce-native (Copado, Flosum, Jenkins, Jira) \u2014 there is no bridge between her skills and the role's technical requirements."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated in the resume; no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office presence in Chennai; candidate is based in Bengaluru."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 7 years total experience, which exceeds half of the JD's 4-year relevant experience requirement."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any'; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college exclusion or preference specified in the JD; no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch"
+  ],
+  "role_level_detected": "Lead",
+  "role_level_match": "Match",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at Infosys is listed as August 2025 to Present with no end date or notice period mentioned.",
+  "alternative_role_fit": "Senior Salesforce DevOps Engineer / Salesforce Release Manager",
+  "rare_assets": [
+    "Selected as a Copado Mentor \u2014 a peer-recognised, invitation-only program indicating platform-level expertise recognised by the vendor itself.",
+    "Dual Flosum certifications at Professional and Expert level \u2014 rare combination as most practitioners hold only one."
+  ],
+  "self_reported_unverified": [
+    "'Rise Insta Award' for exceptional performance \u2014 award criteria and scope not described; cannot verify significance.",
+    "Claim of leading Salesforce DevOps for Philip Morris International \u2014 team size, scope, and ownership level are unverified."
+  ],
+  "interview_flags": [
+    "Do not interview \u2014 candidate is in the wrong domain entirely; no radar, automotive, or embedded systems experience exists to probe.",
+    "If reconsidered for a Salesforce role, probe actual team leadership scope at Infosys \u2014 'Technology Lead' title with no team size or direct reports mentioned.",
+    "Clarify the nature of the Apple project listed as 'August 2025 to Present' \u2014 this is a future date relative to most evaluation contexts; verify timeline accuracy.",
+    "Ask whether candidate has any academic or personal exposure to embedded systems, C/C++, or automotive protocols \u2014 to rule out any hidden crossover skills.",
+    "Verify Copado Mentorship program scope \u2014 was this a formal vendor-run program or an informal community initiative?"
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:29:54.950237"
+}

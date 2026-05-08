@@ -1,0 +1,115 @@
+{
+  "fitment_score": 42.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.2857142857142857,
+  "must_have_breakdown": [
+    {
+      "skill": "8+ years of experience in Car Rental / Fleet Management / Mobility industry",
+      "status": "Partial",
+      "evidence": "Candidate has 10+ years across fleet/transport but primarily in EV buses, ambulance fuel ops, and FMCG distribution \u2014 not car rental or corporate cab/passenger vehicle mobility."
+    },
+    {
+      "skill": "Strong experience in Operations Management + Sales / Business Development",
+      "status": "Partial",
+      "evidence": "Operations management is well-evidenced across multiple roles, but zero sales or business development activity is mentioned anywhere in the resume."
+    },
+    {
+      "skill": "Proven track record in P&L ownership and profitability management",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience handling corporate clients / B2B accounts",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Strong leadership and team management experience",
+      "status": "Partial",
+      "evidence": "Candidate mentions driver supervision and coordination with field teams but no explicit team size managed or formal leadership title held."
+    },
+    {
+      "skill": "Good commercial acumen and negotiation skills",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Ability to work in a fast-paced target-driven environment",
+      "status": "Partial",
+      "evidence": "Emergency ambulance fuel operations and real-time EV bus scheduling demonstrate high-pressure execution capability, but commercial targets are absent."
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 3,
+  "certifications_assessed": [],
+  "composite_score": 39.357142857142854,
+  "reasoning": "Reject \u2014 wrong role level and wrong functional profile for this Profit Centre Head position. This candidate is a solid ground-level fleet operations executor, not a P&L-owning branch leader with sales accountability. The role demands someone who can own branch revenue, manage B2B corporate accounts, drive business development, and lead a commercial team \u2014 none of which appear anywhere in this resume. The candidate's strongest differentiator is managing 51 electric buses and 1000+ ambulance vehicles operationally, which is genuine depth but entirely on the execution side. Critically, the recruiter explicitly noted 'passenger management, not goods or Rapido/Uber' \u2014 while the candidate does handle passenger mobility (buses, ambulance), there is no car rental or corporate cab fleet experience, no P&L exposure, and no sales dimension whatsoever. With a must-have coverage ratio of 0.29 and zero commercial or leadership evidence at branch-head level, this candidate would need to be fast-tracked two levels beyond their current operating level. Pass unless the talent pool is critically thin.",
+  "strengths": [
+    "EV FLEET OPERATIONS DEPTH: Currently managing 51 electric buses across 76 live schedules at GreenCell Mobility \u2014 rare, hands-on EV mobility experience that is genuinely current and market-relevant.",
+    "LARGE-SCALE FLEET COMPLIANCE: Managed fuel operations and statutory compliance for 1000+ emergency vehicles at GVK EMRI, demonstrating ability to handle high-volume, high-stakes fleet environments under pressure.",
+    "GROUND EXECUTION UNDER PRESSURE: Proven real-time decision-making in breakdown handling, towing approvals, and emergency response \u2014 strong operational instincts that would support any ops-heavy branch role."
+  ],
+  "gaps": [
+    "ZERO P&L OR COMMERCIAL OWNERSHIP: This is a profit centre head role requiring full branch P&L accountability, B2B sales, and revenue targets. The candidate has never owned a budget, managed a P&L, or handled any sales/business development function \u2014 this is a fundamental disqualifier, not a gap that can be bridged with coaching.",
+    "NO CAR RENTAL / CORPORATE CAB FLEET BACKGROUND: The recruiter specifically wants passenger fleet management from car rental or similar \u2014 this candidate's experience is in inter-city electric buses, ambulance fleets, and FMCG distribution, which does not translate to the corporate cab/car rental client management this role requires."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period specified in resume; currently employed but no penalty applied without explicit JD notice period limit."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate is based in Hyderabad, matching the JD's in-office Hyderabad requirement."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 10+ years total experience, well above half of the 4-year relevant experience threshold."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD specifies 'Any' gender preference \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in JD \u2014 no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Unknown",
+  "availability_reason": "Candidate is currently employed at GreenCell Mobility (Apr 2025 - Present) with no notice period stated on the resume.",
+  "alternative_role_fit": "Fleet Operations Manager / Senior Fleet Executive",
+  "rare_assets": [
+    "Live EV bus fleet operations experience managing 51 buses across 76 schedules \u2014 rare in the Indian mobility market.",
+    "Emergency services fleet fuel management at scale (1000+ ambulance vehicles) \u2014 niche cross-sector operational credibility."
+  ],
+  "self_reported_unverified": [
+    "Claim of 10+ years of experience is stated in summary but the detailed timeline only accounts for roles from 2021 onwards with a vague 'Earlier Experience 2013-2021' block \u2014 the depth and relevance of those 8 years cannot be assessed.",
+    "Acting as 'operational bridge between control room, depots, and field teams' implies coordination leadership but no team size or reporting structure is confirmed."
+  ],
+  "interview_flags": [
+    "Probe the 2013-2021 'Earlier Experience' block \u2014 what specific roles, companies, and responsibilities are behind this vague summary, and does any involve corporate cab or car rental passenger fleet?",
+    "Ask directly: have you ever owned a P&L, managed a revenue budget, or been accountable for branch-level profitability?",
+    "Probe any B2B sales or account management experience \u2014 has the candidate ever been responsible for client acquisition, retention, or upselling?",
+    "Clarify the team size directly managed at each role \u2014 driver supervision is mentioned but no headcount is given for any position.",
+    "Ask why the candidate left Bisleri International after only 7 months (Jun 2024 - Jan 2025) \u2014 short tenure warrants explanation."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-06T11:42:36.043195"
+}

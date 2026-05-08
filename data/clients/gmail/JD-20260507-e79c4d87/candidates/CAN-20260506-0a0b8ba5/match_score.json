@@ -1,0 +1,194 @@
+{
+  "fitment_score": 8.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.17647058823529413,
+  "must_have_breakdown": [
+    {
+      "skill": "Python (3.x)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Django",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Flask",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "FastAPI",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MySQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "PostgreSQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MongoDB",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "SQLite",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Git",
+      "status": "Met",
+      "evidence": "Resume explicitly lists Git under DevOps tools alongside Copado and SFDX."
+    },
+    {
+      "skill": "Docker",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Jenkins",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "HTML5/CSS3/JavaScript",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RESTful APIs",
+      "status": "Partial",
+      "evidence": "Resume lists REST integration experience but entirely within the Salesforce ecosystem, not Python-based backend services."
+    },
+    {
+      "skill": "JSON",
+      "status": "Partial",
+      "evidence": "REST/SOAP integrations imply JSON usage but no explicit Python-based JSON handling is evidenced."
+    },
+    {
+      "skill": "OOP",
+      "status": "Partial",
+      "evidence": "OOP principles are evident via Apex framework design (Triggers, Batch, Queueable), though not in Python."
+    },
+    {
+      "skill": "Unit Testing (PyTest/Unittest)",
+      "status": "Missing",
+      "evidence": "Resume references a Salesforce test framework with 90%+ coverage but no PyTest or Python unit testing."
+    },
+    {
+      "skill": "AI Model Training",
+      "status": "Partial",
+      "evidence": "Holds 'Salesforce Certified AI Specialist' and 'AI Associate' certifications but no evidence of hands-on AI model training or Python-based ML projects."
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 2,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Platform Developer I",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Platform App Builder",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Business Analyst",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified AI Specialist",
+      "tier": "Expert"
+    },
+    {
+      "name": "Salesforce Certified AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Salesforce Certified Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Microsoft Certified: Azure Fundamentals (AZ-900)",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 9.014705882352942,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Senior Salesforce Developer with 7 years of Apex, LWC, and Salesforce platform experience. The role requires a Junior Python Developer building back-end services with Django/Flask/FastAPI, relational and NoSQL databases, and Docker/Jenkins tooling. There is zero Python development evidence anywhere in this resume. The recruiter specifically wants candidates who have built Python projects and trained AI models \u2014 this candidate holds Salesforce AI certifications but shows no evidence of hands-on model training or Python ML work. The only transferable signals are Git usage and general REST integration experience, both of which are deeply context-locked to the Salesforce ecosystem. Do not shortlist \u2014 this is a domain mismatch, not a level mismatch.",
+  "strengths": [
+    "GIT & CI/CD DISCIPLINE: Actively uses Git, Copado, SFDX, and CI/CD branching strategy in current IBM role \u2014 demonstrates solid version control hygiene, which is one of the few transferable skills to the Python dev role.",
+    "SALESFORCE AI CERTIFICATIONS: Holds both 'Salesforce Certified AI Specialist' and 'AI Associate' credentials \u2014 a rare signal, but scoped entirely to Salesforce AI features, not Python-based model training or ML pipelines the recruiter requires.",
+    "PRODUCTION-SCALE DELIVERY TRACK RECORD: Led end-to-end Salesforce delivery for 1500+ users, reduced deployment defects by 30%, and maintained 90%+ test coverage across 500+ classes \u2014 strong engineering discipline that would translate if the domain were aligned."
+  ],
+  "gaps": [
+    "ZERO PYTHON EXPERIENCE: The entire resume is Salesforce/Apex-only. There is no Python code, no Django/Flask/FastAPI project, no database work in MySQL/PostgreSQL/MongoDB \u2014 this is the single most disqualifying factor for a Python Developer role.",
+    "NO AI MODEL TRAINING EVIDENCE: The recruiter explicitly requires hands-on AI model training experience. Salesforce AI certifications do not demonstrate this \u2014 there are no Python ML projects, no model training pipelines, and no relevant technical depth in this area."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated in resume and JD has no maximum notice period specified."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate location is not stated in resume; cannot confirm or deny Bangalore match."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "JD requires 0 years relevant experience; no experience floor penalty applicable."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any'; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "JD has no college preference or exclusion; no penalty or bonus applied."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Senior",
+  "role_level_match": "Over-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Unknown",
+  "availability_signal": "Unknown",
+  "availability_reason": "",
+  "alternative_role_fit": "",
+  "rare_assets": [],
+  "self_reported_unverified": [],
+  "interview_flags": [],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:54:11.396839"
+}

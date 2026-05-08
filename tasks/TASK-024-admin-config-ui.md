@@ -1,5 +1,5 @@
 # TASK-024: Admin Config UI
-**Status:** TODO
+**Status:** DONE
 **Priority:** Medium
 **Phase:** Phase 5 — Invoicing, Analytics & Admin
 **Sprint:** 10

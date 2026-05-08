@@ -1,0 +1,116 @@
+{
+  "fitment_score": 2.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MISRA coding guidelines",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "AUTOSAR experience",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR system knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR algorithm development",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 3,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 3,
+  "certifications_assessed": [],
+  "composite_score": 4.833333333333333,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a transport and fleet operations professional with 10+ years managing EV buses, ambulance fleets, and corporate mobility. The JD demands a Senior SW Developer with embedded C, AUTOSAR, MISRA, RTOS, and RADAR systems expertise \u2014 none of which appear anywhere in this resume. Not a single technical skill required for this role is evidenced. There is no software development background, no embedded systems exposure, and no automotive software context whatsoever. Do not invest recruiter time here; this is a complete domain mismatch.",
+  "strengths": [
+    "FLEET SCALE MANAGEMENT: Currently managing 51 electric buses across 76 live schedules at GreenCell Mobility \u2014 demonstrates operational leadership at scale, though irrelevant to this SW Developer role.",
+    "EMERGENCY OPERATIONS EXPERIENCE: Managed fuel and fleet operations for 1000+ emergency vehicles at GVK EMRI, showing high-pressure decision-making \u2014 but this is operations, not software engineering.",
+    "DOMAIN TENURE: 10+ years of consistent transport operations experience across EV, FMCG, and emergency services \u2014 a credible career track, but in a completely different domain than automotive embedded software."
+  ],
+  "gaps": [
+    "ZERO EMBEDDED SOFTWARE SKILLS: The candidate has no C programming, AUTOSAR, MISRA, or RTOS experience \u2014 these are the core must-haves for this Senior SW Developer role and are entirely absent from the resume.",
+    "WRONG DOMAIN \u2014 OPERATIONS VS ENGINEERING: This candidate is a transport fleet operations professional, not a software developer. There is no software development experience of any kind, making this application fundamentally misaligned with the JD."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated; no JD maximum specified, so no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires In-office in Chennai; candidate is based in Hyderabad \u2014 location mismatch."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 10+ years of experience, well above the JD minimum of 4 years \u2014 no penalty."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is Any; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college exclusion or preference specified in JD; no penalty applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch"
+  ],
+  "role_level_detected": "Senior",
+  "role_level_match": "Match",
+  "tool_currency": "None",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at GreenCell Mobility is listed as Apr 2025 to Present with no notice period stated.",
+  "alternative_role_fit": "Senior Fleet Operations Manager / Transport Operations Lead",
+  "rare_assets": [
+    "Operational experience managing 1000+ emergency vehicles in a high-stakes environment (GVK EMRI 108 Ambulance Services) \u2014 rare in fleet management."
+  ],
+  "self_reported_unverified": [
+    "Claims management of 51 electric buses across 76 live schedules \u2014 scale is specific but unverified without supporting metrics on uptime or operational KPIs.",
+    "Claims 'proven track record' in fuel control and regulatory compliance \u2014 no quantified outcomes or audit results provided."
+  ],
+  "interview_flags": [
+    "Probe why a fleet operations professional applied for a Senior SW Developer role \u2014 possible misapplication or misunderstanding of the JD.",
+    "Ask if there is any hidden technical background (e.g. GPS telematics software configuration, embedded diagnostics) not reflected in the resume.",
+    "Clarify the gap between earlier experience (2013-2021) and current role \u2014 details are vague for an 8-year period.",
+    "Ask about the short tenure at Bisleri International (Jun 2024 \u2013 Jan 2025, only 7 months) \u2014 reason for leaving.",
+    "Verify actual scope of 'control room operations' \u2014 whether it involved any software tooling or scripting relevant to embedded systems."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:04:06.328696"
+}

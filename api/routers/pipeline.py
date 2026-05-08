@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from datetime import datetime, timedelta
 from typing import Optional
 from pydantic import BaseModel
+import secrets
 
 from auth import check_role
 from utils.client_utils import get_db
@@ -9,6 +10,7 @@ from utils.config_utils import get_pipeline_config
 from routers.recruiter_tasks import create_auto_task
 from tasks.invoice_tasks import generate_and_send_invoice
 from tasks.retention_tasks import start_retention_clock
+from tasks.notification_tasks import send_client_package
 
 # stage → (task_type, description_template, priority, due_hours)
 _STAGE_TASK_MAP = {
@@ -51,16 +53,85 @@ def upsert_initial_stage(db, jd_id: str, candidate_id: str, stage_name: str = "s
     cfg = get_pipeline_config()
     sla = int(cfg["sla_hours"].get(stage_name, 72))
     now = datetime.utcnow()
+
+    # Build planned_stages from JD pipeline_config (fallback: 0 assessments, 1 interview)
+    jd = db.job_descriptions.find_one({"jd_id": jd_id}, {"pipeline_config": 1})
+    pipeline_cfg = (jd or {}).get("pipeline_config") or {}
+    assessment_rounds = int(pipeline_cfg.get("assessment_rounds", 0))
+    interview_rounds = int(pipeline_cfg.get("interview_rounds", 1))
+    planned_stages = _generate_planned_stages(assessment_rounds, interview_rounds)
+
     doc = {
         "jd_id": jd_id,
         "candidate_id": candidate_id,
         "current_stage": stage_name,
+        "planned_stages": planned_stages,
         "stages": [_build_stage(stage_name, sla, now)],
         "created_at": now,
         "updated_at": now,
     }
     db.pipeline_stages.insert_one(doc)
     return doc
+
+
+@router.post("/send-to-client/{jd_id}")
+async def send_to_client(
+    jd_id: str,
+    user: dict = Depends(check_role(["recruiter", "manager", "admin"])),
+):
+    db = get_db()
+    jd = db.job_descriptions.find_one({"jd_id": jd_id})
+    if not jd:
+        raise HTTPException(status_code=404, detail="JD not found")
+
+    client_email = jd.get("client_email")
+    if not client_email:
+        raise HTTPException(status_code=400, detail="No client_email set on this JD")
+
+    evaluated = list(db.candidate_pools.find({"jd_id": jd_id, "status": "pass_2_complete"}).sort("rank", 1))
+    if not evaluated:
+        raise HTTPException(status_code=400, detail="No evaluated candidates for this JD — run matching first")
+
+    now = datetime.utcnow()
+    candidate_ids = [c["candidate_id"] for c in evaluated]
+    db.client_submissions.update_one(
+        {"jd_id": jd_id},
+        {"$set": {
+            "jd_id": jd_id,
+            "client_email": client_email,
+            "candidate_ids": candidate_ids,
+            "status": "sent",
+            "sent_at": now,
+            "sent_by": user.get("sub", "unknown"),
+        }},
+        upsert=True,
+    )
+
+    send_client_package.delay(jd_id, client_email)
+
+    return {
+        "ok": True,
+        "client_email": client_email,
+        "candidates_sent": len(evaluated),
+        "sent_at": now.isoformat(),
+    }
+
+
+@router.get("/submission-status/{jd_id}")
+async def get_submission_status(
+    jd_id: str,
+    user: dict = Depends(check_role(["recruiter", "manager", "admin"])),
+):
+    db = get_db()
+    doc = db.client_submissions.find_one({"jd_id": jd_id}, {"_id": 0})
+    if not doc:
+        return {"sent": False}
+    return {
+        "sent": True,
+        "sent_at": doc.get("sent_at"),
+        "client_email": doc.get("client_email"),
+        "candidates_sent": len(doc.get("candidate_ids", [])),
+    }
 
 
 @router.get("/status")
@@ -145,18 +216,19 @@ async def advance_stage(
     if not current:
         raise HTTPException(status_code=400, detail="No current stage set")
 
+    # Use candidate's planned_stages if available, else fall back to global stage_order
+    planned = doc.get("planned_stages") or order
+
     if body.next_stage:
         next_name = body.next_stage
-        if next_name not in order:
-            raise HTTPException(status_code=400, detail=f"Unknown stage '{next_name}'")
     else:
         try:
-            idx = order.index(current)
+            idx = planned.index(current)
         except ValueError:
-            raise HTTPException(status_code=400, detail=f"Current stage '{current}' not in stage_order")
-        if idx + 1 >= len(order):
+            raise HTTPException(status_code=400, detail=f"Current stage '{current}' not in planned stages")
+        if idx + 1 >= len(planned):
             raise HTTPException(status_code=400, detail="Already at final stage")
-        next_name = order[idx + 1]
+        next_name = planned[idx + 1]
 
     now = datetime.utcnow()
     stages = doc.get("stages", [])
@@ -165,8 +237,17 @@ async def advance_stage(
         raise HTTPException(status_code=500, detail="Inconsistent state: current stage missing from stages array")
 
     stages[cur_idx]["completed_at"] = now
-    new_stage = _build_stage(next_name, int(sla_map.get(next_name, 72)), now)
-    if body.interview_details and next_name in _INTERVIEW_STAGES:
+    # SLA lookup: use specific key, else fall back by stage type
+    if next_name in sla_map:
+        sla_hours = int(sla_map[next_name])
+    elif _is_assessment_stage(next_name):
+        sla_hours = int(sla_map.get("assessment_1", 48))
+    elif _is_interview_stage(next_name):
+        sla_hours = int(sla_map.get("interview_1", 24))
+    else:
+        sla_hours = 72
+    new_stage = _build_stage(next_name, sla_hours, now)
+    if body.interview_details and _is_interview_stage(next_name):
         new_stage["interview_details"] = body.interview_details.model_dump()
     stages.append(new_stage)
 
@@ -184,7 +265,7 @@ async def advance_stage(
         except Exception:
             pass  # task creation must never block pipeline advance
 
-    if body.interview_details and next_name in _INTERVIEW_STAGES:
+    if body.interview_details and _is_interview_stage(next_name):
         try:
             from tasks.notification_tasks import send_interview_email
             send_interview_email.delay(jd_id, candidate_id, body.interview_details.model_dump())
@@ -197,6 +278,18 @@ async def advance_stage(
     except Exception:
         pass  # notification must never block stage advance
 
+    if next_name == "offer":
+        offer_token = secrets.token_urlsafe(32)
+        db.pipeline_stages.update_one(
+            {"_id": doc["_id"]},
+            {"$set": {"offer_token": offer_token, "offer_sent_at": now}},
+        )
+        try:
+            from tasks.notification_tasks import send_offer_response_email
+            send_offer_response_email.delay(jd_id, candidate_id, offer_token)
+        except Exception:
+            pass  # offer email must never block stage advance
+
     if next_name == "joined":
         try:
             generate_and_send_invoice.delay(jd_id, candidate_id)
@@ -208,6 +301,276 @@ async def advance_stage(
             pass  # retention tracking must never block pipeline advance
 
     return {"ok": True, "current_stage": next_name}
+
+
+def _is_interview_stage(stage_name: str) -> bool:
+    return stage_name.startswith("interview_")
+
+
+def _is_assessment_stage(stage_name: str) -> bool:
+    return stage_name.startswith("assessment_")
+
+
+def _generate_planned_stages(assessment_rounds: int, interview_rounds: int) -> list:
+    stages = ["shortlist"]
+    for i in range(1, assessment_rounds + 1):
+        stages.append(f"assessment_{i}")
+    for i in range(1, interview_rounds + 1):
+        stages.append(f"interview_{i}")
+    stages += ["offer", "joined"]
+    return stages
+
+
+def _next_interview_stage_name(stages: list) -> str:
+    """Return interview_N+1 based on how many interview stages already exist."""
+    count = sum(1 for s in stages if _is_interview_stage(s.get("name", "")))
+    return f"interview_{count + 1}"
+
+
+class InterviewOutcomeBody(BaseModel):
+    outcome: str                                    # "selected" | "on_hold" | "rejected"
+    next_step: Optional[str] = None                 # "next_round" | "offer"  (required when outcome=selected)
+    interview_details: Optional[InterviewDetails] = None  # required when next_step=next_round
+    reason: Optional[str] = None
+
+
+@router.post("/interview-outcome/{jd_id}/{candidate_id}")
+async def set_interview_outcome(
+    jd_id: str,
+    candidate_id: str,
+    body: InterviewOutcomeBody,
+    user: dict = Depends(check_role(["recruiter", "manager", "admin"])),
+):
+    if body.outcome not in ("selected", "on_hold", "rejected"):
+        raise HTTPException(status_code=400, detail="outcome must be selected, on_hold, or rejected")
+
+    db = get_db()
+    cfg = get_pipeline_config()
+    sla_map = cfg["sla_hours"]
+
+    doc = db.pipeline_stages.find_one({"jd_id": jd_id, "candidate_id": candidate_id})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Pipeline not found for this candidate")
+
+    current = doc.get("current_stage")
+    if not _is_interview_stage(current):
+        raise HTTPException(status_code=400, detail=f"Outcome can only be set during interview stages, current is '{current}'")
+
+    now = datetime.utcnow()
+
+    if body.outcome == "rejected":
+        db.pipeline_stages.update_one(
+            {"_id": doc["_id"]},
+            {"$set": {
+                "current_stage": "rejected",
+                "rejected_at": now,
+                "rejection_reason": body.reason,
+                "updated_at": now,
+            }},
+        )
+        return {"ok": True, "outcome": "rejected"}
+
+    if body.outcome == "on_hold":
+        db.pipeline_stages.update_one(
+            {"_id": doc["_id"]},
+            {"$set": {
+                "on_hold": True,
+                "on_hold_reason": body.reason,
+                "updated_at": now,
+            }},
+        )
+        return {"ok": True, "outcome": "on_hold"}
+
+    # outcome == "selected"
+    if body.next_step not in ("next_round", "offer"):
+        raise HTTPException(status_code=400, detail="next_step must be 'next_round' or 'offer' when outcome is selected")
+    if body.next_step == "next_round" and not body.interview_details:
+        raise HTTPException(status_code=400, detail="interview_details required when next_step is next_round")
+
+    stages = doc.get("stages", [])
+    cur_idx = next((i for i, s in enumerate(stages) if s.get("name") == current), -1)
+    if cur_idx < 0:
+        raise HTTPException(status_code=500, detail="Inconsistent state: current stage missing from stages array")
+
+    stages[cur_idx]["completed_at"] = now
+    stages[cur_idx]["outcome"] = "selected"
+
+    if body.next_step == "next_round":
+        next_name = _next_interview_stage_name(stages)
+        sla = int(sla_map.get("interview_1", 24))  # reuse interview SLA for all rounds
+        new_stage = _build_stage(next_name, sla, now)
+        new_stage["interview_details"] = body.interview_details.model_dump()
+        stages.append(new_stage)
+
+        db.pipeline_stages.update_one(
+            {"_id": doc["_id"]},
+            {"$set": {
+                "stages": stages,
+                "current_stage": next_name,
+                "on_hold": False,
+                "updated_at": now,
+            }},
+        )
+
+        try:
+            from tasks.notification_tasks import send_interview_email
+            send_interview_email.delay(jd_id, candidate_id, body.interview_details.model_dump())
+        except Exception:
+            pass
+
+        return {"ok": True, "outcome": "selected", "current_stage": next_name}
+
+    # next_step == "offer"
+    next_name = "offer"
+    new_stage = _build_stage(next_name, int(sla_map.get(next_name, 48)), now)
+    stages.append(new_stage)
+
+    offer_token = secrets.token_urlsafe(32)
+    db.pipeline_stages.update_one(
+        {"_id": doc["_id"]},
+        {"$set": {
+            "stages": stages,
+            "current_stage": next_name,
+            "on_hold": False,
+            "offer_token": offer_token,
+            "offer_sent_at": now,
+            "updated_at": now,
+        }},
+    )
+
+    if "offer" in _STAGE_TASK_MAP:
+        t_type, tmpl, priority, due_h = _STAGE_TASK_MAP["offer"]
+        desc = tmpl.format(cid=candidate_id, jid=jd_id)
+        try:
+            create_auto_task(db, t_type, desc, user.get("sub", "unknown"), jd_id, candidate_id, priority, due_h)
+        except Exception:
+            pass
+
+    # Offer email is sent later — after recruiter fills in joining date via /give-offer
+    return {"ok": True, "outcome": "selected", "current_stage": next_name}
+
+
+class GiveOfferBody(BaseModel):
+    joining_date: str
+    work_location: str
+
+
+@router.post("/give-offer/{jd_id}/{candidate_id}")
+async def give_offer(
+    jd_id: str,
+    candidate_id: str,
+    body: GiveOfferBody,
+    user: dict = Depends(check_role(["recruiter", "manager", "admin"])),
+):
+    """Save joining date + location to offer stage, then advance to joined."""
+    db = get_db()
+    cfg = get_pipeline_config()
+    sla_map = cfg["sla_hours"]
+
+    doc = db.pipeline_stages.find_one({"jd_id": jd_id, "candidate_id": candidate_id})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Pipeline not found for this candidate")
+
+    if doc.get("current_stage") != "offer":
+        raise HTTPException(status_code=400, detail="Candidate is not in offer stage")
+
+    now = datetime.utcnow()
+    stages = doc.get("stages", [])
+    offer_idx = next((i for i, s in enumerate(stages) if s.get("name") == "offer"), -1)
+    if offer_idx < 0:
+        raise HTTPException(status_code=500, detail="Offer stage entry missing")
+
+    # Save offer details — stay on offer stage, wait for candidate response
+    stages[offer_idx]["joining_date"] = body.joining_date
+    stages[offer_idx]["work_location"] = body.work_location
+    stages[offer_idx]["offer_sent_at"] = now
+
+    db.pipeline_stages.update_one(
+        {"_id": doc["_id"]},
+        {"$set": {
+            "stages": stages,
+            "offer_sent_at": now,
+            "candidate_response": None,
+            "updated_at": now,
+        }},
+    )
+
+    # Send offer email to candidate with joining date
+    try:
+        from tasks.notification_tasks import send_offer_response_email
+        send_offer_response_email.delay(jd_id, candidate_id, doc["offer_token"], body.joining_date, body.work_location)
+    except Exception:
+        pass
+
+    return {"ok": True, "current_stage": "offer", "joining_date": body.joining_date, "work_location": body.work_location}
+
+
+@router.post("/confirm-joining/{jd_id}/{candidate_id}")
+async def confirm_joining(
+    jd_id: str,
+    candidate_id: str,
+    user: dict = Depends(check_role(["recruiter", "manager", "admin"])),
+):
+    """Recruiter confirms candidate is joining — advances to joined and triggers invoice."""
+    db = get_db()
+    cfg = get_pipeline_config()
+    sla_map = cfg["sla_hours"]
+
+    doc = db.pipeline_stages.find_one({"jd_id": jd_id, "candidate_id": candidate_id})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Pipeline not found")
+    if doc.get("current_stage") != "offer":
+        raise HTTPException(status_code=400, detail="Candidate is not in offer stage")
+
+    now = datetime.utcnow()
+    stages = doc.get("stages", [])
+    offer_idx = next((i for i, s in enumerate(stages) if s.get("name") == "offer"), -1)
+    if offer_idx >= 0:
+        stages[offer_idx]["completed_at"] = now
+
+    joined_stage = _build_stage("joined", int(sla_map.get("joined", 720)), now)
+    stages.append(joined_stage)
+
+    db.pipeline_stages.update_one(
+        {"_id": doc["_id"]},
+        {"$set": {"stages": stages, "current_stage": "joined", "updated_at": now}},
+    )
+
+    try:
+        generate_and_send_invoice.delay(jd_id, candidate_id)
+    except Exception:
+        pass
+    try:
+        start_retention_clock.delay(jd_id, candidate_id)
+    except Exception:
+        pass
+    try:
+        from tasks.notification_tasks import send_stage_notification
+        send_stage_notification.delay(candidate_id, jd_id, "joined")
+    except Exception:
+        pass
+
+    return {"ok": True, "current_stage": "joined"}
+
+
+@router.post("/reject-from-offer/{jd_id}/{candidate_id}")
+async def reject_from_offer(
+    jd_id: str,
+    candidate_id: str,
+    user: dict = Depends(check_role(["recruiter", "manager", "admin"])),
+):
+    """Recruiter rejects the candidate from the offer stage."""
+    db = get_db()
+    doc = db.pipeline_stages.find_one({"jd_id": jd_id, "candidate_id": candidate_id})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Pipeline not found")
+
+    now = datetime.utcnow()
+    db.pipeline_stages.update_one(
+        {"_id": doc["_id"]},
+        {"$set": {"current_stage": "rejected", "rejected_at": now, "updated_at": now}},
+    )
+    return {"ok": True, "current_stage": "rejected"}
 
 
 class ExtensionRequest(BaseModel):
@@ -254,6 +617,83 @@ async def request_extension(
         {"$set": {"stages": stages, "updated_at": now}},
     )
     return {"ok": True, "stage": current}
+
+
+class OfferResponseBody(BaseModel):
+    response: str  # "accept" | "hold" | "reject"
+    reason: Optional[str] = None
+    preferred_joining_date: Optional[str] = None
+
+
+@router.get("/offer-response/{token}")
+async def get_offer_details(token: str):
+    """Public endpoint — no auth. Returns offer details for the candidate response page."""
+    db = get_db()
+    doc = db.pipeline_stages.find_one({"offer_token": token})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Invalid or expired offer link")
+
+    jd_id = doc["jd_id"]
+    candidate_id = doc["candidate_id"]
+
+    jd = db.job_descriptions.find_one({"jd_id": jd_id})
+    jd_title = (jd.get("structured_data", {}).get("title") or jd.get("title", "Job Role")) if jd else "Job Role"
+
+    candidate = db.candidates.find_one({"candidate_id": candidate_id}, {"name": 1})
+    candidate_name = candidate.get("name", "Candidate") if candidate else "Candidate"
+
+    joining_date = None
+    for stage in doc.get("stages", []):
+        if stage.get("name") == "offer":
+            joining_date = stage.get("joining_date")
+
+    candidate_response = doc.get("candidate_response")
+
+    return {
+        "jd_id": jd_id,
+        "jd_title": jd_title,
+        "candidate_id": candidate_id,
+        "candidate_name": candidate_name,
+        "joining_date": joining_date,
+        "already_responded": candidate_response is not None,
+        "candidate_response": candidate_response,
+    }
+
+
+@router.post("/offer-response/{token}")
+async def submit_offer_response(token: str, body: OfferResponseBody):
+    """Public endpoint — no auth. Candidate submits their offer response."""
+    if body.response not in ("accept", "hold", "reject"):
+        raise HTTPException(status_code=400, detail="response must be accept, hold, or reject")
+
+    db = get_db()
+    doc = db.pipeline_stages.find_one({"offer_token": token})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Invalid or expired offer link")
+
+    if doc.get("candidate_response"):
+        raise HTTPException(status_code=400, detail="You have already responded to this offer")
+
+    now = datetime.utcnow()
+    response_data = {
+        "response": body.response,
+        "reason": body.reason,
+        "preferred_joining_date": body.preferred_joining_date,
+        "responded_at": now,
+    }
+
+    db.pipeline_stages.update_one(
+        {"offer_token": token},
+        {"$set": {"candidate_response": response_data, "updated_at": now}},
+    )
+
+    try:
+        from tasks.notification_tasks import notify_offer_response
+        notify_offer_response.delay(doc["jd_id"], doc["candidate_id"], body.response, body.reason)
+    except Exception:
+        pass
+
+    return {"ok": True, "response": body.response}
 
 
 class ExtensionDecision(BaseModel):

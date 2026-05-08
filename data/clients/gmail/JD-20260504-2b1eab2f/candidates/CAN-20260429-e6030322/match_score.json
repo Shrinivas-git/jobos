@@ -1,0 +1,24 @@
+{
+  "fitment_score": 20.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 31.677618600000002,
+  "reasoning": "The candidate's background is primarily in software development and data science, with no direct experience in Salesforce development, which is a critical requirement for the SalesForce Platform Manager role. While the candidate has a strong foundation in programming languages and technologies, the lack of relevant experience and skills in Salesforce ecosystem makes it a challenging fit.",
+  "strengths": [
+    "The candidate has experience in building scalable RESTful APIs using FastAPI and Flask, demonstrating their ability to design and develop efficient APIs.",
+    "The candidate has worked on multiple projects, including AI-Driven Speech Clarity Enhancement System and BookMyShow Clone, showcasing their ability to work on diverse projects and technologies.",
+    "The candidate has a strong foundation in programming languages, including Python, Java, and SQL, which could be beneficial in learning Salesforce development.",
+    "The candidate has experience in data analysis and machine learning, which could be relevant in Salesforce data analysis and reporting.",
+    "The candidate has a strong educational background, with a Master of Computer Applications degree, demonstrating their commitment to learning and professional development."
+  ],
+  "gaps": [
+    "The candidate lacks direct experience in Salesforce development, which is a critical requirement for the SalesForce Platform Manager role.",
+    "The candidate does not have experience with Copado for CI/CD and release orchestration, which is a key skill required for the role.",
+    "The candidate does not have experience with Salesforce multi-tenant architecture, Governor limits, and Environment management, which are essential skills for the role.",
+    "The candidate does not have experience with Visualforce, Apex, and Lightning frameworks, which are critical skills for Salesforce development.",
+    "The candidate does not have Salesforce certifications, such as Salesforce Certified Development Lifecycle and Deployment Designer, which are preferred for the role."
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T12:45:25.477086"
+}

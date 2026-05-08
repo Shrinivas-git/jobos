@@ -1,0 +1,24 @@
+{
+  "fitment_score": 10.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 22.1135536,
+  "reasoning": "The candidate's resume does not show any direct experience or skills relevant to the Salesforce Platform Manager role, with no mention of Salesforce, Copado, or related technologies, making them a poor fit for the position.",
+  "strengths": [
+    "The candidate has experience with programming languages such as Python and JavaScript, which could be beneficial in a general development context.",
+    "They have worked on various projects, including a student database management system and a chatbot, demonstrating some development experience.",
+    "The candidate has certifications in AWS and Cisco, showing some knowledge of cloud and networking technologies.",
+    "They have a strong educational background, with a Master's degree in Computer Applications and a Bachelor's degree in Computer Applications.",
+    "The candidate has experience with databases such as MySQL and MongoDB, which could be useful in a data management context."
+  ],
+  "gaps": [
+    "The candidate lacks any direct experience with Salesforce, which is a critical requirement for the role.",
+    "There is no mention of Copado, CI/CD, or release orchestration, which are key skills required for the position.",
+    "The candidate does not have any experience with Visualforce, Apex, or Lightning frameworks, which are essential for Salesforce development.",
+    "They do not have any certifications or experience related to Salesforce, such as the Salesforce Certified Development Lifecycle and Deployment Designer certification.",
+    "The candidate's resume does not show any experience with environment management, governor limits, or data cloud, which are important aspects of the Salesforce Platform Manager role."
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T12:45:37.872958"
+}

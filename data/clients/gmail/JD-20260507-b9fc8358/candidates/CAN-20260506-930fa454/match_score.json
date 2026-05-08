@@ -1,0 +1,144 @@
+{
+  "fitment_score": 2.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "System engineering principles",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Knowledge of ASPICE",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ISO26262",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "System Requirements writing and System Architecture Design",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System (End User function) and Product knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience on system service function (Diagnostics, Flashability, FOTA, etc)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "CAN/LIN/Ethernet/LVDS",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Embedded System",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Basic Functional Safety and Cyber Security knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience in RADAR function validation (HIL and vehicle environment)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Requirement management tools DOORs, Code Beamer",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Configuration management tools such as CoreALM",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Modeling tool Catia Magic",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [],
+  "composite_score": 3.1666666666666665,
+  "reasoning": "Reject \u2014 completely wrong domain. This candidate has nine years of experience in Facilities Management and Transportation operations, with zero evidence of any automotive, embedded systems, RADAR, or system engineering background. Every single must-have for the System Radar Function Owner role \u2014 ASPICE, ISO26262, CAN/LIN/Ethernet, RADAR validation, HIL testing, DOORs, Catia Magic \u2014 is entirely absent. The resume describes scheduling cabs, vendor management, GPS tracking of transport fleets, and facility administration. There is no crossover whatsoever with the automotive embedded systems engineering domain required here. Do not proceed with this application under any circumstances.",
+  "strengths": [
+    "TRANSPORT OPERATIONS SCALE: Managed end-to-end transportation for 4,000 employees at Cognizant across 24/7 operations \u2014 demonstrates ability to handle large-scale logistics, though entirely irrelevant to this RADAR systems engineering role.",
+    "MULTI-SITE OPERATIONS MANAGEMENT: Led facilities and transport management across multiple clients and sites at RouteMatic, including server configuration and client training for transport tech platforms \u2014 shows project execution capability in a different domain.",
+    "TEAM LEADERSHIP IN FM: Currently serving as Team Lead at Ventra Health managing FM and Transport verticals including budgeting, compliance, and manpower \u2014 indicates seniority within facilities management, not transferable to automotive systems."
+  ],
+  "gaps": [
+    "ZERO AUTOMOTIVE/EMBEDDED SYSTEMS EXPERIENCE: The role requires deep expertise in RADAR systems, ISO26262 Functional Safety, ASPICE process compliance, and embedded system architecture. This candidate's entire career is in facilities and transport administration \u2014 a completely different industry and function.",
+    "NO RELEVANT TOOLCHAIN OR DOMAIN KNOWLEDGE: Must-have tools including DOORs, Code Beamer, CoreALM, Catia Magic, and protocols like CAN/LIN/Ethernet/LVDS are entirely absent. There is no basis for even a 'borderline' consideration \u2014 this is a domain mismatch, not a skill gap."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period specified in resume; no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate location cannot be confirmed from resume; no penalty applied."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 9 years total experience, exceeding the half-threshold of 2 years relevant experience required."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD has no gender preference; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college exclusion or preference specified in JD; no penalty applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch \u2014 candidate location not confirmed for Chennai in-office requirement"
+  ],
+  "role_level_detected": "Lead",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "None",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Available now",
+  "availability_reason": "Latest role listed end date as March 2026, which appears to be a future date \u2014 however, given the role history and context, candidate may be currently employed; treat as unknown without confirmation.",
+  "alternative_role_fit": "Facilities and Transport Manager",
+  "rare_assets": [],
+  "self_reported_unverified": [
+    "End date of 'March 2026' at Ventra Health is listed as a future date \u2014 unclear if this is a typo or the candidate is still employed there.",
+    "Claims of managing transportation for 4,000 employees 24/7 at Cognizant \u2014 scale is notable but unverified with no supporting metrics on outcomes."
+  ],
+  "interview_flags": [
+    "Clarify the end date 'March 2026' at Ventra Health \u2014 is the candidate currently employed or was this a typo?",
+    "Ask why this candidate applied for a RADAR systems engineering role given a facilities management background \u2014 possible resume mismatch or incorrect application.",
+    "Probe whether candidate has any hidden engineering or automotive background not reflected in the resume.",
+    "Confirm current location \u2014 is the candidate based in Chennai or willing to relocate for in-office work?",
+    "Clarify B.Com Computers degree \u2014 does this include any technical coursework relevant to embedded systems or electronics?"
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:26:11.296908"
+}

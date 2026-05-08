@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from celery_app import celery
-from routers import auth, candidates, jd, matching, pipeline, documents, crm, analytics, notifications, feedback, recruiter_tasks, admin, assessments
+from routers import auth, candidates, jd, matching, pipeline, documents, crm, analytics, notifications, feedback, recruiter_tasks, admin, assessments, invoices
 from middleware.audit import AuditMiddleware
 
 logging.basicConfig(level=logging.INFO)
@@ -83,6 +83,7 @@ app.include_router(feedback.router)
 app.include_router(recruiter_tasks.router)
 app.include_router(admin.router)
 app.include_router(assessments.router)
+app.include_router(invoices.router)
 
 
 @app.get("/")

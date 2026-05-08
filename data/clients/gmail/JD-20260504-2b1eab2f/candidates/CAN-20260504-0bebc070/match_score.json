@@ -1,0 +1,24 @@
+{
+  "fitment_score": 85.0,
+  "completeness_score": 100.0,
+  "context_bonus": 5.0,
+  "composite_score": 74.933819,
+  "reasoning": "The candidate has a strong background in Salesforce DevOps, with experience in managing CI/CD pipelines, release governance, and deployment automation using Copado, Flosum, and Jenkins, which aligns well with the job description. However, there are some gaps in their experience, such as a lack of direct experience as a Salesforce Platform Manager and limited information about their experience with Salesforce multi-tenant architecture and Governor limits.",
+  "strengths": [
+    "The candidate has 7 years of experience in managing CI/CD pipelines and release governance, with a strong focus on Salesforce DevOps, as evident from their work experience at Infosys Ltd and CGI.",
+    "They have hands-on experience with Copado, Flosum, and Jenkins, which are required skills for the job, and have implemented CI/CD processes using these tools in their previous projects.",
+    "The candidate has a strong understanding of environment strategy, cutover planning, and ensuring smooth multi-org Salesforce releases with minimal risks, as seen in their experience with Apple and Philip Morris International projects.",
+    "They have a good balance of technical and soft skills, with experience in collaborating with cross-functional teams, providing comprehensive support for production releases, and managing hotfixes, as evident from their work experience and certifications.",
+    "The candidate has a strong educational background, with a B.Tech in Computer Science Engineering and various Salesforce certifications, including Salesforce Administrator, Platform Developer, and App Builder, which demonstrates their technical expertise and commitment to continuous learning."
+  ],
+  "gaps": [
+    "The candidate lacks direct experience as a Salesforce Platform Manager, which is a critical requirement for the job, and may need to demonstrate their ability to lead and manage a team in this role.",
+    "There is limited information about their experience with Salesforce multi-tenant architecture and Governor limits, which are key skills required for the job, and may require further investigation during the interview process.",
+    "The candidate's experience with Visualforce, Apex, and Lightning frameworks is not explicitly mentioned, which are important skills for the job, and may be a area for further exploration.",
+    "There is no information about their experience with establishing a Center of Excellence, which is a key responsibility of the Salesforce Platform Manager role, and may require additional training or support.",
+    "The candidate's experience with Data Cloud is not explicitly mentioned, which is a required skill for the job, and may be an area for further development or training."
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T12:45:14.548808"
+}

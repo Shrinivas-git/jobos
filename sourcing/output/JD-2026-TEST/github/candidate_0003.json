@@ -1,0 +1,43 @@
+{
+  "_meta": {
+    "source": "github",
+    "jd_id": "JD-2026-TEST",
+    "fetched_at": "2026-05-08T06:33:00.497489",
+    "index": 3
+  },
+  "profile": {
+    "login": "ashfaqsyedn",
+    "id": 48689650,
+    "node_id": "MDQ6VXNlcjQ4Njg5NjUw",
+    "avatar_url": "https://avatars.githubusercontent.com/u/48689650?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/ashfaqsyedn",
+    "html_url": "https://github.com/ashfaqsyedn",
+    "followers_url": "https://api.github.com/users/ashfaqsyedn/followers",
+    "following_url": "https://api.github.com/users/ashfaqsyedn/following{/other_user}",
+    "gists_url": "https://api.github.com/users/ashfaqsyedn/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/ashfaqsyedn/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/ashfaqsyedn/subscriptions",
+    "organizations_url": "https://api.github.com/users/ashfaqsyedn/orgs",
+    "repos_url": "https://api.github.com/users/ashfaqsyedn/repos",
+    "events_url": "https://api.github.com/users/ashfaqsyedn/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/ashfaqsyedn/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false,
+    "name": "Syed Ashfaq N",
+    "company": null,
+    "blog": "",
+    "location": "Bengaluru",
+    "email": null,
+    "hireable": null,
+    "bio": "ML Engineer, Soft Computing Algorithms and Network Science.",
+    "twitter_username": "_syedashfaq",
+    "public_repos": 448,
+    "public_gists": 2,
+    "followers": 2,
+    "following": 8,
+    "created_at": "2019-03-18T16:41:58Z",
+    "updated_at": "2026-04-20T13:08:43Z"
+  }
+}

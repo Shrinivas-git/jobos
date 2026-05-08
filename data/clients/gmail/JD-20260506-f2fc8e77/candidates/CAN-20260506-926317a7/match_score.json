@@ -1,0 +1,142 @@
+{
+  "fitment_score": 2.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.14285714285714285,
+  "must_have_breakdown": [
+    {
+      "skill": "8+ years of experience in Car Rental / Fleet Management / Mobility industry",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Strong experience in Operations Management + Sales / Business Development",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Proven track record in P&L ownership and profitability management",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience handling corporate clients / B2B accounts",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Strong leadership and team management experience",
+      "status": "Partial",
+      "evidence": "Candidate mentions mentoring junior team members on Copado processes, but no formal team management or leadership of ops/sales teams is evidenced."
+    },
+    {
+      "skill": "Good commercial acumen and negotiation skills",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Ability to work in a fast-paced target-driven environment",
+      "status": "Partial",
+      "evidence": "Candidate references 'fast-paced Agile environment' and '24/7 production support' in IT context, but no evidence in fleet/mobility or revenue-target-driven settings."
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [
+    {
+      "name": "Copado Fundamentals I - Metadata Format",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II - Metadata Format",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Copado Fundamentals I - Source Format (SFP)",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II - Source Format (SFP)",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Platform Developer I",
+      "tier": "Practitioner"
+    }
+  ],
+  "composite_score": 7.928571428571429,
+  "reasoning": "Reject \u2014 completely wrong domain. This candidate is a Salesforce Copado DevOps/Release Engineer with 6 years in IT, and has zero relevance to the Profit Centre Head / Branch Head role in Car Rental or Fleet Management. The JD requires a leader with 8+ years in mobility/fleet, P&L ownership, B2B sales, and operations management of drivers, vehicles, and vendors in Hyderabad. This candidate manages CI/CD pipelines and Salesforce deployments for telecom and tech clients \u2014 an entirely different world. There is no fleet, no corporate mobility accounts, no P&L, no branch operations experience, and the candidate is based in Puducherry, not Hyderabad. Do not proceed under any circumstances.",
+  "strengths": [
+    "SALESFORCE DEVOPS EXPERTISE: 4+ years of hands-on Copado deployment experience across SFP and Metadata formats, reducing deployment time by 30% \u2014 strong in IT DevOps, but entirely irrelevant to this role.",
+    "RELEASE GOVERNANCE: Led enterprise-level Salesforce release management for telecom clients at Atos Syntel, managing multi-environment CI/CD pipelines with 24/7 production support \u2014 again, zero transferability to fleet operations or mobility P&L.",
+    "CERTIFICATIONS IN SALESFORCE STACK: Holds 6 certifications including Salesforce Certified Administrator, Platform Developer I, and multiple Copado Fundamentals \u2014 high signal in her actual domain, not this one."
+  ],
+  "gaps": [
+    "ZERO FLEET/MOBILITY/CAR RENTAL EXPERIENCE: The entire career is in Salesforce DevOps and IT release engineering. No exposure whatsoever to fleet management, vehicle utilization, driver management, or passenger mobility \u2014 this is the single most disqualifying factor for this role.",
+    "NO P&L OR BRANCH MANAGEMENT BACKGROUND: There is no evidence of revenue ownership, budgeting, cost control, B2B sales, or any commercial/operational leadership \u2014 the core competency this Branch Head role demands."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated; no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office presence in Hyderabad; candidate is based in Puducherry, India \u2014 location mismatch."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 6+ years total IT experience, which exceeds half of the 4-year relevant experience threshold numerically, so no penalty applied here \u2014 though domain is entirely wrong."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any'; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD; no penalty applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch \u2014 candidate is in Puducherry, JD requires in-office in Hyderabad"
+  ],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at Trimble Inc. is listed as March 2025 to Present with no end date or notice period stated.",
+  "alternative_role_fit": "Senior Salesforce Release Engineer / Salesforce DevOps Lead",
+  "rare_assets": [
+    "Dual-format Copado certification (both SFP and Metadata) \u2014 uncommon combination even among Salesforce DevOps professionals.",
+    "Agentforce AI component deployment experience \u2014 early-adopter signal in the Salesforce ecosystem."
+  ],
+  "self_reported_unverified": [
+    "'Reduced deployment time by 30%' \u2014 no baseline, team size, or independent evidence provided.",
+    "Bronze Accolade Award described as 'exceptional contribution to organizational activities' \u2014 vague, likely participation-based rather than performance-based."
+  ],
+  "interview_flags": [
+    "Confirm whether the MBA in HR (completing December 2025) indicates a planned career pivot away from technical roles.",
+    "Clarify if candidate mistakenly applied to this role or if there is any undisclosed fleet/mobility experience not on the resume.",
+    "Probe the 30% deployment time reduction \u2014 what was the baseline, what was the team size, and what specifically changed?",
+    "Ask about the nature of the Trimble Inc. role \u2014 is it a permanent position or contract, given the relatively recent start date?",
+    "Verify the scope of 'mentoring junior team members' \u2014 how many, over what period, and what was the formal leadership structure?"
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-06T12:40:16.238967"
+}

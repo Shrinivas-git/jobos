@@ -1,0 +1,75 @@
+{
+  "fitment_score": 62.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "composite_score": 59.84861253333334,
+  "reasoning": "Purna Sai Ram is a strong Salesforce developer with 7+ years of experience and hands-on Copado usage, which aligns well with the CI/CD requirement. However, the role is for a Platform Manager\u2014a leadership and governance role\u2014whereas this candidate is primarily a hands-on senior developer. There is no demonstrated experience managing Salesforce releases at an organizational governance level, establishing a Center of Excellence, working with Salesforce's premier support tiers, managing Business Critical production environments at scale, or supporting Agentforce and Data Cloud. The candidate's experience leans heavily toward development execution rather than platform strategy, release orchestration, or stakeholder-facing roadmap communication.",
+  "strengths": [
+    "Hands-on Copado experience: The candidate explicitly lists Copado as a tool used at IBM for end-to-end delivery for a 1500+ user Salesforce org, holding Copado Fundamentals I & II certifications\u2014directly matching a key required skill.",
+    "Deep Salesforce technical expertise: 7+ years covering Apex, LWC, integrations, LDV optimization, governor limits, and multi-tenant architecture demonstrates the deep platform understanding required for this role.",
+    "Production ownership experience: The candidate acted as production owner handling critical defects and release stability at IBM, showing direct exposure to production environment management.",
+    "Broad certification portfolio: Holding 7 Salesforce certifications including AI Specialist, Business Analyst, and Platform Developer I, plus Copado certifications, signals broad platform awareness beyond just development.",
+    "Mentorship and code governance: Mentoring 5 developers, enforcing best practices, and reducing deployment defects by 30% demonstrates some team leadership and quality governance capability relevant to CoE establishment."
+  ],
+  "gaps": [
+    "No platform management or release governance leadership: The JD requires managing the full lifecycle of Salesforce releases at an organizational level and establishing a Center of Excellence\u2014there is no evidence of this strategic, cross-team governance role in the resume.",
+    "No Agentforce or Data Cloud experience: The JD explicitly mentions supporting streamlining for Agentforce and Data Cloud environments, and the candidate's resume contains no mention of either product.",
+    "No experience with Salesforce premier support tiers: The JD requires direct experience managing 'Business Critical' production environments and working with Salesforce's premier support\u2014this is absent from the resume.",
+    "No business stakeholder roadmap communication: The JD requires translating complex technical releases into business-friendly roadmaps; the candidate's profile is developer-centric with no evidence of executive or business stakeholder communication.",
+    "Limited environment management and release orchestration at scale: While Copado is mentioned, there is no evidence of managing multi-sandbox environment strategy, org topology design, or orchestrating large cross-team releases beyond a single project delivery."
+  ],
+  "recommendation": "hold",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period is specified in the JD or the resume, so no penalty applies."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "The JD does not specify a work structure of In-office or a specific location, so no location penalty applies."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "The candidate has 7+ years of Salesforce experience, well above the minimum threshold of 2.5 years (half of the 5-year JD requirement)."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "The JD specifies 'Any' gender preference, so no penalty applies."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "The candidate's B.Tech institution is not named in the resume and does not match any excluded or preferred college in the JD."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Senior",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Unknown",
+  "rare_assets": [
+    "Salesforce Certified AI Specialist certification\u2014rare among platform professionals and directly relevant to Agentforce capabilities.",
+    "Copado Fundamentals I & II combined with active production deployment experience in a 1500+ user enterprise org.",
+    "Combination of Business Analyst and Platform Developer certifications indicating cross-functional Salesforce depth unusual for a purely technical profile."
+  ],
+  "self_reported_unverified": [
+    "'Reduced deployment defects by 30%'\u2014a specific metric claim with no baseline, measurement period, or external validation provided.",
+    "'Led end-to-end delivery' at IBM\u2014leadership scope is unclear; no mention of team size managed or budget ownership to confirm this was a true lead role.",
+    "'Mentored 5 developers'\u2014claimed mentorship with no detail on outcomes, duration, or formal program structure to verify depth of impact."
+  ],
+  "interview_flags": [
+    "Probe the actual scope of 'production owner' role\u2014was this a formal title with change control authority, or informal accountability within a developer team?",
+    "Ask specifically about experience with Salesforce release management governance tools and processes beyond Copado pipelines\u2014e.g., release calendars, CAB processes, environment strategy.",
+    "Probe any exposure to Agentforce or Data Cloud\u2014even exploratory or certification-level, as neither appears in the resume despite AI Specialist certification.",
+    "Ask whether the candidate has directly interfaced with Salesforce Account Executives or premier support (Signature/Premier Success) for escalations or roadmap discussions.",
+    "Clarify the gap between the developer-heavy resume and the managerial scope of this role\u2014has the candidate managed cross-functional stakeholders, built governance frameworks, or led a CoE in any capacity?"
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-05T10:57:18.350684"
+}

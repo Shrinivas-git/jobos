@@ -1,0 +1,159 @@
+{
+  "fitment_score": 18.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.03333333333333333,
+  "must_have_breakdown": [
+    {
+      "skill": "Python (3.x)",
+      "status": "Partial",
+      "evidence": "Resume mentions 'exposure in Python' under programming languages \u2014 no projects, no depth demonstrated."
+    },
+    {
+      "skill": "Django",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Flask",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "FastAPI",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MySQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "PostgreSQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MongoDB",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "SQLite",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Git/GitHub/Bitbucket",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Docker",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Jenkins",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "HTML5/CSS3/JavaScript",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RESTful APIs/JSON",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "OOP/Data Structures/Algorithms",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Unit Testing (PyTest/Unittest)",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 9,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [],
+  "composite_score": 13.833333333333336,
+  "reasoning": "Reject \u2014 wrong domain entirely. This is an automotive system test engineer with 4 years of ECU/ADAS/infotainment validation experience, not a Python backend developer. His Python exposure is a single parenthetical mention ('exposure in Python') buried in a skills list \u2014 there are zero Python projects, zero backend frameworks (Django/Flask/FastAPI), zero database experience, and zero web technology skills. The recruiter explicitly wants someone with Python projects and AI model training experience; this candidate has neither. His actual expertise is in CAPL scripting, CANoe, UDS protocols, HIL testing, and AUTOSAR \u2014 none of which transfer to this role. Do not shortlist.",
+  "strengths": [
+    "AUTOMOTIVE TESTING DEPTH: 4 years of hands-on ECU validation across Infotainment, ADAS, and Telematics systems for clients like General Motors and Skoda \u2014 strong domain expertise, but entirely irrelevant to a Python backend role.",
+    "TEST AUTOMATION BACKGROUND: Developed and executed complex test cases using CAPL scripting in CANoe, reducing manual testing time \u2014 demonstrates automation thinking, but in a completely different language and toolchain than required.",
+    "INDUSTRY STANDARDS COMPLIANCE: Practical experience with ASPICE, ISO 26262, and V&V processes \u2014 shows structured engineering discipline, though not applicable to the Python dev or AI training requirements of this role."
+  ],
+  "gaps": [
+    "NO PYTHON BACKEND DEVELOPMENT: The recruiter requires Python projects and AI model training experience. This candidate lists only 'exposure in Python' with zero demonstrated projects, no frameworks (Django/Flask/FastAPI), and no AI/ML work \u2014 this is a complete miss on the core requirement.",
+    "WRONG DOMAIN AND TOOLCHAIN: The candidate's entire 4-year career is automotive embedded systems testing (CANoe, CAPL, CAN protocols, HIL benches) \u2014 there is no overlap with web technologies, databases, REST APIs, Docker, or any skill on the JD's required list."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated and JD has no maximum specified \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office in Bangalore; candidate is based in Chennai (Jasmin Infotech, Chennai 600100)."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "JD requires 0 relevant experience \u2014 no penalty applies regardless of candidate background."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college exclusion or preference specified in JD \u2014 no penalty applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch"
+  ],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Over-qualified",
+  "tool_currency": "Previous",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at Jasmin Infotech is listed as ongoing ('March 2022 to present') with no notice period stated.",
+  "alternative_role_fit": "Automotive System Test Engineer / ADAS Validation Engineer",
+  "rare_assets": [
+    "HIL bench testing expertise with Dyna4 and VT-Studio for ADAS ECU validation \u2014 rare specialisation in automotive embedded testing.",
+    "UDS protocol depth with hands-on service ID-level diagnostics (10, 11, 22, 2E, 3E, 27, 31, 19, 28, 85, 14) \u2014 highly niche automotive knowledge.",
+    "CAPL scripting for automated test scenarios in CANoe across Infotainment, ADAS, and cluster systems \u2014 a rare automotive test automation skill."
+  ],
+  "self_reported_unverified": [
+    "'Significantly reducing manual testing time' via CAPL scripting \u2014 no quantified baseline or percentage improvement provided.",
+    "'Led defect tracing efforts' on ADAS systems \u2014 no team size or scope of leadership mentioned to verify seniority of this claim.",
+    "'Improving system stability and overall ADAS performance' \u2014 outcome claim with no metrics or before/after data to substantiate."
+  ],
+  "interview_flags": [
+    "Probe actual depth of Python \u2014 'exposure in Python' is vague; ask for any code written, scripts developed, or GitHub profile.",
+    "Ask whether candidate has any interest or background in AI/ML model training, as recruiter specifically requires this.",
+    "Clarify willingness to relocate from Chennai to Bangalore for an in-office role.",
+    "Probe whether candidate is open to a complete domain switch from automotive embedded testing to Python backend development.",
+    "Ask about compensation expectations \u2014 current role is 4 years of mid-level automotive work, and the JD budget (4-6 LPA) may be a significant downgrade."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:54:53.327436"
+}

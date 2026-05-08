@@ -1,0 +1,134 @@
+{
+  "fitment_score": 4.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MISRA coding guidelines",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "AUTOSAR experience",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR Algorithm development",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 3,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [
+    {
+      "name": "Cisco Certified Support Technician \u2013 Networking",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Oracle Cloud Infrastructure AI Foundations 2025 Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Oracle Cloud Infrastructure Certified Foundations Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "IT Specialist \u2013 Data Analytics (Certiport / Pearson VUE)",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 6.333333333333332,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a web/AI software engineer with Python, FastAPI, React, and ML skills, and has zero overlap with the embedded systems, automotive, and radar engineering stack required for this Senior SW Developer role. The JD demands C programming, MISRA compliance, AUTOSAR, RTOS, and radar domain expertise \u2014 none of which appear anywhere on this resume. The candidate is currently pursuing an MCA and has only intern-level experience, making them doubly unsuitable for a Senior-level embedded role requiring 4 years of relevant experience. Do not proceed; this is a domain mismatch, not a skill gap.",
+  "strengths": [
+    "AI/ML PIPELINE DEPTH: Built a production two-pass candidate-job matching engine using Qdrant vector DB and Gemini 1.5 Pro API within a 13-container microservices environment \u2014 demonstrating real system design capability, though entirely irrelevant to this role.",
+    "BACKEND ENGINEERING COMPETENCE: Delivered a custom CNN-based speech clarity enhancement system end-to-end using FastAPI, PyTorch, and Whisper ASR \u2014 shows ability to build complex, multi-component software systems from scratch.",
+    "COMPETITIVE CODING SIGNAL: Secured global rank ~1600 in TCS CodeVita Season 11 Round 2 \u2014 a credible signal of algorithmic problem-solving ability, but not transferable to embedded C or radar DSP contexts."
+  ],
+  "gaps": [
+    "ZERO EMBEDDED/AUTOMOTIVE EXPERIENCE: The candidate has no C programming, AUTOSAR, RTOS, or any embedded systems exposure whatsoever. These are mandatory, non-negotiable requirements for this role, and no amount of Python or web dev experience compensates for this in an automotive radar engineering context.",
+    "WRONG LEVEL AND WRONG DOMAIN: The candidate is a current MCA student with only two internships (web/data science), making them a Junior-level web developer at best. This role requires a Senior SW Developer with 4+ years of embedded radar/automotive experience \u2014 a fundamental mismatch on both seniority and specialisation."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated; candidate appears to be a student/intern so no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office presence in Chennai; candidate is based in Bengaluru."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "-10",
+      "reason": "JD requires 4 years of relevant embedded experience; candidate has effectively 0 relevant experience (only intern web/data science roles)."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is Any; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in JD; no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch",
+    "Experience below minimum"
+  ],
+  "role_level_detected": "Junior",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Available now",
+  "availability_reason": "Most recent internship ends June 2026 and candidate is still studying; effectively available for roles that start after June 2026.",
+  "alternative_role_fit": "Junior Python/AI Backend Developer",
+  "rare_assets": [
+    "Global Rank ~1600 in TCS CodeVita Season 11 Round 2 \u2014 a highly competitive global coding contest with hundreds of thousands of participants, signalling strong algorithmic ability for a junior candidate."
+  ],
+  "self_reported_unverified": [
+    "'Core member of the JobOS product team' \u2014 intern contribution scope and actual ownership level within a commercial AI product are unverifiable from the resume alone.",
+    "'Selected by the college for technical capability and reliability' for the ERP Automation Module \u2014 selection criteria and actual impact on mentor workflow are unverified."
+  ],
+  "interview_flags": [
+    "Confirm whether the candidate has any exposure to C programming, even academically \u2014 the JD's primary language is C and the resume shows none.",
+    "Ask whether the candidate is aware of embedded systems, RTOS, or automotive software standards \u2014 baseline domain awareness check before any further discussion.",
+    "Clarify the nature and scale of the JobOS internship: how many real users, was code deployed to production, and what was the intern's individual contribution vs. team output?",
+    "The MCA is listed as ending August 2026 \u2014 confirm availability and whether the candidate is open to relocating to Chennai for a full-time in-office role.",
+    "Probe why the candidate applied for an embedded radar SW Developer role given a profile that is entirely web/AI-focused \u2014 could indicate a sourcing or application error."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:05:52.618311"
+}

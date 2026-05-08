@@ -1,0 +1,103 @@
+{
+  "fitment_score": 74.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.8571428571428571,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Met",
+      "evidence": "Resume lists Embedded C as a primary language and demonstrates C-level work across all three employers including MCAL modules, diagnostic stacks, and CAN/CAN-FD stack development."
+    },
+    {
+      "skill": "MISRA coding guideline",
+      "status": "Met",
+      "evidence": "Explicitly listed under Testing & Quality Tools and referenced in both Forvia Hella and Capgemini Engineering roles with Helix QAC for MISRA compliance."
+    },
+    {
+      "skill": "AUTOSAR experience",
+      "status": "Met",
+      "evidence": "Configured AUTOSAR MCAL modules (ADC, DIO, SPI, PWM, Port), worked on RTE layer, BSW/ASW integration, and used DaVinci Configurator/Developer across Forvia Hella and Capgemini roles."
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Met",
+      "evidence": "Listed RTOS and FreeRTOS under Operating Systems; developed RTOS-based application-level logic at Forvia Hella with OS task configuration and multicore kernel support."
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Met",
+      "evidence": "Worked on ADAS Analysis Framework at Amdocs for JLR, implementing Radar SIL for SRR5 and running Blind Spot Detection and Lane Departure Warning feature functions."
+    },
+    {
+      "skill": "RADAR System knowledge",
+      "status": "Partial",
+      "evidence": "Modelled Radar SIL for SRR5 and Radar ECU at Amdocs, but role was framework/testing-oriented rather than deep radar system design or signal processing."
+    },
+    {
+      "skill": "RADAR Algo development",
+      "status": "Partial",
+      "evidence": "Involved in ADAS Analysis Framework with radar data integrity and feature function execution, but no explicit radar algorithm development (e.g. CFAR, tracking) is claimed."
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [],
+  "composite_score": 64.07142857142857,
+  "reasoning": "Shortlist \u2014 strong candidate with some gaps to probe. Akash brings solid AUTOSAR MCAL configuration depth (DaVinci Configurator, RTE, MCAL modules across two employers), verified MISRA/Helix QAC compliance work, and hands-on RTOS task configuration including multicore OS integration \u2014 all core must-haves for this role. The ADAS exposure via the JLR/Amdocs engagement is a genuine differentiator and checks the 'added advantage' box. However, radar work is shallow: his Amdocs engagement was SIL framework integration, not radar algorithm development or signal processing, so the RADAR Algo development box is only partially checked. Also note this candidate is based in Pune (current employer Forvia Hella, Pune), and the JD requires in-office work in Chennai \u2014 this is a relocation ask that must be confirmed before investing further. Probe RADAR depth and Chennai relocation intent immediately before scheduling technical rounds.",
+  "strengths": [
+    "AUTOSAR & MCAL DEPTH: Configured and integrated AUTOSAR MCAL modules (ADC, DIO, SPI, PWM, Port) across two automotive projects on RH850-U2B, including RTE layer configuration and ASPICE-compliant development \u2014 this is exactly the layer the JD targets.",
+    "MISRA/QAC COMPLIANCE TRACK RECORD: Actively enforced MISRA guidelines using Helix QAC with static analysis on production code at both Forvia Hella and Capgemini Engineering, demonstrating consistent quality discipline across multiple projects.",
+    "ADAS RADAR FRAMEWORK EXPOSURE: At Amdocs for JLR, designed C/C++ modules within an ADAS Analysis Framework (RESIM-SIL) modelling Radar SIL for SRR5 and Radar ECU \u2014 rare cross-domain exposure that directly addresses the JD's ADAS and RADAR added-advantage requirements."
+  ],
+  "gaps": [
+    "RADAR ALGORITHM DEVELOPMENT \u2014 SHALLOW: The JD calls out radar algo development as an added advantage, but Akash's radar work was confined to SIL framework integration and data log validation at Amdocs. There is no evidence of developing or optimising radar detection algorithms (e.g. CFAR, Doppler processing, object tracking), which limits his value on radar-heavy workstreams.",
+    "LOCATION MISMATCH \u2014 RELOCATION REQUIRED: JD specifies in-office work in Chennai; candidate is currently employed in Pune. This is not a disqualifier but is a real risk \u2014 confirm relocation willingness and timeline before proceeding, as this adds cost and timeline uncertainty."
+  ],
+  "recommendation": "shortlist",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period specified in JD or resume; no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office work in Chennai; candidate is based in Pune based on current employer location."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 5+ years total with 4+ years in relevant automotive embedded domain, meeting the 4-year relevant experience threshold."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any'; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in JD; no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Unknown",
+  "role_level_match": "Unknown",
+  "tool_currency": "None",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Unknown",
+  "availability_signal": "Unknown",
+  "availability_reason": "",
+  "alternative_role_fit": "",
+  "rare_assets": [],
+  "self_reported_unverified": [],
+  "interview_flags": [],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T08:58:53.899031"
+}

@@ -1,0 +1,113 @@
+{
+  "fitment_score": 78.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.8333333333333334,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Met",
+      "evidence": "Resume explicitly lists Embedded C as a primary language and demonstrates C usage across all three employers including Volvo Front Radar and ADAS projects."
+    },
+    {
+      "skill": "MISRA coding guideline",
+      "status": "Met",
+      "evidence": "Resume states 'MISRA compliance' under static analysis tools at Forvia Hella and lists MISRA under tools at Capgemini Engineering."
+    },
+    {
+      "skill": "AUTOSAR experience",
+      "status": "Met",
+      "evidence": "Configured AUTOSAR MCAL modules (ADC, DIO, SPI, PWM, Port), worked on RTE layer, BSW integration, and used DaVinci Configurator at both Forvia Hella and Capgemini Engineering."
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Met",
+      "evidence": "Resume lists RTOS and FreeRTOS under operating systems and explicitly developed RTOS-based application-level logic at Forvia Hella."
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Met",
+      "evidence": "Worked on ADAS Analysis Test Framework at Amdocs for JLR client, modelling Radar SIL for SRR5 including Blind Spot Detection and Lane Departure Warning features."
+    },
+    {
+      "skill": "RADAR System knowledge",
+      "status": "Partial",
+      "evidence": "Worked on Radar SIL and Radar ECU integration at Amdocs and Front Radar project at Capgemini for Volvo, but depth of radar system architecture knowledge is not explicitly detailed."
+    },
+    {
+      "skill": "RADAR Algo development",
+      "status": "Partial",
+      "evidence": "ADAS framework involved Feature Functions like Blind Spot Detection and Lane Departure Warning using radar data, but direct radar algorithm development is not explicitly claimed."
+    },
+    {
+      "skill": "Team collaboration",
+      "status": "Met",
+      "evidence": "Resume mentions cross-functional team collaboration with DevOps and Testing at Amdocs, and Agile/Scrum practices at Forvia Hella."
+    },
+    {
+      "skill": "Effective communication",
+      "status": "Partial",
+      "evidence": "Documentation creation using IBM Rhapsody and requirements traceability using IBM DNG suggests communication capability but no direct evidence of presentation or stakeholder management."
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [],
+  "composite_score": 66.83333333333333,
+  "reasoning": "Shortlist \u2014 strong candidate with solid evidence across the core must-haves. Akash brings 4+ years in automotive embedded systems spanning Forvia Hella, Amdocs/JLR, and Capgemini/Volvo, covering AUTOSAR MCAL configuration, RTOS-based development, MISRA compliance via Helix QAC, and direct ADAS/Radar exposure. The ADAS Analysis Framework work at Amdocs \u2014 specifically Radar SIL modelling for JLR's SRR5 and Feature Functions like Blind Spot Detection \u2014 is the highest-signal differentiator. The two partial gaps are radar algorithm development depth (ADAS work is framework/integration-level, not algorithm authorship) and location (candidate is Pune-based; role requires Chennai in-office). The Chennai location mismatch is the primary risk \u2014 verify relocation willingness before committing recruiter time. If candidate is willing to relocate, move to interview immediately.",
+  "strengths": [
+    "AUTOSAR DEPTH: Configured and integrated full AUTOSAR MCAL stack (ADC, DIO, SPI, PWM, Port) at Forvia Hella and Capgemini, with hands-on RTE layer configuration and multicore OS task setup on RH850-U2B using DaVinci Configurator \u2014 directly transferable to this role.",
+    "RADAR AND ADAS EXPOSURE: Designed C/C++ modules within the ADAS Analysis Framework at Amdocs for JLR, modelling Radar SIL for SRR5 and implementing Feature Functions including Blind Spot Detection and Lane Departure Warning \u2014 rare direct radar-ADAS intersection at this experience level.",
+    "MISRA AND CODE QUALITY: Demonstrated MISRA compliance using Helix QAC across multiple projects and employers, supported by Google Test unit testing and static analysis using Coverity and Astree \u2014 signals production-ready code discipline aligned to automotive safety standards."
+  ],
+  "gaps": [
+    "RADAR ALGORITHM DEVELOPMENT: The JD flags radar algo development as an added advantage, but Akash's radar work is limited to framework integration, SIL modelling, and data validation \u2014 no evidence of owning or authoring radar detection/tracking algorithms. This limits depth on a key differentiator.",
+    "LOCATION MISMATCH \u2014 CHENNAI REQUIRED: Candidate is based in Pune; the role is In-office in Chennai. No relocation intent is stated on the resume. This is an operational blocker that must be resolved before scheduling interviews \u2014 non-negotiable for an in-office mandate."
+  ],
+  "recommendation": "shortlist",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period is stated on the resume and no JD maximum is specified, so no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office presence in Chennai; candidate is based in Pune with no relocation intent mentioned."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 4+ years of relevant experience, meeting the JD requirement of 4 years relevant experience."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD specifies 'Any' gender preference, so no penalty applies."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion is specified in the JD, so no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Unknown",
+  "role_level_match": "Unknown",
+  "tool_currency": "None",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Unknown",
+  "availability_signal": "Unknown",
+  "availability_reason": "",
+  "alternative_role_fit": "",
+  "rare_assets": [],
+  "self_reported_unverified": [],
+  "interview_flags": [],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:01:30.543957"
+}

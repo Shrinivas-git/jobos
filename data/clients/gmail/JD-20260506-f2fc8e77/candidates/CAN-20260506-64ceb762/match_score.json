@@ -1,0 +1,116 @@
+{
+  "fitment_score": 52.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.35714285714285715,
+  "must_have_breakdown": [
+    {
+      "skill": "8+ years of experience in Car Rental / Fleet Management / Mobility industry",
+      "status": "Partial",
+      "evidence": "Candidate has 10+ years in employee transportation/fleet ops at large corporates (Microsoft, HSBC, Novartis) \u2014 passenger mobility focused, not car rental or commercial fleet management per se."
+    },
+    {
+      "skill": "Strong experience in Operations Management + Sales / Business Development",
+      "status": "Partial",
+      "evidence": "Strong operations management evidence across multiple roles; zero evidence of B2B sales, business development, renewals, or upselling activity anywhere in the resume."
+    },
+    {
+      "skill": "Proven track record in P&L ownership and profitability management",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience handling corporate clients / B2B accounts",
+      "status": "Missing",
+      "evidence": "Candidate is embedded within a corporate as an internal transport manager \u2014 not managing external corporate clients or B2B accounts from a vendor/service-provider side."
+    },
+    {
+      "skill": "Strong leadership and team management experience",
+      "status": "Partial",
+      "evidence": "Promoted from Executive to Deputy Manager at Microsoft over 7 years, implying team leadership, but team size and direct report count are never stated."
+    },
+    {
+      "skill": "Good commercial acumen and negotiation skills",
+      "status": "Partial",
+      "evidence": "Mentions procurement collaboration, vendor management, and cost optimization, but no evidence of contract negotiation, commercial deal-making, or margin management."
+    },
+    {
+      "skill": "Ability to work in a fast-paced target-driven environment",
+      "status": "Partial",
+      "evidence": "Corporate facilities/transport roles are operationally demanding, but there is no evidence of revenue targets, sales quotas, or performance-driven commercial KPIs."
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 2,
+  "certifications_assessed": [],
+  "composite_score": 47.57142857142857,
+  "reasoning": "Hold \u2014 wrong side of the industry. Nagarjuna is a solid corporate in-house transport manager with 10+ years running employee commute operations for large MNCs (Microsoft, Novartis), which superficially aligns with passenger mobility. However, the critical disqualifier is that this role requires a Profit Centre Head operating from the vendor/service-provider side \u2014 owning P&L, driving B2B sales, retaining corporate accounts, and generating revenue. Nagarjuna has never sat on the commercial side of this relationship. There is zero evidence of P&L ownership, revenue targets, B2B client acquisition, or sales activity. The recruiter note explicitly flags 'passenger management, not goods/Rapido/Uber' \u2014 Nagarjuna fits the passenger profile, which is a positive signal, but the absence of sales and profit centre experience is a hard structural gap for a role that is 50% management and explicitly tied to branch profitability. The Hyderabad location is a match. Reject unless the hiring manager is willing to consider a pure-ops profile with zero commercial track record for a branch head role.",
+  "strengths": [
+    "PASSENGER MOBILITY DOMAIN FIT: 10+ years exclusively in employee/passenger transportation at large corporate environments (Microsoft 2000+ employees, Novartis 2000+ employees) \u2014 directly aligns with recruiter's requirement to avoid goods/Rapido/Uber profiles.",
+    "OPERATIONAL DEPTH AT SCALE: Managed end-to-end transport operations for 2000+ employees at Microsoft and Novartis, covering vendor management, SLA compliance, budget preparation, accruals, and MOR/QBR reporting \u2014 strong operational foundation for the ops half of this role.",
+    "PROGRESSIVE CAREER TRAJECTORY: Promoted four times at Microsoft India R&D (Executive to Deputy Manager over 7 years) \u2014 evidence of consistent performance and growing responsibility in a demanding corporate environment."
+  ],
+  "gaps": [
+    "NO P&L OWNERSHIP OR COMMERCIAL EXPERIENCE: This is a Profit Centre Head role requiring full branch P&L responsibility, revenue growth, and profitability management. Nagarjuna has only managed internal cost budgets as a buyer of transport services \u2014 never owned revenue, margins, or a business unit P&L. This is the single most disqualifying gap.",
+    "ZERO B2B SALES OR CLIENT ACQUISITION EXPERIENCE: The role demands driving B2B sales, corporate client renewals, upselling, and new account acquisition. Nagarjuna has operated entirely as an in-house corporate function head \u2014 there is no evidence of external sales activity, client pitching, or commercial business development anywhere in a 10-year career."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated; candidate appears to be currently employed at Novartis from May 2025 \u2014 cannot penalize without data."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate's address is Beeramguda, Hyderabad \u2014 matches the JD's in-office Hyderabad requirement."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "JD requires 4 years relevant experience minimum threshold; candidate has 10+ years total \u2014 no penalty applies."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in JD \u2014 no penalty or bonus applied."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Manager",
+  "role_level_match": "Match",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Unknown",
+  "availability_reason": "Candidate is currently employed at Novartis from May 2025 with no end date or notice period stated.",
+  "alternative_role_fit": "Corporate Transport Manager / Facilities & Transport Lead",
+  "rare_assets": [
+    "Dual-role experience as both Facilities Manager and Transport Lead \u2014 rare combination of physical infrastructure and mobility management.",
+    "7-year tenure at Microsoft India R&D with four promotions \u2014 high-signal indicator of performance in a globally benchmarked corporate environment."
+  ],
+  "self_reported_unverified": [
+    "Claims to manage 2000+ employees transport at both Microsoft and Novartis \u2014 scale is stated but no vendor count, fleet size, or cost budget figure is provided to validate.",
+    "Team size and number of direct reports never stated despite Deputy Manager title \u2014 leadership scope is unverifiable.",
+    "Cost optimization outcomes mentioned but no savings figure or percentage improvement cited anywhere in the resume."
+  ],
+  "interview_flags": [
+    "Ask directly: have you ever owned a revenue target or been responsible for generating business from external corporate clients?",
+    "Probe the 2-month TJX stint (Feb 2025 \u2013 May 2025) \u2014 why did this role end so quickly and what were the circumstances?",
+    "Clarify the gap between Northern Tools end (Nov 2024) and TJX start (Feb 2025) \u2014 was candidate between roles for 3 months?",
+    "Ask about team size managed at each role \u2014 how many direct reports, how were KPIs set and monitored?",
+    "Probe P&L understanding: has candidate ever been responsible for revenue generation, margin targets, or branch-level profitability \u2014 or only internal cost budgets?"
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-06T11:41:25.119739"
+}

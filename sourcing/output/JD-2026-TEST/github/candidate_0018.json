@@ -1,0 +1,43 @@
+{
+  "_meta": {
+    "source": "github",
+    "jd_id": "JD-2026-TEST",
+    "fetched_at": "2026-05-08T06:33:00.522675",
+    "index": 18
+  },
+  "profile": {
+    "login": "paramsiddharth",
+    "id": 30315706,
+    "node_id": "MDQ6VXNlcjMwMzE1NzA2",
+    "avatar_url": "https://avatars.githubusercontent.com/u/30315706?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/paramsiddharth",
+    "html_url": "https://github.com/paramsiddharth",
+    "followers_url": "https://api.github.com/users/paramsiddharth/followers",
+    "following_url": "https://api.github.com/users/paramsiddharth/following{/other_user}",
+    "gists_url": "https://api.github.com/users/paramsiddharth/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/paramsiddharth/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/paramsiddharth/subscriptions",
+    "organizations_url": "https://api.github.com/users/paramsiddharth/orgs",
+    "repos_url": "https://api.github.com/users/paramsiddharth/repos",
+    "events_url": "https://api.github.com/users/paramsiddharth/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/paramsiddharth/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false,
+    "name": "Param Siddharth",
+    "company": "@heyrema @LongshotSyndicate @OpenSourceFellows @Witchcraft-Coding",
+    "blog": "www.paramsid.com",
+    "location": "Bengaluru",
+    "email": null,
+    "hireable": true,
+    "bio": "Bihari, hairy, rural creep. 🌱 Burnt in melanin. ✨ Cursed, endless love. ❤️🇮🇳🏳️‍🌈🕉️ SDE ✈ Indie Musician 🎶",
+    "twitter_username": "ParamSiddharth",
+    "public_repos": 204,
+    "public_gists": 1,
+    "followers": 559,
+    "following": 121,
+    "created_at": "2017-07-20T10:25:07Z",
+    "updated_at": "2026-04-29T22:53:37Z"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "fitment_score": 85.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 5.0,
+  "composite_score": 75.98240133333333,
+  "reasoning": "The candidate has a strong background in Salesforce administration and release engineering, with experience in Copado, CI/CD pipelines, and DevOps. The candidate's technical skills and experience align well with the job description, making them a strong fit for the role.",
+  "strengths": [
+    "The candidate has expert-level proficiency with Copado, as evident from their experience in implementing and managing Copado from scratch in their previous roles.",
+    "The candidate has strong expertise in Salesforce multi-tenant architecture, having worked with various Salesforce clouds, including Sales, Service, Marketing, and Communities.",
+    "The candidate has experience in managing governor limits and environment management, having performed environment planning, provisioning, and lifecycle management to support smooth deployments.",
+    "The candidate has strong communication skills, having led release readiness meetings, Go/No-Go calls, and coordinated pre-deployment, deployment, and post-deployment activities.",
+    "The candidate has hands-on experience with various Salesforce tools, including Data Loader, Workbench, and Eclipse, and has developed and deployed custom objects, workflows, and approval processes."
+  ],
+  "gaps": [
+    "The candidate's experience in establishing a Center of Excellence is not explicitly mentioned, which is a key responsibility in the job description.",
+    "The candidate's experience in architecting a modern, federated development strategy is not clearly mentioned, which is a critical aspect of the role.",
+    "The candidate's experience in managing the full lifecycle of Salesforce releases is not explicitly mentioned, although they have experience in release management and deployment.",
+    "The candidate's experience in streamlining release management and testing environments is not clearly mentioned, which is an important aspect of the role.",
+    "The candidate's experience in working with a large team or in a senior leadership role is not explicitly mentioned, which may be a concern for a senior-level position."
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T18:38:04.376113"
+}

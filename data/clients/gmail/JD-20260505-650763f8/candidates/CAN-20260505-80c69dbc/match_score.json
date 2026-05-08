@@ -1,0 +1,117 @@
+{
+  "fitment_score": 91.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 1.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Salesforce Platform Management or Salesforce Architecture",
+      "status": "Met",
+      "evidence": "Resume title is 'Senior Salesforce Platform Manager and DevOps Engineer' with 6+ years managing ecosystem health, scalability, and release integrity across multiple enterprise engagements."
+    },
+    {
+      "skill": "Expert-level proficiency with Copado for CI/CD and release orchestration",
+      "status": "Met",
+      "evidence": "Copado listed as 'Expert' in skills, used in most recent two roles (FinSure and HSBC), with 50+ releases delivered at HSBC using Copado across 5 environments with zero unplanned production outages."
+    },
+    {
+      "skill": "Deep understanding of Salesforce multi-tenant architecture",
+      "status": "Met",
+      "evidence": "Explicitly mentions 'Force.com best practices and design patterns within Salesforce multi-tenant architecture' and 'governor limit compliance' across multiple roles."
+    },
+    {
+      "skill": "Governor limits knowledge",
+      "status": "Met",
+      "evidence": "Multiple resume entries reference 'governor limit compliance', 'governor limit best practices', and 'query optimization within governor limit boundaries' across FinSure, HSBC, and CVS Health."
+    },
+    {
+      "skill": "Environment management",
+      "status": "Met",
+      "evidence": "Served as 'primary custodian of Salesforce environments, managing full lifecycle of Dev, QA, UAT, and Production orgs including Sandbox refresh cycles, Scratch Org configurations, and org health monitoring'."
+    },
+    {
+      "skill": "Communication skills to translate technical releases into business-friendly roadmaps",
+      "status": "Met",
+      "evidence": "At FinSure: 'translating complex technical releases into business-friendly roadmaps for stakeholder and leadership visibility'."
+    },
+    {
+      "skill": "Experience managing Business Critical production environments",
+      "status": "Met",
+      "evidence": "Key Achievement section: 'Production Environment Ownership \u2014 Served as primary custodian of business-critical Salesforce environments across 4 enterprise engagements, maintaining production stability'."
+    },
+    {
+      "skill": "Working with Salesforce premier support tiers",
+      "status": "Met",
+      "evidence": "At HSBC: 'working directly with Salesforce Premier Support tiers to resolve platform-level issues and ensure compliance with banking regulatory requirements'."
+    },
+    {
+      "skill": "Salesforce.com development environment experience",
+      "status": "Met",
+      "evidence": "Hands-on development across Apex, LWC, Aura, Visualforce, SOQL, SOSL listed in every role across 6+ years."
+    },
+    {
+      "skill": "Custom objects, workflows, triggers, SOQL & SOSL",
+      "status": "Met",
+      "evidence": "Skills section and multiple role entries explicitly list custom objects, workflows, triggers, SOQL, and SOSL with evidence of usage across FinSure, HSBC, and CVS Health roles."
+    },
+    {
+      "skill": "Best practices and design patterns",
+      "status": "Met",
+      "evidence": "Consistently references 'Force.com best practices and design patterns' across all four engagement descriptions."
+    },
+    {
+      "skill": "Work independently with minimal supervision",
+      "status": "Met",
+      "evidence": "Professional summary explicitly states 'proven ability to work independently with minimal supervision' and candidate functioned as primary platform custodian across all engagements."
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [],
+  "composite_score": 78.25,
+  "reasoning": "Pavan Gajjala is an exceptionally strong match for this Salesforce Platform Manager role. All 12 must-have skills are directly evidenced in the resume with specific, verifiable examples. The candidate demonstrates expert-level Copado usage in the two most recent roles, has managed business-critical production environments including direct engagement with Salesforce Premier Support at HSBC, and has architected federated development strategies and Centers of Excellence \u2014 mirroring the JD's exact responsibilities. Technical depth spans Apex, LWC, Aura, Visualforce, SOQL, and SOSL. The 6+ year tenure at a single employer (NTT Data) across progressively complex engagements signals stability. Minor gaps include no evidence of hands-on Salesforce Data Cloud or Agentforce experience (a nice-to-have from the JD), absence of the Salesforce Certified Development Lifecycle and Deployment Designer certification, and a B.Com background rather than a technical/engineering degree \u2014 though the last point is offset by strong demonstrated experience. The resume is achievement-focused with quantified metrics throughout, and the candidate appears currently available.",
+  "strengths": [
+    "Expert Copado CI/CD mastery with production-grade proof: Managed 50+ end-to-end Salesforce releases at HSBC using Copado across 5 environments with zero unplanned production outages over 18 months, directly matching the JD's core requirement.",
+    "Full-stack Salesforce technical depth: Demonstrated hands-on proficiency across Apex (Batch, Queueable, Future), LWC, Aura, Visualforce, SOQL, SOSL, and REST/SOAP API integration \u2014 covering virtually all technical skills listed in the JD.",
+    "Proven federated development architecture and CoE establishment: Architected multi-region branching strategies at HSBC and established foundational CI/CD frameworks and governance SOPs at both FinSure and the Philippines Health platform, adopted as NTT Data's standard approach.",
+    "Business-critical production environment ownership with Premier Support experience: Served as primary custodian across 4 enterprise engagements and directly escalated to Salesforce Premier Support tiers at HSBC, a specific must-have in the JD.",
+    "Strong quantified delivery track record: Resume contains at least 7 distinct measurable outcomes including 35% deployment cycle time reduction, 50% reduction in team escalations, 30% production defect escape rate reduction, and zero compliance audit findings over 18 months at HSBC."
+  ],
+  "gaps": [
+    "No Salesforce Data Cloud or Agentforce experience: The JD explicitly mentions supporting 'Agentforce and Data Cloud' environments \u2014 there is zero mention of either in the resume, which is a notable gap for a role that includes these as part of the platform scope.",
+    "Missing Salesforce Certified Development Lifecycle and Deployment Designer certification: The JD lists this as a nice-to-have but it is the most directly relevant Salesforce credential for this role; the candidate holds only Admin, Advanced Admin, and Copado Fundamentals I \u2014 a certification gap that may signal limited formal recognition of architectural DevOps depth.",
+    "B.Com (Commerce) educational background, not Computer Science or Engineering: While practical experience far outweighs this in the Salesforce ecosystem, some enterprises and hiring panels may flag the absence of a technical degree for a senior platform architecture role.",
+    "Copado Fundamentals I only, no advanced Copado certification: Despite claiming 'Expert' proficiency and using Copado as the primary CI/CD tool, the candidate holds only the foundational Copado certification \u2014 advanced Copado certifications (e.g. Copado Architect) would strengthen the credential profile given the JD's emphasis.",
+    "All experience is with a single employer (NTT Data): While the engagement variety is strong, spending the entire career (6+ years) as a consultant at one staffing/services firm may raise questions about adaptability to an in-house product team culture, direct vendor/client accountability, and breadth of organisational exposure."
+  ],
+  "recommendation": "shortlist",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "Latest role end-date is March 2026 indicating the candidate is currently between roles, so no notice period penalty applies."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "JD does not specify a work structure of In-office or a required location, so no location penalty applies."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Unknown",
+  "role_level_match": "Unknown",
+  "tool_currency": "None",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Unknown",
+  "availability_signal": "Unknown",
+  "availability_reason": "",
+  "alternative_role_fit": "",
+  "rare_assets": [],
+  "self_reported_unverified": [],
+  "interview_flags": [],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-05T12:15:01.379310"
+}

@@ -1,0 +1,43 @@
+{
+  "_meta": {
+    "source": "github",
+    "jd_id": "JD-2026-TEST",
+    "fetched_at": "2026-05-08T06:33:00.535834",
+    "index": 30
+  },
+  "profile": {
+    "login": "amitu",
+    "id": 58662,
+    "node_id": "MDQ6VXNlcjU4NjYy",
+    "avatar_url": "https://avatars.githubusercontent.com/u/58662?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/amitu",
+    "html_url": "https://github.com/amitu",
+    "followers_url": "https://api.github.com/users/amitu/followers",
+    "following_url": "https://api.github.com/users/amitu/following{/other_user}",
+    "gists_url": "https://api.github.com/users/amitu/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/amitu/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/amitu/subscriptions",
+    "organizations_url": "https://api.github.com/users/amitu/orgs",
+    "repos_url": "https://api.github.com/users/amitu/repos",
+    "events_url": "https://api.github.com/users/amitu/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/amitu/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false,
+    "name": "Amit Upadhyay",
+    "company": "@browserstack",
+    "blog": "fastn.com",
+    "location": "Bengaluru, India",
+    "email": null,
+    "hireable": null,
+    "bio": "Creator of [fastn.com - better way to build websites] -- [malai.sh - P2P Infrastructure Platform] -- [bhumi - 3D operating] - 🚧 Everything Alpha / WIP 🚧",
+    "twitter_username": null,
+    "public_repos": 166,
+    "public_gists": 58,
+    "followers": 274,
+    "following": 306,
+    "created_at": "2009-02-27T20:35:50Z",
+    "updated_at": "2026-03-26T06:38:51Z"
+  }
+}

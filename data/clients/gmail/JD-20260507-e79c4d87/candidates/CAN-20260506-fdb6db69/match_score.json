@@ -1,0 +1,188 @@
+{
+  "fitment_score": 8.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.13333333333333333,
+  "must_have_breakdown": [
+    {
+      "skill": "Python (3.x)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Django",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Flask",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "FastAPI",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MySQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "PostgreSQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MongoDB",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "SQLite",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Git/GitHub/Bitbucket",
+      "status": "Met",
+      "evidence": "Resume explicitly lists Git, GitHub, and Bitbucket under version control and uses them across both roles."
+    },
+    {
+      "skill": "Docker",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Jenkins",
+      "status": "Met",
+      "evidence": "Jenkins listed under DevOps tools and referenced in project work at Capgemini."
+    },
+    {
+      "skill": "HTML5/CSS3/JavaScript",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RESTful APIs/JSON",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "OOP/Data Structures/Algorithms",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Unit Testing (PyTest/Unittest)",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 9,
+  "cert_tier_bonus": 2,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Certified Consultant",
+      "tier": "Expert"
+    },
+    {
+      "name": "Gearset Fundamentals Certificate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Flosum Certified Professional",
+      "tier": "Practitioner"
+    }
+  ],
+  "composite_score": 15.25,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Salesforce DevOps Engineer with 5 years of experience building CI/CD pipelines for Salesforce deployments. The JD requires a Junior Python Developer who can write backend services in Python, Django, Flask, or FastAPI, work with relational and NoSQL databases, and has Python project experience including AI model training. There is zero evidence of Python programming, web frameworks, database management (MySQL/PostgreSQL/MongoDB), or AI/ML work anywhere in this resume. The only overlapping skills are Git/GitHub/Bitbucket and Jenkins \u2014 generic DevOps tools that represent 2 out of 15 must-haves. Furthermore, the recruiter specifically called out Python projects and AI model training as key hiring criteria, both of which are completely absent. Do not proceed with this candidate for this role.",
+  "strengths": [
+    "GIT/VERSION CONTROL: Demonstrated active use of Git, GitHub, and Bitbucket across both TCS and Capgemini roles \u2014 the only hard-skill overlap with the JD, though it is a basic requirement, not a differentiator.",
+    "JENKINS CI/CD: Has hands-on Jenkins experience referenced in current Capgemini role alongside GitHub Actions, showing pipeline automation competency \u2014 entirely in the wrong domain (Salesforce) but the tooling knowledge exists.",
+    "CERTIFICATIONS DEPTH: Holds 7 certifications including Copado Certified Consultant and Salesforce AI Associate \u2014 shows discipline and continuous learning, though none are relevant to Python development or AI model training."
+  ],
+  "gaps": [
+    "ZERO PYTHON DEVELOPMENT EXPERIENCE: The JD's core requirement is Python (3.x) with Django/Flask/FastAPI for backend services. This candidate has no Python code written, no backend projects, and no web framework exposure \u2014 this is a fundamental domain mismatch, not a skill gap.",
+    "NO AI MODEL TRAINING OR PYTHON PROJECTS: The recruiter explicitly requires Python projects and AI model training experience. The candidate's 'Salesforce AI Associate' cert is a conceptual certification, not evidence of training models \u2014 this directly contradicts the ideal candidate profile."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No JD notice period limit specified; no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office work in Bangalore; candidate is based in Chennai, Tamil Nadu \u2014 location mismatch."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "JD requires 0 years relevant experience (fresher/junior role); no minimum threshold to fail on."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any'; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in JD; no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch"
+  ],
+  "role_level_detected": "Senior",
+  "role_level_match": "Over-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at Capgemini shows 'May 2025 \u2013 Present' with no end date or notice period stated; standard notice period for this seniority level in India is typically 60-90 days but cannot be confirmed from the document.",
+  "alternative_role_fit": "Senior Salesforce DevOps Engineer / Salesforce Release Manager",
+  "rare_assets": [
+    "Copado Certified Consultant \u2014 a relatively niche and highly valued credential in the Salesforce DevOps ecosystem, held by a small percentage of practitioners.",
+    "Flosum Certified Professional \u2014 Flosum is a security-first DevOps platform with very limited certified practitioners in the market.",
+    "Multi-tool Salesforce DevOps mastery spanning Copado, Gearset, Flosum, and DevOps Center simultaneously \u2014 extremely rare in a single profile."
+  ],
+  "self_reported_unverified": [
+    "'Reduced deployment time by 30-40%' \u2014 no baseline deployment count, team size, or org complexity provided to validate the scale or attribution of this claim.",
+    "'Best Performer Award' and 'Special Achievement Award' \u2014 internal awards with no external verification or context on selection criteria or pool size.",
+    "'Improved deployment success rate' \u2014 no before/after percentage or absolute numbers provided to substantiate this claim."
+  ],
+  "interview_flags": [
+    "Probe whether candidate has any Python scripting exposure outside of Salesforce shell scripting (YAML/XML automation) \u2014 even hobbyist projects would be relevant.",
+    "Ask specifically about the 'Salesforce AI Associate' certification \u2014 determine if this reflects any hands-on ML/AI work or is purely a conceptual/exam-based credential.",
+    "Clarify notice period at Capgemini \u2014 role started May 2025 and appears current; a 60-90 day notice could delay joining significantly.",
+    "Probe willingness and rationale for relocating from Chennai to Bangalore for an in-office junior Python role \u2014 significant seniority and compensation downgrade.",
+    "Ask why candidate is applying for a Junior Python Developer role after 5 years of senior Salesforce DevOps experience \u2014 understand if there is a genuine pivot plan or if this is a mismatch in application."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:53:30.264770"
+}

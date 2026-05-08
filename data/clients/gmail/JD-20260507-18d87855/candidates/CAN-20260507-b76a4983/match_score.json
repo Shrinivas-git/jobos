@@ -1,0 +1,122 @@
+{
+  "fitment_score": 72.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.875,
+  "must_have_breakdown": [
+    {
+      "skill": "Source code management skills",
+      "status": "Met",
+      "evidence": "Resume lists Git, GitHub, IBM RTC, and ClearCase as version control tools used across multiple projects."
+    },
+    {
+      "skill": "GIT knowledge is mandatory",
+      "status": "Met",
+      "evidence": "Git and GitHub are explicitly listed under 'Version Control & CI/CD' and are part of the candidate's active toolchain."
+    },
+    {
+      "skill": "Ability to define branching strategy",
+      "status": "Partial",
+      "evidence": "Git usage is confirmed but no explicit mention of defining branching strategies or owning repository governance."
+    },
+    {
+      "skill": "Software coding knowledge - C",
+      "status": "Met",
+      "evidence": "C and Embedded C are listed as primary programming languages with 4+ years of hands-on project application."
+    },
+    {
+      "skill": "Whitebox testing skills",
+      "status": "Met",
+      "evidence": "Candidate performed statement, branch, and MC/DC code coverage analysis using VectorCAST \u2014 textbook whitebox testing."
+    },
+    {
+      "skill": "Continuous integration testing experience",
+      "status": "Met",
+      "evidence": "Jenkins is listed under CI/CD tools and candidate explicitly references delivering firmware in CI/CD environments in the summary."
+    },
+    {
+      "skill": "Team collaboration",
+      "status": "Met",
+      "evidence": "Candidate worked in Agile Scrum teams across multiple projects with cross-functional embedded software roles."
+    },
+    {
+      "skill": "Effective communication",
+      "status": "Partial",
+      "evidence": "No explicit evidence of communication deliverables such as stakeholder presentations or documentation leadership, though defect logs and reports are mentioned."
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [],
+  "composite_score": 35,
+  "reasoning": "Shortlist with one verification gap. This candidate brings 4 years of solid automotive embedded software experience that directly overlaps with RADAR integration work \u2014 strong Embedded C coding, whitebox testing via VectorCAST with MC/DC coverage, Git-based version control, and Jenkins CI/CD exposure. The ADAS and safety-critical background (MISRA C, ISO 26262, unit testing) is highly relevant for a RADAR SW Integrator role. The key gap is branching strategy ownership \u2014 the resume shows Git usage but does not evidence the candidate has ever defined or governed a branching model, which is a named requirement for this role. Location is also a flag: this candidate is based in Bangalore, not Chennai, and the role is in-office in Chennai. Verify relocation intent before proceeding. If the candidate is open to relocating to Chennai, shortlist immediately for a technical screen.",
+  "strengths": [
+    "WHITEBOX TESTING DEPTH: Designed and executed VectorCAST test harnesses with full MC/DC, statement, and branch coverage analysis on safety-critical ADAS firmware \u2014 exactly the validation depth a RADAR SW Integrator must own.",
+    "EMBEDDED C + CI/CD IN AUTOMOTIVE: Four years of active C/Embedded C development delivered inside Jenkins CI/CD pipelines on MISRA-compliant, ISO 26262-aligned codebases \u2014 rare combination at this experience level.",
+    "MULTI-TOOL VERSION CONTROL: Hands-on with Git, GitHub, IBM RTC, and ClearCase across two live automotive projects, signalling adaptability to enterprise SCM environments common in RADAR-focused OEM/Tier-1 setups."
+  ],
+  "gaps": [
+    "BRANCHING STRATEGY OWNERSHIP NOT EVIDENCED: The JD explicitly requires the ability to define branching strategies, but the resume only confirms Git usage as a contributor \u2014 no evidence of repository governance, release branch management, or SCM process ownership, which is a critical gap for a Senior SW Integrator.",
+    "LOCATION MISMATCH \u2014 BANGALORE vs CHENNAI: The role is in-office in Chennai; the candidate is currently based in Bangalore. Unless relocation is confirmed, this is an operational blocker that must be resolved before screening resources are invested."
+  ],
+  "recommendation": "shortlist",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period specified in the resume and no JD maximum stated \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office presence in Chennai; candidate is based in Bangalore \u2014 location mismatch penalty applied."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 4+ years of experience, meeting the JD requirement of 4 years relevant experience \u2014 no penalty."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applicable."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college exclusion or preference specified in the JD \u2014 no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch \u2014 candidate is in Bangalore, role is in-office in Chennai"
+  ],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Current",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Available now",
+  "availability_reason": "Latest role is listed as ending April 2026, suggesting the candidate has recently exited or is exiting employment.",
+  "alternative_role_fit": "Embedded SW Integration Engineer (Mid-level)",
+  "rare_assets": [
+    "MC/DC code coverage analysis on ADAS safety-critical systems \u2014 a niche skill typically required only in ISO 26262 ASIL-C/D contexts.",
+    "Hands-on experience with Lauterbach Trace32 and Renesas E1 debuggers \u2014 specialised automotive hardware debugging tools rarely seen at the 4-year experience level."
+  ],
+  "self_reported_unverified": [
+    "Claims ISO 26262 functional safety support but provides no evidence of specific ASIL level involvement, safety case contributions, or functional safety role title.",
+    "States experience in CI/CD environments in the summary but Jenkins is only listed as a tool \u2014 no evidence of pipeline creation, maintenance, or integration ownership."
+  ],
+  "interview_flags": [
+    "Ask specifically: have you ever defined or documented a Git branching strategy (e.g. GitFlow, trunk-based development) for a team \u2014 or have you only followed strategies set by others?",
+    "Probe actual Jenkins usage: did you write Jenkinsfiles, configure pipelines, or only trigger pre-built CI jobs?",
+    "Clarify relocation intent: the role is in-office in Chennai \u2014 are you open to relocating and what is your timeline?",
+    "Verify ISO 26262 depth: what ASIL level did you work under, and what specific safety work products did you author or review?",
+    "The resume shows 4 years at a single company (Mar 2022 \u2013 Apr 2026) with no earlier roles \u2014 confirm this is the candidate's only professional experience and probe the scope of independence vs. guided work."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:41:00.373737"
+}

@@ -1,0 +1,24 @@
+{
+  "fitment_score": 10.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "composite_score": 22.842533933333335,
+  "reasoning": "The candidate's resume does not align with the job description requirements, as they lack experience and skills in Salesforce, Copado, and related technologies. The candidate's background is in Java, Python, SQL, and machine learning, which are not relevant to the Salesforce Platform Manager role.",
+  "strengths": [
+    "The candidate has strong programming fundamentals in Java, Python, and C, which could be beneficial in a software development role.",
+    "The candidate has experience with database management systems, including SQL and DBMS, which could be useful in managing data.",
+    "The candidate has worked on projects that demonstrate problem-solving skills, such as the Uncertainty-Aware Fire Detection System.",
+    "The candidate has familiarity with web technologies, including HTML, CSS, and JavaScript, which could be useful in a development role.",
+    "The candidate has a strong educational background, with a Master of Computer Applications degree from Dayananda Sagar University."
+  ],
+  "gaps": [
+    "The candidate lacks experience and skills in Salesforce, which is a critical requirement for the Salesforce Platform Manager role.",
+    "The candidate does not have experience with Copado, which is a key technology used in the role for CI/CD and release orchestration.",
+    "The candidate does not have experience with Salesforce multi-tenant architecture, Governor limits, or Environment management, which are essential skills for the role.",
+    "The candidate lacks experience with Visualforce, Apex, and Lightning frameworks, which are critical components of the Salesforce platform.",
+    "The candidate does not have relevant certifications, such as Salesforce Certified Development Lifecycle and Deployment Designer, which are preferred for the role."
+  ],
+  "recommendation": "reject",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T12:45:32.348612"
+}

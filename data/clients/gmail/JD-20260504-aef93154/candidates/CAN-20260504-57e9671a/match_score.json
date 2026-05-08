@@ -1,0 +1,24 @@
+{
+  "fitment_score": 92.0,
+  "completeness_score": 100.0,
+  "context_bonus": 5.0,
+  "composite_score": 79.914961,
+  "reasoning": "The candidate's resume demonstrates a strong fit for the Salesforce Platform Manager role, with extensive experience in managing Salesforce ecosystems, releasing updates, and ensuring production stability. The candidate's expertise in Copado, Salesforce multi-tenant architecture, and governor limits aligns well with the job description.",
+  "strengths": [
+    "The candidate has expert-level proficiency with Copado, as evident from their experience in managing 50+ end-to-end Salesforce releases at HSBC using Copado.",
+    "The candidate has a deep understanding of Salesforce multi-tenant architecture, governor limits, and environment management, which is crucial for the role.",
+    "The candidate has experience in architecting federated development strategies, establishing release governance frameworks, and managing business-critical production environments.",
+    "The candidate has hands-on technical depth across Apex, LWC, Aura, Visualforce, SOQL, and SOSL, which is essential for the role.",
+    "The candidate has a proven ability to translate complex technical releases into business-friendly roadmaps and work independently with minimal supervision."
+  ],
+  "gaps": [
+    "The candidate's resume does not mention any experience with Center of Excellence establishment, which is a key responsibility in the job description.",
+    "The candidate's skills in problem-solving and communication are not explicitly highlighted in the resume, which are essential skills for the role.",
+    "The candidate's experience in managing the full lifecycle of Salesforce releases is impressive, but it is not clear if they have experience in streamlining release management and testing environments.",
+    "The candidate's resume does not provide any information about their experience in working with stakeholders to enable product teams to deploy code safely.",
+    "The candidate's education background is not directly relevant to the role, which may be a concern for some hiring managers."
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T18:38:19.999496"
+}

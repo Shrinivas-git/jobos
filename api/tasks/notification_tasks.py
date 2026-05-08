@@ -79,6 +79,106 @@ def _build_email_html(jd_title: str, jd_id: str, pool: list) -> str:
 </html>"""
 
 
+def _build_client_package_html(jd_title: str, jd_id: str, candidates: list) -> str:
+    verdict_color = {"shortlist": "#4ade80", "hold": "#f59e0b", "reject": "#f87171"}
+    verdict_label = {"shortlist": "STRONG HIRE", "hold": "BORDERLINE", "reject": "NOT RECOMMENDED"}
+
+    candidate_blocks = ""
+    for i, c in enumerate(candidates):
+        name = c.get("_name", c.get("candidate_id", "Unknown"))
+        score = c.get("fitment_score") or c.get("composite_score") or 0
+        rec = (c.get("recommendation") or "hold").lower()
+        color = verdict_color.get(rec, "#f59e0b")
+        label = verdict_label.get(rec, "BORDERLINE")
+        reasoning = c.get("reasoning") or ""
+        strengths = c.get("strengths") or []
+        gaps = c.get("gaps") or []
+        availability = c.get("availability_reason") or c.get("availability_signal") or ""
+
+        strengths_html = "".join(
+            f'<li style="margin:6px 0;color:#cbd5e1;font-size:13px;line-height:1.6">{s}</li>'
+            for s in strengths[:3]
+        )
+        gaps_html = "".join(
+            f'<li style="margin:6px 0;color:#cbd5e1;font-size:13px;line-height:1.6">{g}</li>'
+            for g in gaps[:2]
+        )
+
+        candidate_blocks += f"""
+    <div style="background:#1e293b;border-radius:12px;padding:28px;margin-bottom:20px;border-left:4px solid {color}">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <div>
+          <p style="margin:0;font-size:20px;font-weight:700;color:#f1f5f9">#{i+1} &nbsp;{name}</p>
+          <p style="margin:4px 0 0 0;font-size:13px;color:#64748b">{c.get('candidate_id','')}</p>
+        </div>
+        <div style="text-align:right">
+          <p style="margin:0;font-size:28px;font-weight:900;color:{color}">{score:.0f}%</p>
+          <p style="margin:2px 0 0 0;font-size:10px;font-weight:700;color:{color};text-transform:uppercase;letter-spacing:1px">{label}</p>
+        </div>
+      </div>
+
+      {"<p style='margin:0 0 16px 0;font-size:13px;color:#94a3b8;line-height:1.7;font-style:italic'>" + reasoning + "</p>" if reasoning else ""}
+
+      {"<p style='margin:0 0 6px 0;font-size:11px;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:1px'>Strengths</p><ul style='margin:0 0 16px 0;padding-left:18px'>" + strengths_html + "</ul>" if strengths_html else ""}
+
+      {"<p style='margin:0 0 6px 0;font-size:11px;font-weight:700;color:#f87171;text-transform:uppercase;letter-spacing:1px'>Key Gaps</p><ul style='margin:0 0 16px 0;padding-left:18px'>" + gaps_html + "</ul>" if gaps_html else ""}
+
+      {"<p style='margin:0;font-size:12px;color:#64748b;font-style:italic'>⏱ " + availability + "</p>" if availability else ""}
+    </div>"""
+
+    return f"""<!DOCTYPE html>
+<html>
+<body style="background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#f1f5f9;margin:0;padding:24px">
+  <div style="max-width:700px;margin:0 auto">
+
+    <div style="background:#1e293b;padding:28px;border-radius:12px;margin-bottom:20px">
+      <p style="margin:0 0 4px 0;font-size:22px;font-weight:700;color:#60a5fa">Candidate Assessment Report</p>
+      <p style="margin:0;font-size:12px;color:#475569;text-transform:uppercase;letter-spacing:2px">Prepared by your recruitment partner</p>
+    </div>
+
+    <div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:20px">
+      <p style="margin:0 0 4px 0;font-size:17px;font-weight:700;color:#f1f5f9">{jd_title}</p>
+      <p style="margin:0 0 16px 0;font-size:12px;color:#475569">Ref: {jd_id}</p>
+      <p style="margin:0;font-size:13px;color:#94a3b8;line-height:1.7">
+        Please find below our assessed candidates for this position, ranked by fitment.
+        Each profile has been evaluated against your job requirements.
+        Kindly review and reply with the candidates you'd like to proceed with.
+      </p>
+    </div>
+
+    {candidate_blocks}
+
+    <p style="color:#334155;font-size:11px;text-align:center;margin-top:24px">
+      This report is confidential and intended solely for the named recipient.
+    </p>
+  </div>
+</body>
+</html>"""
+
+
+@celery.task(name="tasks.notification_tasks.send_client_package")
+def send_client_package(jd_id: str, client_email: str):
+    logger.info(f"send_client_package: JD {jd_id} → {client_email}")
+    db = get_db()
+
+    jd = db.job_descriptions.find_one({"jd_id": jd_id})
+    if not jd:
+        logger.error(f"JD {jd_id} not found")
+        return
+    structured = jd.get("structured_data", {})
+    jd_title = structured.get("title") or jd.get("title", "Job Role")
+
+    candidates = list(db.candidate_pools.find({"jd_id": jd_id, "status": "pass_2_complete"}).sort("rank", 1))
+    for entry in candidates:
+        cand = db.candidates.find_one({"candidate_id": entry["candidate_id"]}, {"name": 1})
+        entry["_name"] = cand.get("name", entry["candidate_id"]) if cand else entry["candidate_id"]
+
+    html = _build_client_package_html(jd_title, jd_id, candidates)
+    subject = f"Candidate Assessment — {jd_title}"
+    send_email(client_email, subject, html)
+    logger.info(f"Client package sent to {client_email} for JD {jd_id} ({len(candidates)} candidates)")
+
+
 @celery.task(name="tasks.notification_tasks.notify_pool_ready")
 def notify_pool_ready(jd_id: str):
     logger.info(f"notify_pool_ready triggered for JD: {jd_id}")
@@ -314,6 +414,211 @@ def send_interview_email(jd_id: str, candidate_id: str, interview_details: dict)
 
     send_email(email, subject, html)
     logger.info(f"Interview email sent to {email} for candidate {candidate_id}")
+
+    # Also notify client
+    client_email = jd.get("client_email") if jd else None
+    if client_email:
+        structured = (jd.get("structured_data") or {}) if jd else {}
+        level = structured.get("level", "")
+        location = structured.get("location", "Not specified")
+        skills = (structured.get("must_have_skills") or structured.get("skills") or [])[:5]
+        skills_str = ", ".join(skills) if skills else "—"
+
+        mode_client = ""
+        if mode == "online" and meeting_link:
+            mode_client = f'<p style="color:#94a3b8;margin:4px 0;font-size:13px">Meeting Link: <a href="{meeting_link}" style="color:#60a5fa">{meeting_link}</a></p>'
+        elif mode == "in-person" and location:
+            mode_client = f'<p style="color:#94a3b8;margin:4px 0;font-size:13px">Location: <span style="color:#f1f5f9">{location}</span></p>'
+
+        client_subject = f"Interview Scheduled — {name} · {jd_title}"
+        client_html = f"""<!DOCTYPE html>
+<html>
+<body style="background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#f1f5f9;margin:0;padding:24px">
+  <div style="max-width:600px;margin:0 auto">
+    <div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px">
+      <p style="color:#60a5fa;margin:0 0 4px 0;font-size:20px;font-weight:700">Interview Confirmation</p>
+      <p style="color:#94a3b8;margin:0;font-size:12px;text-transform:uppercase;letter-spacing:2px">From your recruitment partner</p>
+    </div>
+
+    <div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px">
+      <p style="color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px 0">Role</p>
+      <p style="color:#f1f5f9;font-size:17px;font-weight:700;margin:0 0 4px 0">{jd_title}</p>
+      {"<p style='color:#94a3b8;font-size:13px;margin:2px 0'>Level: " + level + "</p>" if level else ""}
+      <p style="color:#94a3b8;font-size:13px;margin:2px 0">Location: {location}</p>
+      <p style="color:#94a3b8;font-size:13px;margin:8px 0 0 0">Key Skills: <span style="color:#cbd5e1">{skills_str}</span></p>
+    </div>
+
+    <div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px">
+      <p style="color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px 0">Candidate</p>
+      <p style="color:#f1f5f9;font-size:16px;font-weight:700;margin:0">{name}</p>
+    </div>
+
+    <div style="background:#1e293b;padding:24px;border-radius:12px">
+      <p style="color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin:0 0 12px 0">Interview Details</p>
+      <p style="color:#94a3b8;margin:4px 0;font-size:13px">Date: <span style="color:#f1f5f9">{date}</span></p>
+      <p style="color:#94a3b8;margin:4px 0;font-size:13px">Time: <span style="color:#f1f5f9">{time}</span></p>
+      <p style="color:#94a3b8;margin:4px 0;font-size:13px">Duration: <span style="color:#f1f5f9">{duration_label}</span></p>
+      <p style="color:#94a3b8;margin:4px 0;font-size:13px">Mode: <span style="color:#f1f5f9">{"Online" if mode == "online" else "In-person"}</span></p>
+      {mode_client}
+    </div>
+
+    <p style="color:#334155;font-size:11px;text-align:center;margin-top:24px">
+      This is an automated notification from your recruitment partner.
+    </p>
+  </div>
+</body>
+</html>"""
+        send_email(client_email, client_subject, client_html)
+        logger.info(f"Interview client notification sent to {client_email} for {candidate_id}")
+    else:
+        logger.warning(f"No client_email on JD {jd_id} — skipping client interview notification")
+
+
+_FRONTEND_BASE = "http://localhost:5173"
+
+
+@celery.task(name="tasks.notification_tasks.send_offer_response_email")
+def send_offer_response_email(jd_id: str, candidate_id: str, offer_token: str, joining_date: str = None, work_location: str = None):
+    logger.info(f"send_offer_response_email: {candidate_id} for JD {jd_id}")
+    db = get_db()
+
+    candidate = db.candidates.find_one({"candidate_id": candidate_id}, {"email": 1, "name": 1})
+    if not candidate or not candidate.get("email"):
+        logger.warning(f"No email for candidate {candidate_id} — skipping offer email")
+        return
+
+    jd = db.job_descriptions.find_one({"jd_id": jd_id})
+    jd_title = (jd.get("structured_data", {}).get("title") or jd.get("title", "the role")) if jd else "the role"
+
+    name = candidate.get("name", "Candidate")
+    email = candidate["email"]
+    response_url = f"{_FRONTEND_BASE}/offer-response/{offer_token}"
+
+    offer_details_block = ""
+    if joining_date or work_location:
+        rows = ""
+        if joining_date:
+            rows += f'<p style="color:#94a3b8;margin:4px 0;font-size:13px">Proposed Joining Date: <strong style="color:#f1f5f9">{joining_date}</strong></p>'
+        if work_location:
+            rows += f'<p style="color:#94a3b8;margin:4px 0;font-size:13px">Work Location: <strong style="color:#f1f5f9">{work_location}</strong></p>'
+        offer_details_block = f"""
+      <div style="background:#0f172a;padding:16px;border-radius:8px;margin-bottom:20px">
+        <p style="color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin:0 0 10px 0">Offer Details</p>
+        {rows}
+      </div>"""
+
+    subject = f"[JobOS] Offer Letter — {jd_title}"
+    html = f"""<!DOCTYPE html>
+<html>
+<body style="background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#f1f5f9;margin:0;padding:24px">
+  <div style="max-width:600px;margin:0 auto">
+    <div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px">
+      <h1 style="color:#60a5fa;margin:0 0 4px 0;font-size:22px">JobOS</h1>
+      <p style="color:#94a3b8;margin:0;font-size:12px;text-transform:uppercase;letter-spacing:2px">Offer Extended</p>
+    </div>
+    <div style="background:#1e293b;padding:24px;border-radius:12px">
+      <p style="color:#f1f5f9;margin:0 0 16px 0">Hi {name},</p>
+      <p style="color:#94a3b8;margin:0 0 20px 0;line-height:1.6">
+        Congratulations! We are pleased to extend an offer for the position of
+        <strong style="color:#f1f5f9">{jd_title}</strong>.
+      </p>
+      {offer_details_block}
+      <p style="color:#94a3b8;margin:0 0 24px 0;line-height:1.6">
+        Please click the button below to confirm or respond to this offer.
+      </p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{response_url}"
+           style="display:inline-block;padding:14px 32px;background:#2563eb;color:#ffffff;text-decoration:none;border-radius:10px;font-weight:700;font-size:14px;letter-spacing:0.5px">
+          View & Respond to Offer
+        </a>
+      </div>
+      <p style="color:#64748b;font-size:12px;margin:0;text-align:center">
+        Or copy this link: <span style="color:#60a5fa">{response_url}</span>
+      </p>
+    </div>
+    <p style="color:#334155;font-size:11px;text-align:center;margin-top:24px">
+      JobOS · Recruitment Operating System · Do not reply to this email
+    </p>
+  </div>
+</body>
+</html>"""
+
+    send_email(email, subject, html)
+    logger.info(f"Offer response email sent to {email}")
+
+
+@celery.task(name="tasks.notification_tasks.notify_offer_response")
+def notify_offer_response(jd_id: str, candidate_id: str, response: str, reason: str | None):
+    logger.info(f"notify_offer_response: {candidate_id} responded '{response}' for JD {jd_id}")
+    db = get_db()
+
+    jd = db.job_descriptions.find_one({"jd_id": jd_id})
+    jd_title = (jd.get("structured_data", {}).get("title") or jd.get("title", "the role")) if jd else "the role"
+    candidate = db.candidates.find_one({"candidate_id": candidate_id}, {"name": 1})
+    candidate_name = candidate.get("name", candidate_id) if candidate else candidate_id
+
+    color_map = {"accept": "#4ade80", "hold": "#f59e0b", "reject": "#f87171"}
+    color = color_map.get(response, "#94a3b8")
+    label_map = {"accept": "ACCEPTED", "hold": "ON HOLD", "reject": "DECLINED"}
+    label = label_map.get(response, response.upper())
+
+    reason_block = ""
+    if reason:
+        reason_block = f"""
+      <div style="background:#0f172a;padding:14px;border-radius:8px;margin-top:16px">
+        <p style="color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin:0 0 6px 0">Reason</p>
+        <p style="color:#94a3b8;margin:0;font-size:13px">{reason}</p>
+      </div>"""
+
+    recruiters = list(db.users.find({"roles": {"$in": ["recruiter", "manager", "admin"]}}, {"email": 1}))
+    now = datetime.utcnow()
+
+    notification_body = f"{candidate_name} has {response}d the offer for {jd_title}."
+    for rec in recruiters:
+        email = rec.get("email")
+        if not email:
+            continue
+        db.notifications.insert_one({
+            "notification_id": str(uuid.uuid4()),
+            "type": "offer_response",
+            "recipient_email": email,
+            "recipient_roles": ["recruiter"],
+            "title": f"Offer {label} — {candidate_name}",
+            "body": notification_body,
+            "data": {"jd_id": jd_id, "candidate_id": candidate_id, "response": response},
+            "is_read": False,
+            "created_at": now,
+        })
+
+        subject = f"[JobOS] Offer {label} — {candidate_name} · {jd_title}"
+        html = f"""<!DOCTYPE html>
+<html>
+<body style="background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#f1f5f9;margin:0;padding:24px">
+  <div style="max-width:600px;margin:0 auto">
+    <div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px">
+      <h1 style="color:#60a5fa;margin:0 0 4px 0;font-size:22px">JobOS</h1>
+      <p style="color:#94a3b8;margin:0;font-size:12px;text-transform:uppercase;letter-spacing:2px">Offer Response Received</p>
+    </div>
+    <div style="background:#1e293b;padding:24px;border-radius:12px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+        <span style="font-size:28px;font-weight:900;color:{color}">{label}</span>
+      </div>
+      <div style="background:#0f172a;padding:16px;border-radius:8px">
+        <p style="color:#94a3b8;margin:4px 0;font-size:13px">Candidate: <strong style="color:#f1f5f9">{candidate_name}</strong></p>
+        <p style="color:#94a3b8;margin:4px 0;font-size:13px">Role: <strong style="color:#f1f5f9">{jd_title}</strong></p>
+        <p style="color:#94a3b8;margin:4px 0;font-size:13px">Response: <strong style="color:{color}">{label}</strong></p>
+      </div>
+      {reason_block}
+    </div>
+    <p style="color:#334155;font-size:11px;text-align:center;margin-top:24px">
+      JobOS · Recruitment Operating System · Do not reply to this email
+    </p>
+  </div>
+</body>
+</html>"""
+        send_email(email, subject, html)
+
+    logger.info(f"Offer response notifications sent to {len(recruiters)} recruiter(s)")
 
 
 _STAGE_NOTIFICATIONS = {

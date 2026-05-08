@@ -10,10 +10,14 @@ import CRM from './pages/CRM';
 import Analytics from './pages/Analytics';
 import Matching from './pages/Matching';
 import Admin from './pages/Admin';
+import Invoices from './pages/Invoices';
 import Assessment from './pages/Assessment';
+import OfferResponse from './pages/OfferResponse';
 
 // Public paths that must not trigger Keycloak login-required redirect
-const _isPublicPath = window.location.pathname.startsWith('/assessment/');
+const _isPublicPath =
+  window.location.pathname.startsWith('/assessment/') ||
+  window.location.pathname.startsWith('/offer-response/');
 
 const App: React.FC = () => {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
@@ -62,6 +66,7 @@ const App: React.FC = () => {
       <Routes>
         {/* Public routes — no auth, no layout */}
         <Route path="/assessment/:id" element={<Assessment />} />
+        <Route path="/offer-response/:token" element={<OfferResponse />} />
 
         {/* Auth-gated routes */}
         <Route path="/*" element={
@@ -81,6 +86,11 @@ const App: React.FC = () => {
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/matching" element={<Matching />} />
                 <Route path="/admin" element={<Admin />} />
+                <Route path="/invoices" element={
+                  keycloak.tokenParsed?.realm_access?.roles?.some((r: string) => ['manager','admin'].includes(r))
+                    ? <Invoices />
+                    : <Navigate to="/dashboard" replace />
+                } />
                 <Route path="*" element={<div className="text-white p-8">Page Not Found</div>} />
               </Routes>
             </Layout>

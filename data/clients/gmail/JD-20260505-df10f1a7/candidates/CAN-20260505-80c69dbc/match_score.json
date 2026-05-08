@@ -1,0 +1,75 @@
+{
+  "fitment_score": 72.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 68.551918,
+  "reasoning": "Pavan Gajjala is a strong technical match for the Salesforce Platform Manager role, demonstrating 6+ years of directly relevant experience with Copado CI/CD, multi-tenant architecture, release lifecycle management, and business-critical production environment ownership across HSBC, CVS Health, and other enterprise clients. The candidate's experience aligns closely with all four key skills listed in the JD, including expert-level Copado proficiency, environment management, stakeholder communication, and Premier Support engagement. However, a mandatory 10-point deduction applies because the candidate graduated from Osmania University, which is explicitly excluded in the JD's college_exclusion list. Additionally, no mention of Agentforce or Data Cloud experience is present, which are specifically called out in the JD. The candidate's end date of March 2026 on the resume raises a flag as it appears to be a future date, requiring clarification. Overall, despite technical alignment, the college exclusion significantly impacts the score.",
+  "strengths": [
+    "Expert Copado proficiency with demonstrated outcomes: Managed 50+ end-to-end Salesforce releases at HSBC using Copado across 5 environments with zero unplanned production outages over 18 months, directly matching the JD's requirement for expert-level Copado CI/CD and release orchestration.",
+    "Business-critical production environment ownership: Directly managed business-critical production environments at HSBC and escalated to Salesforce Premier Support tiers, fulfilling one of the four specific JD skill requirements verbatim.",
+    "Center of Excellence establishment: Established foundational CI/CD frameworks, release governance SOPs, and developer enablement programs at FinSure and the Philippines Health platform, directly matching the JD's responsibility to establish a Center of Excellence.",
+    "Multi-tenant architecture and governor limit expertise: Demonstrated across all four engagements with consistent application of Force.com design patterns, bulk Apex, SOQL optimization, and governor limit compliance in high-volume banking, healthcare, and retail environments.",
+    "Stakeholder communication and business-friendly roadmap delivery: Explicitly established release governance standards and translated complex technical releases into business-friendly roadmaps for leadership visibility, matching the JD's requirement for translating technical releases into business-friendly roadmaps."
+  ],
+  "gaps": [
+    "No Agentforce or Data Cloud experience: The JD explicitly calls out streamlining release management for Agentforce and Data Cloud, and there is no mention of either technology in the candidate's resume, representing a meaningful gap for a key responsibility.",
+    "Limited certification depth: The candidate holds only Salesforce Administrator, Advanced Administrator, and Copado Fundamentals I certifications, with no Platform App Builder, DevOps Center, or architect-level credentials that would be expected for a senior platform manager role.",
+    "Future-dated employment end: The resume lists a current role ending March 2026, which is a future date relative to most hiring timelines, raising questions about availability, accuracy, or whether the candidate is currently employed or between roles.",
+    "No explicit experience managing multiple product teams or enterprise-scale CoE at scale: While a CoE foundation is mentioned, the JD asks for enabling 'product teams' (plural, at scale), and the resume does not clearly evidence managing or governing multiple autonomous product teams simultaneously.",
+    "No evidence of experience with Salesforce's premier support tier for complex platform-level architectural issues: While Premier Support is mentioned at HSBC, the resume does not describe the nature or complexity of escalations, leaving depth of that experience unverified."
+  ],
+  "recommendation": "hold",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period is specified in the JD or candidate resume, so no penalty is applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "The JD does not specify a work structure of In-office or a required location, so no location penalty applies."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "The candidate has 6+ years of relevant Salesforce experience, well above the minimum threshold of 2.5 years (half of the JD's 5-year requirement)."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "The JD specifies 'Any' gender preference, so no penalty is applied."
+    },
+    {
+      "factor": "College",
+      "impact": "-10",
+      "reason": "The candidate graduated from Osmania University, which is explicitly listed in the JD's college_exclusion list, triggering a mandatory 10-point deduction."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Senior",
+  "role_level_match": "Match",
+  "tool_currency": "Current",
+  "cv_narrative_style": "Achievement-focused",
+  "availability_signal": "Unknown",
+  "rare_assets": [
+    "Zero unplanned production outages across 50+ releases over 18 months at a global banking institution (HSBC), a high-signal operational achievement in business-critical environments",
+    "Zero-finding compliance audit results across all internal and external banking compliance audits over 18 months using Copado governance, a rare compliance achievement in heavily regulated banking",
+    "Multi-region federated development architecture for parallel global banking teams with zero metadata collision incidents, demonstrating rare architectural governance capability"
+  ],
+  "self_reported_unverified": [
+    "Claim of 'zerounplanned production outages over 18 months' across 50+ releases at HSBC \u2014 impressive but unverifiable without client confirmation or incident logs",
+    "'50% reduction in team escalations within 3 months' at FinSure from developer enablement \u2014 a specific metric without supporting data or third-party validation",
+    "'Zero-finding results on all internal and external banking compliance audits' at HSBC \u2014 significant regulatory claim that cannot be independently verified from resume alone"
+  ],
+  "interview_flags": [
+    "The resume end date for the current role is listed as March 2026, which appears to be a future date \u2014 clarify whether this is a typo, a contract end date, or if the candidate is still employed and when they are actually available.",
+    "Probe actual depth of Copado usage: specifically whether they configured Copado pipelines independently or worked within pre-built pipelines established by others, and whether they have experience with Copado's User Stories, Branches, and Compliance Hub.",
+    "Ask about Agentforce and Data Cloud exposure \u2014 the JD explicitly requires support for these technologies and neither is mentioned in the resume; determine if there is any adjacent experience.",
+    "The candidate claims 'zero metadata collision incidents' in a multi-region parallel development environment \u2014 probe the specific branching strategy, conflict resolution process, and tooling used to achieve this.",
+    "Clarify the nature of Salesforce Premier Support escalations at HSBC \u2014 what types of platform-level issues were escalated, what was the resolution process, and what was the candidate's direct role versus a support team's role."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-05T10:56:49.232865"
+}

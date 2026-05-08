@@ -1,0 +1,115 @@
+{
+  "fitment_score": 28.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.21428571428571427,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MISRA coding guidelines",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "AUTOSAR experience",
+      "status": "Partial",
+      "evidence": "Resume mentions 'strong expertise in AUTOSAR' as a bullet point but only in the context of test environments, not software development or implementation."
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Met",
+      "evidence": "Candidate has a dedicated ADAS project (Skoda) testing Forward Collision Warning, Ultrasonic sensors, ACC, MVC, RVC and HIL bench validation for 2 years."
+    },
+    {
+      "skill": "RADAR system knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR algorithm development",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 3,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [],
+  "composite_score": 24.80952380952381,
+  "reasoning": "Reject \u2014 this is a system test engineer applying for a software developer role, and that mismatch is fundamental. The JD requires a hands-on C developer with MISRA coding discipline, AUTOSAR stack implementation, RTOS programming, and RADAR system or algorithm development experience. Raju has none of these \u2014 his entire 4-year career is in validation and testing (Canoe, JIRA, HIL benches, test case authoring), not software development or embedded firmware writing. The only partially relevant signal is ADAS domain exposure from the Skoda project, and AUTOSAR is mentioned only as a testing context, not implementation. There is no C programming, no MISRA, no RTOS, and no RADAR \u2014 five of the seven must-haves are completely absent. Do not shortlist; this candidate needs a test engineer opening, not a developer role.",
+  "strengths": [
+    "ADAS DOMAIN EXPOSURE: Two years of hands-on ADAS testing on Skoda's Forward Collision Avoidance and Ultrasonic Parking systems using HIL bench (Dyna4, VT-Studio) and closed-loop simulation \u2014 relevant domain context even if the skillset is wrong for this role.",
+    "AUTOMOTIVE PROTOCOL DEPTH: Proficient across CAN, CANFD, CANTP, UDS, and Automotive Ethernet, with practical diagnostic experience using service IDs and DTC analysis \u2014 strong embedded communication foundation for a tester.",
+    "TOOLCHAIN BREADTH: Experienced with Canoe, CAPL scripting, IBM Rational DOORS, JIRA, and HIL environments \u2014 a well-rounded automotive test engineer toolchain that signals real industry exposure."
+  ],
+  "gaps": [
+    "NO SOFTWARE DEVELOPMENT SKILLS \u2014 ZERO C OR RTOS: The JD is explicitly for an SW Developer with C programming and RTOS knowledge as mandatory requirements. Raju has no evidence of writing embedded software in C, following MISRA guidelines, or working with any RTOS (FreeRTOS, AUTOSAR OS, etc.). This is not a gap \u2014 it is a category mismatch.",
+    "NO RADAR KNOWLEDGE OR ALGO DEVELOPMENT: The JD lists RADAR system knowledge and RADAR algorithm development as key differentiators. Raju's ADAS work was entirely camera, ultrasonic sensor, and HIL bench testing \u2014 no radar signal processing, radar ECU work, or algorithm-level engagement anywhere in the resume."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated in the resume and JD does not specify a maximum \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate is based in Chennai and JD requires in-office work in Chennai \u2014 location matches."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 4 years of experience and JD requires 4 years relevant experience \u2014 meets the minimum threshold."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college exclusion or preference specified in the JD \u2014 no impact."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at Jasmin Infotech is listed as ongoing ('March 2022 to present') and no notice period is stated on the resume.",
+  "alternative_role_fit": "Automotive System Test Engineer (ADAS/Infotainment)",
+  "rare_assets": [
+    "HIL bench experience with Dyna4 and VT-Studio for ADAS closed-loop simulation \u2014 niche tooling exposure rarely seen in general testers."
+  ],
+  "self_reported_unverified": [
+    "Claims 'strong expertise in AUTOSAR' but all context points to testing awareness, not implementation \u2014 depth of AUTOSAR knowledge is unverified.",
+    "States CAPL scripting 'significantly reducing manual testing time' \u2014 no metrics provided to substantiate the efficiency claim.",
+    "Lists 'exposure in Python' without any project evidence or use case \u2014 depth is entirely unverifiable."
+  ],
+  "interview_flags": [
+    "Ask directly: have you ever written production embedded software in C? If so, show a code sample or describe a module you owned.",
+    "Probe AUTOSAR claim: can you explain the difference between AUTOSAR Classic BSW layers and how you implemented or configured any component \u2014 not tested, but developed?",
+    "Ask about RTOS: name any RTOS you have worked with and describe a scheduling or interrupt handling task you personally wrote.",
+    "Probe RADAR: is any of your ADAS work radar-based, or was it exclusively camera and ultrasonic sensor systems?",
+    "Clarify role scope: the JD is for an SW Developer \u2014 does the candidate understand the distinction, and is he genuinely interested in transitioning from test to development?"
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T08:59:26.993805"
+}

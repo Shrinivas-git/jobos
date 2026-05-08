@@ -1,0 +1,115 @@
+{
+  "fitment_score": 32.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.21428571428571427,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MISRA coding guideline",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "AUTOSAR experience",
+      "status": "Partial",
+      "evidence": "Resume lists 'Strong expertise in AUTOSAR' under key skills but provides no evidence of development work \u2014 only testing context."
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Met",
+      "evidence": "2 years on Skoda ADAS project testing Forward Collision Warning, Parking Assistance, MVC, RVC, ACC, and Ultrasonic sensors using HIL bench and DYNA4."
+    },
+    {
+      "skill": "RADAR system knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR algorithm development",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 3,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [],
+  "composite_score": 27.80952380952381,
+  "reasoning": "Reject \u2014 wrong role. This candidate is a System Test Engineer, not a Software Developer. The JD is looking for a Senior SW Developer with hands-on C programming, MISRA coding standards, AUTOSAR stack development, and RTOS expertise \u2014 none of which this candidate demonstrates. Their AUTOSAR mention is surface-level and testing-only; they have zero evidence of embedded C development, MISRA compliance, or RTOS work. The only meaningful overlap is ADAS domain exposure from 2 years of system-level testing on the Skoda project, but that is testing, not development. RADAR knowledge \u2014 a key differentiator for this JD \u2014 is entirely absent. Even if the pool is thin, this candidate would need a complete career pivot to be relevant. Do not shortlist.",
+  "strengths": [
+    "ADAS DOMAIN EXPOSURE: Two years of hands-on ADAS system testing on Skoda's Forward Collision Avoidance and parking systems, including HIL bench simulation with DYNA4 and VT-Studio \u2014 provides relevant domain context even though the work is test-side.",
+    "AUTOMOTIVE PROTOCOL DEPTH: Proficient across CAN, CANFD, CAN-TP, UDS, and Automotive Ethernet with working knowledge of diagnostic service IDs and DTC analysis \u2014 signals solid ECU communication fundamentals.",
+    "AUTOSAR AWARENESS: Claims AUTOSAR familiarity and has worked in ASPICE and ISO 26262 compliant environments, which shows exposure to the automotive development framework even if not from a development role."
+  ],
+  "gaps": [
+    "NO EMBEDDED C OR MISRA EXPERIENCE: The JD's primary requirement is strong C programming with MISRA compliance \u2014 this candidate lists no C development, no MISRA awareness, and no software development experience of any kind. This is a hard disqualifier.",
+    "NO RTOS OR RADAR KNOWLEDGE: RTOS is listed as mandatory in the JD; RADAR system knowledge and algorithm development are key differentiators. The resume shows zero evidence of either \u2014 this candidate operates entirely on the test side of the V-model."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated in resume; no JD maximum specified \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate is based in Chennai (Jasmin Infotech, Chennai 600100) matching the JD's in-office Chennai requirement."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 4 years of experience meeting the JD's minimum of 4 years relevant experience \u2014 no penalty."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD \u2014 no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at Jasmin Infotech is listed as 'March 2022 to present' with no notice period stated.",
+  "alternative_role_fit": "Automotive System Test Engineer (ADAS/Infotainment)",
+  "rare_assets": [
+    "HIL bench experience with DYNA4 and VT-Studio for ADAS closed-loop simulation \u2014 niche test capability in automotive validation."
+  ],
+  "self_reported_unverified": [
+    "'Strong expertise in AUTOSAR' \u2014 listed as a skill but no development-level AUTOSAR work or specific layer/module involvement is described anywhere in the resume.",
+    "'Significantly reducing manual testing time and improving efficiency' via CAPL scripting \u2014 no metric or quantified outcome provided to support this claim.",
+    "ISO 26262 functional safety compliance \u2014 mentioned as a standard adhered to but no evidence of active participation in a safety case, FMEA, or safety analysis activity."
+  ],
+  "interview_flags": [
+    "Probe the actual depth of AUTOSAR knowledge \u2014 can they name specific layers (RTE, BSW, MCAL) and have they ever configured or developed within the AUTOSAR stack, or only tested against it?",
+    "Ask directly: have they written any embedded C code outside of CAPL scripting? CAPL is not embedded C.",
+    "Clarify the MISRA claim \u2014 do they have any awareness of MISRA-C guidelines even as a tester reviewing code?",
+    "Probe RTOS exposure \u2014 have they ever worked with FreeRTOS, OSEK, or any real-time OS in any capacity?",
+    "Verify RADAR system exposure \u2014 the Skoda project mentions ultrasonic and camera sensors; probe whether they have any radar-specific (77GHz/24GHz) validation or algorithm testing experience."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:02:04.010403"
+}

@@ -1,0 +1,72 @@
+{
+  "fitment_score": 2.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "composite_score": 14.736477333333333,
+  "reasoning": "Prathamesh Khot is an early-career candidate with a Master's in Computer Applications and a single 5-month internship in software development. His technical background is entirely in Python, JavaScript, Django, Flask, and basic web development with no mention of Salesforce, Copado, CI/CD pipelines, release management, or any enterprise platform experience. The role demands a senior professional with expert-level Copado proficiency, deep Salesforce architecture knowledge, and experience managing production enterprise environments \u2014 none of which this candidate demonstrates. He is fundamentally misaligned with every core requirement of this position.",
+  "strengths": [
+    "Basic cloud awareness: AWS certifications (Technical Essentials and Cloud Practitioner Essentials) show some foundational understanding of cloud infrastructure concepts, which are tangentially relevant to Salesforce's cloud-based ecosystem.",
+    "Exposure to software testing: The internship mentions 'thorough testing to identify and resolve issues,' indicating some familiarity with QA practices relevant to release management contexts.",
+    "Database experience: Exposure to MySQL and MongoDB provides a minimal foundation in data management, which is distantly relevant to Salesforce Data Cloud concepts.",
+    "Programming fundamentals: Python and JavaScript knowledge could serve as a starting point for learning Salesforce's Apex and LWC in the distant future.",
+    "Academic completion: Completion of an MCA degree from Dayananda Sagar University demonstrates formal computer science education and the ability to complete structured technical programs."
+  ],
+  "gaps": [
+    "Zero Salesforce experience: The resume contains no mention of Salesforce, Apex, LWC, SOQL, or any Salesforce product, which is the entire domain of the role requiring 5+ years of relevant expertise.",
+    "No Copado or CI/CD knowledge: The role requires expert-level Copado proficiency for CI/CD and release orchestration; this candidate shows no exposure to any CI/CD tooling whatsoever.",
+    "No release management or platform governance experience: The role demands managing full release lifecycles and establishing a Center of Excellence; the candidate's only experience is a 5-month development internship.",
+    "No enterprise or production environment experience: The role requires managing 'Business Critical' production environments and working with Salesforce premier support; this candidate has only intern-level project exposure.",
+    "Insufficient seniority and experience: The JD requires a Senior-level professional with at least 5 years of relevant experience; this candidate has approximately 5 months of internship experience with no professional employment history."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period is stated and the JD does not specify a maximum, so no penalty is applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "The JD does not specify a work structure of In-office or a required location, so no location penalty applies."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "-10",
+      "reason": "The candidate has approximately 5 months of internship experience, which is far less than half of the 5-year relevant experience requirement."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "The JD specifies no gender preference, so no penalty is applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "The candidate's colleges (Dayananda Sagar University and Karnataka University) are not on the exclusion list and no preference list is specified."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Experience below minimum"
+  ],
+  "role_level_detected": "Junior",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Previous",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Unknown",
+  "rare_assets": [],
+  "self_reported_unverified": [
+    "Claim of designing a 'comprehensive system' during internship without any details on scope, scale, or measurable outcome.",
+    "Collaboration with UX team described without evidence of team size or actual contribution scope."
+  ],
+  "interview_flags": [
+    "Ask what prompted applying for a Senior Salesforce Platform Manager role given the absence of any Salesforce experience on the resume.",
+    "Probe whether the candidate has any self-taught or unpublished Salesforce or Copado exposure not listed on the resume.",
+    "Ask about the internship project scope \u2014 how large was the student database system and what was the actual technical complexity?",
+    "Clarify current employment status and whether there is any full-time experience not captured on the resume.",
+    "Ask about career goals to assess whether the candidate understands the seniority gap between their current level and this role."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-05T10:58:13.763453"
+}

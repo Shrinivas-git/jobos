@@ -110,6 +110,19 @@ def get_resume_vector(candidate_id: str):
         logger.error(f"Error retrieving resume vector: {e}")
         return None
 
+def delete_resume_vector(candidate_id: str):
+    """Deletes the resume vector from Qdrant by candidate_id."""
+    try:
+        point_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, candidate_id))
+        client.delete(
+            collection_name=RESUME_COLLECTION,
+            points_selector=models.PointIdsList(points=[point_id]),
+        )
+        logger.info(f"Deleted Qdrant vector for candidate {candidate_id}")
+    except Exception as e:
+        logger.error(f"Error deleting Qdrant vector for {candidate_id}: {e}")
+
+
 def search_resumes_by_vector(vector: list, limit: int = 100):
     """Searches for top resumes matching a vector."""
     try:

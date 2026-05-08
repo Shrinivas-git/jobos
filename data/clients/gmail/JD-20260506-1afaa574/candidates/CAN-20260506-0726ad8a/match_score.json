@@ -1,0 +1,206 @@
+{
+  "fitment_score": 74.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.6470588235294118,
+  "must_have_breakdown": [
+    {
+      "skill": "Salesforce Platform Management",
+      "status": "Met",
+      "evidence": "7 years managing Salesforce environments across multiple orgs and clients including Apple and Philip Morris International."
+    },
+    {
+      "skill": "Salesforce Architecture",
+      "status": "Partial",
+      "evidence": "Demonstrates environment strategy and multi-org architecture work but no explicit solution architecture or CoE design evidence."
+    },
+    {
+      "skill": "5+ years experience in Salesforce Platform Management or Salesforce Architecture",
+      "status": "Met",
+      "evidence": "Resume states 7 years of experience as a Salesforce Release and DevOps Specialist."
+    },
+    {
+      "skill": "Expert-level proficiency with Copado for CI/CD and release orchestration",
+      "status": "Met",
+      "evidence": "Used Copado at Apple (current role) and Advance Auto Parts; holds Copado Fundamentals I, II, AI Certified, and was selected as a Copado Mentor."
+    },
+    {
+      "skill": "Deep understanding of Salesforce multi-tenant architecture",
+      "status": "Partial",
+      "evidence": "Managed multi-org deployments and sandbox administration but no explicit mention of multi-tenant architecture design or governor limits management."
+    },
+    {
+      "skill": "Governor limits understanding",
+      "status": "Partial",
+      "evidence": "No direct mention of governor limits; implied through Salesforce development and admin experience."
+    },
+    {
+      "skill": "Environment management",
+      "status": "Met",
+      "evidence": "Configured and administered Salesforce sandboxes, managed environment strategy using Copado at Advance Auto Parts."
+    },
+    {
+      "skill": "Communication and ability to translate complex technical releases into business-friendly roadmaps",
+      "status": "Partial",
+      "evidence": "Collaborated with cross-functional teams but no evidence of translating releases into business roadmaps or stakeholder communication at executive level."
+    },
+    {
+      "skill": "Experience managing Business Critical production environments",
+      "status": "Partial",
+      "evidence": "Managed production releases and hotfixes at PMI but no explicit 'Business Critical' tier or premier support tier language used."
+    },
+    {
+      "skill": "Work with Salesforce's premier support tiers",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Salesforce.com development environment",
+      "status": "Met",
+      "evidence": "Salesforce Admin and Platform Developer I certified with development experience at CGI."
+    },
+    {
+      "skill": "Custom objects",
+      "status": "Met",
+      "evidence": "Configured Salesforce features using Admin and development skills at CGI with custom objects implied."
+    },
+    {
+      "skill": "Workflows",
+      "status": "Partial",
+      "evidence": "Admin and development experience implies workflow knowledge but not explicitly called out."
+    },
+    {
+      "skill": "Triggers",
+      "status": "Partial",
+      "evidence": "Platform Developer I certification implies Apex trigger knowledge but not explicitly mentioned in work experience."
+    },
+    {
+      "skill": "SOQL",
+      "status": "Met",
+      "evidence": "SOQL listed explicitly in the Key Skills section under Other Tools."
+    },
+    {
+      "skill": "SOSL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Best practices and design patterns",
+      "status": "Partial",
+      "evidence": "Established scalable DevOps practices across clients but no mention of Salesforce design pattern application (e.g. bulkification, separation of concerns)."
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 8,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Platform Developer I",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Platform App Builder",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Business Analyst",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Agentforce Specialist",
+      "tier": "Expert"
+    },
+    {
+      "name": "Salesforce AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Copado AI Certified",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Flosum Professional Level Certification",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Flosum Expert Level Certification",
+      "tier": "Expert"
+    },
+    {
+      "name": "Infosys Agile Certification",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Mentor Program",
+      "tier": "Mentor"
+    }
+  ],
+  "composite_score": 66.97058823529412,
+  "reasoning": "Shortlist with verification required \u2014 this candidate is a genuine Copado specialist and the Copado Mentor selection is a rare, high-signal differentiator that most candidates cannot match. Her 7 years across enterprise clients (Apple, PMI) with hands-on Copado CI/CD, multi-org deployment, and a full certification stack positions her well for the release management and DevOps pillars of this role. However, the role demands more than DevOps execution \u2014 it requires platform architecture, CoE establishment, and the ability to translate strategy to business stakeholders. There is no evidence she has designed a CoE, managed Salesforce Premier Support escalations, or operated at the architect/manager level vs. the technical lead level. She is currently operating as a strong senior practitioner, not yet a platform manager with governance ownership. Verify her scope of authority at PMI and Apple \u2014 if she was the decision-maker on environment strategy (not just executor), she may be ready. Otherwise, this is a level-up stretch hire.",
+  "strengths": [
+    "COPADO MASTERY: Selected as a Copado Mentor (top-tier peer recognition) and certified at Fundamentals I, II, and AI level \u2014 this is a rare asset that directly addresses the JD's 'expert-level Copado' requirement and signals she is trusted by the vendor itself.",
+    "ENTERPRISE MULTI-ORG RELEASE MANAGEMENT: Delivered end-to-end CI/CD pipelines and cutover planning for Advance Auto Parts (Copado) and Philip Morris International (Jenkins/Bitbucket), managing Dev-to-Production deployments at scale across business-critical clients.",
+    "BREADTH OF SALESFORCE TOOLING: Active across Copado, Flosum, Jenkins, GitHub, Bitbucket, and Agentforce with current hands-on experience at Apple \u2014 tool currency is strong and directly matches the JD's Agentforce and Data Cloud modernisation goals."
+  ],
+  "gaps": [
+    "MISSING PLATFORM ARCHITECT AND COE LEADERSHIP EVIDENCE: The JD requires establishing a Center of Excellence and architecting a federated development strategy \u2014 there is zero evidence in this resume of CoE design, governance framework creation, or leading platform-level architectural decisions rather than executing deployments.",
+    "NO PREMIER SUPPORT OR STAKEHOLDER ROADMAP EXPERIENCE: The role explicitly requires experience with Salesforce premier support tiers and translating technical releases into business roadmaps for executives \u2014 neither appears anywhere in the resume, which is a meaningful gap for a 'Platform Manager' vs. a 'Release Engineer' title."
+  ],
+  "recommendation": "shortlist",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated in the resume and JD does not specify a maximum \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "JD does not specify a work structure as In-office, so location mismatch penalty does not apply."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 7 years of experience, well above the minimum threshold of 2.5 years (half of the 5-year requirement)."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD specifies 'Any' gender preference \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "JD has no college preference or exclusion list \u2014 no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Lead",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Current",
+  "cv_narrative_style": "Unknown",
+  "availability_signal": "Unknown",
+  "availability_reason": "",
+  "alternative_role_fit": "",
+  "rare_assets": [],
+  "self_reported_unverified": [],
+  "interview_flags": [],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-06T09:09:37.933144"
+}

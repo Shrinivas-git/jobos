@@ -11,6 +11,7 @@ export interface JD {
   title: string;
   status: string;
   created_at: string;
+  pipeline_config?: { assessment_rounds: number; interview_rounds: number };
 }
 
 export interface MatchResult {
@@ -169,11 +170,22 @@ export interface PipelineStageEntry {
   extension: PipelineExtension | null;
 }
 
+export interface CandidateOfferResponse {
+  response: 'accept' | 'reject';
+  reason?: string | null;
+  responded_at: string;
+}
+
 export interface PipelineRecord {
   jd_id: string;
   candidate_id: string;
   current_stage: string;
+  planned_stages?: string[];
   stages: PipelineStageEntry[];
+  on_hold?: boolean;
+  on_hold_reason?: string;
+  offer_token?: string;
+  candidate_response?: CandidateOfferResponse | null;
   created_at: string;
   updated_at: string;
 }

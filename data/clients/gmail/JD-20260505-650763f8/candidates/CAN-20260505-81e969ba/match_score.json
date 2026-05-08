@@ -1,0 +1,145 @@
+{
+  "fitment_score": 72.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.6666666666666666,
+  "must_have_breakdown": [
+    {
+      "skill": "Salesforce Platform Management or Salesforce Architecture",
+      "status": "Met",
+      "evidence": "Candidate led 'end-to-end delivery for Salesforce org with 1500+ users across Sales & Service Cloud' and designed scalable Apex frameworks and data models."
+    },
+    {
+      "skill": "Expert-level proficiency with Copado for CI/CD and release orchestration",
+      "status": "Partial",
+      "evidence": "Resume mentions 'using Copado' for deployment in the IBM/Informa role and holds 'Copado Fundamentals I & II' certifications, but no evidence of expert-level orchestration, pipeline architecture, or advanced Copado features."
+    },
+    {
+      "skill": "Deep understanding of Salesforce multi-tenant architecture",
+      "status": "Met",
+      "evidence": "Candidate demonstrates governor-limit compliance, LDV optimization, sharing architecture, and org-wide design \u2014 all indicative of multi-tenant architecture expertise."
+    },
+    {
+      "skill": "Governor limits knowledge",
+      "status": "Met",
+      "evidence": "Resume explicitly states 'scalable Apex frameworks with strict governor-limit compliance' and 'LDV, indexing, query optimization' skills."
+    },
+    {
+      "skill": "Environment management",
+      "status": "Partial",
+      "evidence": "Candidate 'Acted as production owner, handling critical defects and release stability' but no explicit mention of managing sandbox environments, scratch orgs, or environment strategy at the platform level."
+    },
+    {
+      "skill": "Communication skills to translate technical releases into business-friendly roadmaps",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience managing Business Critical production environments",
+      "status": "Partial",
+      "evidence": "Candidate 'Acted as production owner, handling critical defects and release stability' for a 1500+ user org, but no explicit mention of 'Business Critical' tier or Salesforce Mission Critical Success engagement."
+    },
+    {
+      "skill": "Working with Salesforce premier support tiers",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Salesforce.com development environment experience",
+      "status": "Met",
+      "evidence": "7+ years of experience delivering Salesforce solutions across enterprise environments including IBM and TCS engagements."
+    },
+    {
+      "skill": "Custom objects, workflows, triggers, SOQL & SOSL",
+      "status": "Met",
+      "evidence": "Resume lists 'Apex Triggers, Classes and Test Classes using SOQL/SOSL', custom objects, relationships, and workflow replacement as core activities."
+    },
+    {
+      "skill": "Best practices and design patterns",
+      "status": "Met",
+      "evidence": "Candidate 'enforced Salesforce best practices', built trigger frameworks, and applied 'design patterns' mentioned in core skills."
+    },
+    {
+      "skill": "Work independently with minimal supervision",
+      "status": "Partial",
+      "evidence": "Candidate mentored 5 developers and led end-to-end delivery, suggesting autonomy, but no explicit statement about independent operation without supervision."
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Platform Developer I",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Platform App Builder",
+      "tier": "Practitioner"
+    }
+  ],
+  "composite_score": 60.666666666666664,
+  "reasoning": "Purna Sai Ram is a strong Salesforce Developer with 7+ years of experience demonstrating solid Apex, LWC, automation, and CI/CD skills using Copado. He meets most core technical must-haves including governor limits, multi-tenant architecture knowledge, custom objects, triggers, SOQL/SOSL, and best practices. However, critical gaps exist for this Platform Manager role: his Copado experience appears to be practitioner-level (Fundamentals I & II only) rather than the expert-level CI/CD orchestration and pipeline architecture the JD demands. There is no evidence of working with Salesforce premier support tiers, no demonstration of translating technical releases into business-friendly roadmaps, and no explicit Center of Excellence or federated development strategy experience. His role is fundamentally developer-centric with some tech lead responsibilities, whereas the JD seeks a platform governance and release management leader. He is a strong developer but has not yet made the leap to Platform Manager scope.",
+  "strengths": [
+    "Strong Copado CI/CD hands-on experience: Candidate used Copado for end-to-end delivery across a 1500+ user org at IBM/Informa, and holds both Copado Fundamentals I & II certifications, demonstrating practical tool usage.",
+    "Deep Salesforce technical depth: Expertise in Apex, LWC, Triggers, SOQL/SOSL, LDV optimization, async processing, and governor-limit compliance covers the core technical requirements of the role comprehensively.",
+    "Production ownership experience: Acted as 'production owner, handling critical defects and release stability' at IBM, directly relevant to the JD requirement of managing Business Critical production environments.",
+    "Strong certification portfolio: Holds 7 Salesforce certifications including Platform Developer I, Administrator, Platform App Builder, Business Analyst, and AI Specialist, demonstrating broad platform knowledge and continuous learning.",
+    "Team leadership and mentoring: Mentored 5 developers and reduced deployment defects by 30%, indicating the leadership and quality-enforcement capacity needed to establish a Center of Excellence."
+  ],
+  "gaps": [
+    "No expert-level Copado orchestration evidence: The JD requires expert-level Copado proficiency including pipeline architecture and release orchestration, but the candidate only holds Fundamentals I & II certs with no evidence of configuring pipelines, managing user stories at scale, or orchestrating multi-team deployments.",
+    "No experience with Salesforce premier or Mission Critical support tiers: The JD explicitly requires experience working with Salesforce premier support tiers, which is entirely absent from the resume \u2014 this is a distinct operational skill for enterprise platform managers.",
+    "No business communication or roadmap translation experience: The JD requires translating complex technical releases into business-friendly roadmaps for stakeholders, but the resume contains no evidence of executive communication, stakeholder management, or product roadmap ownership.",
+    "No Salesforce Data Cloud or Agentforce exposure: The JD specifically calls for supporting 'Salesforce, Agentforce, and Data Cloud' environments, and while the candidate has an AI Specialist cert, there is no hands-on Data Cloud ingestion, modeling, or activation experience mentioned.",
+    "Platform Manager scope vs. Developer scope mismatch: The JD requires architecting a federated development strategy and establishing a Center of Excellence \u2014 these are organizational governance responsibilities the candidate has not demonstrated, operating primarily as a senior developer/tech lead."
+  ],
+  "recommendation": "hold",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "JD does not specify a maximum notice period, so no penalty applies."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "JD work structure is not specified as In-office, so no location penalty applies."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 7+ years of experience, well above the minimum threshold of 2.5 years (half of JD's 5-year requirement)."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any', so no penalty applies."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "JD has no college preference or exclusion specified, so no adjustment applies."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Senior",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Current",
+  "cv_narrative_style": "Unknown",
+  "availability_signal": "Unknown",
+  "availability_reason": "",
+  "alternative_role_fit": "",
+  "rare_assets": [],
+  "self_reported_unverified": [],
+  "interview_flags": [],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-05T12:17:02.132761"
+}

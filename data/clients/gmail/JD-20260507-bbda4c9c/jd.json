@@ -1,0 +1,26 @@
+{
+  "title": "Senior Software Developer \u2013 Front Camera (FC)",
+  "level": "Senior",
+  "client_email": "shrinivassondur03@gmail.com",
+  "responsibilities": "Develop and maintain embedded software for Front Camera systems\nWrite efficient and reliable code using C programming\nEnsure development follows MISRA coding guidelines\nWork on AUTOSAR architecture and software integration\nDevelop and debug applications in RTOS environments\nSupport software testing, issue analysis, and performance optimization\nCollaborate with cross-functional teams including integration and testing teams\nParticipate in code reviews and technical discussions",
+  "kpis": "",
+  "skills": [
+    "Required Technical Skills Strong knowledge of C programming Good understanding of MISRA coding guidelines Hands-on experience with AUTOSAR Strong RTOS knowledge (Mandatory) Knowledge of Front Camera systems in automotive domain Preferred Skills ADAS knowledge is an added advantage Experience in automotive embedded systems Familiarity with camera-based driver assistance systems Interpersonal Skills Strong team collaboration skills Effective communication skills Good analytical and problem-solving abilities"
+  ],
+  "relevant_experience": 4,
+  "total_experience": 4,
+  "compensation_range": "",
+  "work_structure": "In-office",
+  "location": "Chennai",
+  "hiring_timeline": "",
+  "urgency": "Medium",
+  "num_positions": 1,
+  "gender_preference": "Any",
+  "college_preference": "",
+  "college_exclusion": "",
+  "preferred_company_type": [],
+  "preferred_team_size": "Any",
+  "role_type": "Any",
+  "obfuscate": false,
+  "recruiter_notes": "We are hiring a Senior Software Developer with expertise in embedded automotive software development for Front Camera (FC) systems. The ideal candidate should have strong experience in Embedded C, AUTOSAR, RTOS, and automotive software development processes."
+}

@@ -1,0 +1,172 @@
+{
+  "fitment_score": 3.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MISRA coding guidelines",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "AUTOSAR experience",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR Algo development",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 9,
+  "cert_tier_bonus": 8,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Platform Developer I",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce App Builder",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Business Analyst",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Agentforce Specialist",
+      "tier": "Expert"
+    },
+    {
+      "name": "Salesforce AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado AI Certified",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Infosys Agile Certification",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Flosum Professional Level Certification",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Flosum Expert Level Certification",
+      "tier": "Expert"
+    },
+    {
+      "name": "Copado Mentor Program",
+      "tier": "Mentor"
+    }
+  ],
+  "composite_score": 12.25,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Salesforce Release and DevOps specialist with 7 years in CI/CD pipeline management using Copado, Flosum, and Jenkins for enterprise CRM clients. The JD demands an embedded software engineer with C programming, MISRA guidelines, AUTOSAR, and RTOS expertise for automotive radar systems in Chennai. Not a single must-have skill from the JD appears anywhere on this resume. There is zero overlap between Salesforce DevOps tooling and automotive embedded systems development. Do not proceed \u2014 this is a domain mismatch at the most fundamental level.",
+  "strengths": [
+    "SALESFORCE DEVOPS DEPTH: Leads CI/CD pipeline automation across multi-org Salesforce environments at Apple and Philip Morris International using Copado, Flosum, and Jenkins \u2014 genuinely senior-level execution in her own domain.",
+    "CERTIFICATION PORTFOLIO: Holds 12+ Salesforce and Copado certifications including Copado AI Certified, Flosum Expert level, and Salesforce Agentforce Specialist \u2014 unusually comprehensive even for a seasoned Salesforce professional.",
+    "COPADO MENTORSHIP RECOGNITION: Selected as a Copado Mentor in their official Mentorship Program \u2014 a peer-recognised credential that signals industry-level authority in Salesforce DevOps tooling."
+  ],
+  "gaps": [
+    "ZERO EMBEDDED SYSTEMS EXPERIENCE: The role requires C programming, MISRA coding standards, AUTOSAR, and RTOS \u2014 none of which appear anywhere on this resume. This is not a training gap; it is a complete domain mismatch that cannot be bridged.",
+    "NO AUTOMOTIVE OR RADAR DOMAIN KNOWLEDGE: The JD specifically requires RADAR system knowledge and ADAS familiarity in an automotive embedded context. This candidate's entire career is in enterprise CRM (Salesforce) \u2014 there is no pathway to qualification for this role."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated; no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office presence in Chennai; candidate is based in Bengaluru."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 7 years of total experience, well above the minimum threshold."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD specifies no gender preference; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch"
+  ],
+  "role_level_detected": "Lead",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at Infosys shows 'August 2025 \u2013 Present' with no end date or notice period stated; availability cannot be determined.",
+  "alternative_role_fit": "Senior Salesforce DevOps Engineer / Salesforce Release Manager",
+  "rare_assets": [
+    "Copado Mentor Program selection \u2014 peer-recognised by Copado as a practitioner-level expert worthy of mentoring others.",
+    "Flosum Expert Level Certification \u2014 rare dual-platform DevOps expertise (both Copado and Flosum) at the highest certification tier.",
+    "Salesforce Agentforce Specialist \u2014 early adopter credential in Salesforce's AI agent platform, positioning her ahead of most peers."
+  ],
+  "self_reported_unverified": [
+    "'Rise Insta Award' for exceptional performance \u2014 internal Infosys recognition with no scope, criteria, or comparative context provided.",
+    "Claims to have 'led' Salesforce DevOps processes at PMI but no team size or direct report count is mentioned to confirm leadership scope.",
+    "POC evaluation for Apple involving Copado and Flosum \u2014 no outcome, timeline, or decision result documented."
+  ],
+  "interview_flags": [
+    "Probe whether she has any exposure \u2014 even academic or hobbyist \u2014 to C programming or embedded systems, to confirm this is a complete domain mismatch.",
+    "Ask why she is applying to an automotive embedded software role given her career is entirely in Salesforce DevOps.",
+    "Clarify team size and leadership scope at Infosys \u2014 'Technology Lead' title is used but no evidence of direct reports or team ownership.",
+    "Verify actual hands-on depth with Flosum vs. Copado \u2014 both are listed but Copado appears primary; check if Flosum experience is POC-level only.",
+    "Confirm location flexibility \u2014 currently in Bengaluru, role is Chennai in-office; check relocation intent before any further engagement."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T08:59:58.034803"
+}

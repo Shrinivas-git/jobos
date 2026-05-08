@@ -1,6 +1,6 @@
 import uuid
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
@@ -152,6 +152,8 @@ def generate_and_send_invoice(jd_id: str, candidate_id: str):
             "generated_at": datetime.utcnow(),
             "sent_at": None,
             "email_status": "pending",
+            "payment_status": "unpaid",
+            "paid_at": None,
         })
 
         email_sent = _send_invoice_email(client_email, invoice_id, pdf_path)
@@ -179,3 +181,56 @@ def generate_and_send_invoice(jd_id: str, candidate_id: str):
     except Exception as e:
         logger.error(f"Failed to generate invoice for {jd_id}/{candidate_id}: {e}")
         return {"ok": False, "error": str(e)}
+
+
+@celery.task(name="tasks.invoice_tasks.check_overdue_invoices")
+def check_overdue_invoices():
+    """Daily task: find unpaid invoices older than 30 days and email recruiter + manager."""
+    from utils.email_utils import send_email
+    db = get_db()
+    cutoff = datetime.utcnow() - timedelta(days=30)
+
+    overdue = list(db.invoices.find({
+        "payment_status": {"$in": ["unpaid", None]},
+        "sent_at": {"$lte": cutoff},
+        "email_status": "sent",
+    }, {"_id": 0}))
+
+    if not overdue:
+        logger.info("No overdue invoices found")
+        return {"checked": 0}
+
+    # Get manager/recruiter emails from users collection
+    staff = list(db.users.find(
+        {"role": {"$in": ["manager", "recruiter"]}},
+        {"email": 1, "_id": 0}
+    ))
+    staff_emails = [u["email"] for u in staff if u.get("email")]
+
+    for inv in overdue:
+        days_overdue = (datetime.utcnow() - inv["sent_at"]).days
+        subject = f"Payment Overdue — Invoice {inv['invoice_id'][:8].upper()} ({days_overdue} days)"
+        body = f"""<!DOCTYPE html>
+<html><body style="font-family:-apple-system,sans-serif;background:#0f172a;color:#f1f5f9;padding:24px">
+  <div style="max-width:600px;margin:0 auto;background:#1e293b;padding:24px;border-radius:12px;border:1px solid #ef4444">
+    <h2 style="color:#ef4444;margin:0 0 12px 0">⚠ Invoice Payment Overdue</h2>
+    <p style="color:#cbd5e1">The following invoice has not been paid for <b>{days_overdue} days</b>.</p>
+    <table style="width:100%;border-collapse:collapse;margin:16px 0">
+      <tr><td style="color:#94a3b8;padding:6px 0">Invoice ID</td><td style="color:#f1f5f9">{inv['invoice_id']}</td></tr>
+      <tr><td style="color:#94a3b8;padding:6px 0">Client</td><td style="color:#f1f5f9">{inv.get('client_email','—')}</td></tr>
+      <tr><td style="color:#94a3b8;padding:6px 0">Candidate</td><td style="color:#f1f5f9">{inv.get('candidate_name','—')}</td></tr>
+      <tr><td style="color:#94a3b8;padding:6px 0">Role</td><td style="color:#f1f5f9">{inv.get('jd_title','—')}</td></tr>
+      <tr><td style="color:#94a3b8;padding:6px 0">Amount</td><td style="color:#f1f5f9">₹{inv.get('amount',0):,.0f}</td></tr>
+      <tr><td style="color:#94a3b8;padding:6px 0">Invoice Sent</td><td style="color:#f1f5f9">{inv['sent_at'].strftime('%d %b %Y')}</td></tr>
+    </table>
+    <p style="color:#94a3b8;font-size:12px">Please follow up with the client immediately.</p>
+    <p style="color:#94a3b8;font-size:11px;margin-top:24px">JobOS · Finance Alerts</p>
+  </div>
+</body></html>"""
+
+        for email in staff_emails:
+            send_email(to=email, subject=subject, html_body=body)
+            logger.info(f"Overdue reminder sent to {email} for invoice {inv['invoice_id']}")
+
+    logger.info(f"Overdue check complete: {len(overdue)} invoices flagged")
+    return {"checked": len(overdue)}

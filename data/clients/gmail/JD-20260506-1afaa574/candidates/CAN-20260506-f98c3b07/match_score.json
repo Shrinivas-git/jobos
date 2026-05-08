@@ -1,0 +1,162 @@
+{
+  "fitment_score": 91.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 1.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Salesforce Platform Management",
+      "status": "Met",
+      "evidence": "6+ years managing Salesforce platform health, release integrity, and environment strategy across healthcare, banking, and financial services at NTT Data."
+    },
+    {
+      "skill": "Salesforce Architecture",
+      "status": "Met",
+      "evidence": "Architected federated development strategies and branching governance across multi-region parallel development teams at HSBC."
+    },
+    {
+      "skill": "5+ years experience in Salesforce Platform Management or Salesforce Architecture",
+      "status": "Met",
+      "evidence": "October 2019 to March 2026 \u2014 approximately 6.5 years in Salesforce Platform Manager and DevOps Engineer roles."
+    },
+    {
+      "skill": "Expert-level proficiency with Copado for CI/CD and release orchestration",
+      "status": "Met",
+      "evidence": "Managed 50+ end-to-end Salesforce releases at HSBC using Copado across 5 environments with zero unplanned production outages over 18 months; listed as 'Expert' in skills."
+    },
+    {
+      "skill": "Deep understanding of Salesforce multi-tenant architecture",
+      "status": "Met",
+      "evidence": "Resume explicitly references Force.com design patterns, governor limit compliance, and Salesforce multi-tenant architecture principles across multiple engagements."
+    },
+    {
+      "skill": "Governor limits understanding",
+      "status": "Met",
+      "evidence": "Developed Apex with 'governor limit compliance and 90%+ test coverage' at FinSure and optimised SOQL queries 'within governor limit boundaries' at HSBC."
+    },
+    {
+      "skill": "Environment management",
+      "status": "Met",
+      "evidence": "Served as primary custodian managing Dev, QA, UAT, and Production orgs including Sandbox refresh cycles, Scratch Org configurations, and org health monitoring."
+    },
+    {
+      "skill": "Communication and ability to translate complex technical releases into business-friendly roadmaps",
+      "status": "Met",
+      "evidence": "Established release governance standards and technical documentation, 'translating complex technical releases into business-friendly roadmaps for stakeholder and leadership visibility.'"
+    },
+    {
+      "skill": "Experience managing Business Critical production environments",
+      "status": "Met",
+      "evidence": "Served as primary custodian of business-critical Salesforce environments across 4 enterprise engagements with zero unplanned production outages."
+    },
+    {
+      "skill": "Work with Salesforce's premier support tiers",
+      "status": "Met",
+      "evidence": "Worked 'directly with Salesforce Premier Support tiers to resolve platform-level issues' at HSBC global banking platform."
+    },
+    {
+      "skill": "Salesforce.com development environment",
+      "status": "Met",
+      "evidence": "Hands-on across Apex, LWC, Aura, Visualforce, SOQL, SOSL, custom objects, workflows, and triggers across multiple enterprise projects."
+    },
+    {
+      "skill": "Custom objects",
+      "status": "Met",
+      "evidence": "Applied 'Force.com best practices for Apex development, declarative configuration, and custom object design' explicitly referenced across multiple engagements."
+    },
+    {
+      "skill": "Workflows",
+      "status": "Met",
+      "evidence": "Declarative configuration and workflow management listed in skills and referenced in platform governance work across all engagements."
+    },
+    {
+      "skill": "Triggers",
+      "status": "Met",
+      "evidence": "Developed 'Apex classes, triggers, Queueable Apex, and Batch Apex for high-volume financial workflows' at FinSure."
+    },
+    {
+      "skill": "SOQL",
+      "status": "Met",
+      "evidence": "Wrote 'complex SOQL and SOSL queries for bulk data operations, integration workflows, and reporting' at CVS Health and HSBC."
+    },
+    {
+      "skill": "SOSL",
+      "status": "Met",
+      "evidence": "SOSL explicitly listed and evidenced at both HSBC and CVS Health for data retrieval and integration workflows."
+    },
+    {
+      "skill": "Best practices and design patterns",
+      "status": "Met",
+      "evidence": "Applied 'Force.com best practices and design patterns' with governor limit compliance referenced consistently across all four client engagements."
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Advanced Administrator",
+      "tier": "Practitioner"
+    }
+  ],
+  "composite_score": 78.25,
+  "reasoning": "Strong hire \u2014 interview immediately. This candidate is a near-perfect match for the Salesforce Platform Manager role. The highest-signal differentiators are exceptional: 50+ Copado-managed releases at HSBC across 5 environments with zero unplanned production outages over 18 months, direct Salesforce Premier Support escalation experience on a global banking platform, and a documented CoE establishment at multiple NTT Data engagements. All 17 must-have skills are verifiably met with specific, quantified evidence. The only notable gaps are the absence of hands-on Data Cloud experience (a nice-to-have) and the lack of the Salesforce Certified Development Lifecycle and Deployment Designer certification \u2014 neither of which is disqualifying. With 6.5 years of directly relevant platform management experience, Copado at expert level, and a proven track record in business-critical environments, this candidate exceeds the minimum bar. Move to technical interview immediately.",
+  "strengths": [
+    "COPADO MASTERY AT SCALE: Managed 50+ end-to-end Salesforce releases at HSBC using Copado across 5 environments \u2014 Dev, SIT, UAT, Pre-Production, Production \u2014 with zero unplanned production outages over 18 months, including major seasonal updates, continuous CI/CD delivery, and emergency hotfix deployments. This is the highest-signal differentiator for this role.",
+    "SALESFORCE PREMIER SUPPORT & PRODUCTION OWNERSHIP: Directly engaged Salesforce Premier Support tiers at HSBC to resolve platform-level issues, and served as primary custodian of business-critical environments across 4 enterprise engagements \u2014 banking, healthcare, retail, and financial services \u2014 with verifiable zero-finding compliance audit results.",
+    "CENTER OF EXCELLENCE ESTABLISHMENT: Architected federated development strategies and multi-region branching governance at HSBC, established CoE frameworks and release governance SOPs at FinSure and Philippines Health Digital Care Platform \u2014 with developer enablement programs adopted as NTT Data's standard across Salesforce engagements."
+  ],
+  "gaps": [
+    "DATA CLOUD EXPERIENCE: The JD lists Data Cloud hands-on experience as a nice-to-have but also calls out 'Agentforce and Data Cloud' environment support as a core responsibility. There is zero mention of Data Cloud in this resume \u2014 this is a risk if the role's roadmap has heavy Data Cloud investment, and should be probed in interview to determine whether this is a blocker.",
+    "DEPLOYMENT DESIGNER CERTIFICATION ABSENT: The JD specifically calls out 'Salesforce Certified Development Lifecycle and Deployment Designer' as a nice-to-have. Given this candidate's depth in release management and Copado, the absence of this cert is a missed signal of formal credentialing. Copado Fundamentals I is present but is a foundational-level cert \u2014 encourage the candidate to pursue this certification if hired."
+  ],
+  "recommendation": "shortlist",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "Latest role ended March 2026 and JD specifies no max notice period \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "JD work structure is not specified as In-office, so location mismatch penalty does not apply."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 6.5 years of directly relevant experience, well above the 5-year minimum and above the 2.5-year hard filter threshold."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college exclusion or preference specified in the JD \u2014 no penalty or bonus applied."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Senior",
+  "role_level_match": "Match",
+  "tool_currency": "Current",
+  "key_tool_recency": "Current",
+  "cv_narrative_style": "Unknown",
+  "availability_signal": "Unknown",
+  "availability_reason": "",
+  "alternative_role_fit": "",
+  "rare_assets": [],
+  "self_reported_unverified": [],
+  "interview_flags": [],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-06T09:08:13.644045"
+}

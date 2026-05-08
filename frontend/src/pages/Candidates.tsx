@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API, getAuthHeaders } from '../utils/api';
-import { Upload, FileText, Search, Filter, Loader2, CheckCircle2, AlertCircle, User, Mail, Phone, MapPin, Calendar, Briefcase, GraduationCap } from 'lucide-react';
+import { Upload, FileText, Search, Loader2, CheckCircle2, AlertCircle, User, Mail, Phone, MapPin, Trash2, X } from 'lucide-react';
 
 interface Candidate {
   candidate_id: string;
@@ -27,6 +27,8 @@ const Candidates: React.FC = () => {
   const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
   const [search, setSearch] = useState('');
   const [file, setFile] = useState<File | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null); // candidate_id pending confirmation
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const fetchCandidates = async () => {
     try {
@@ -73,6 +75,19 @@ const Candidates: React.FC = () => {
       setStatus({ type: 'error', message: err.response?.data?.detail || 'Failed to process resume' });
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleDelete = async (candidateId: string) => {
+    setDeleting(candidateId);
+    try {
+      await axios.delete(`${API}/candidates/${candidateId}`, { headers: getAuthHeaders() });
+      setCandidates(prev => prev.filter(c => c.candidate_id !== candidateId));
+    } catch (err: any) {
+      setStatus({ type: 'error', message: err.response?.data?.detail || 'Failed to delete candidate' });
+    } finally {
+      setDeleting(null);
+      setDeleteConfirm(null);
     }
   };
 
@@ -215,6 +230,13 @@ const Candidates: React.FC = () => {
                             <span className="text-[10px] font-black uppercase bg-slate-800 text-slate-400 px-3 py-1 rounded-full border border-slate-700">
                               {c.college_tier || 'Tier 3'}
                             </span>
+                            <button
+                              onClick={() => setDeleteConfirm(c.candidate_id)}
+                              className="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                              title="Delete candidate"
+                            >
+                              <Trash2 size={14} />
+                            </button>
                           </div>
                         </div>
 
@@ -258,6 +280,48 @@ const Candidates: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* Delete confirmation modal */}
+      {deleteConfirm && (() => {
+        const c = candidates.find(x => x.candidate_id === deleteConfirm);
+        return (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-[#1e293b] border border-red-500/30 rounded-2xl p-8 w-full max-w-md shadow-2xl">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="bg-red-600/20 p-2 rounded-xl">
+                    <Trash2 size={18} className="text-red-400" />
+                  </div>
+                  <h3 className="text-base font-bold text-white">Delete Candidate</h3>
+                </div>
+                <button onClick={() => setDeleteConfirm(null)} className="text-slate-400 hover:text-white">
+                  <X size={18} />
+                </button>
+              </div>
+              <p className="text-sm text-slate-300 mb-1">
+                Are you sure you want to permanently delete <span className="font-bold text-white">{c?.name || deleteConfirm}</span>?
+              </p>
+              <p className="text-xs text-red-400 mb-6">
+                This removes the candidate from the talent pool, all matching records, pipeline stages, and the resume file. This cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => handleDelete(deleteConfirm)}
+                  disabled={deleting === deleteConfirm}
+                  className="flex-1 py-3 bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white text-sm font-bold rounded-xl transition-colors"
+                >
+                  {deleting === deleteConfirm ? 'Deleting…' : 'Yes, Delete Permanently'}
+                </button>
+                <button
+                  onClick={() => setDeleteConfirm(null)}
+                  className="px-5 py-3 text-slate-400 hover:text-white text-sm rounded-xl border border-slate-700/50 hover:border-slate-500 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };

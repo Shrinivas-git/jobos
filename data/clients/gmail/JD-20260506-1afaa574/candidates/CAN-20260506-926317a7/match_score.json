@@ -1,0 +1,178 @@
+{
+  "fitment_score": 58.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.3235294117647059,
+  "must_have_breakdown": [
+    {
+      "skill": "Salesforce Platform Management",
+      "status": "Met",
+      "evidence": "4+ years of Salesforce platform experience across multiple enterprise environments including sandbox management, environment refresh, and production support."
+    },
+    {
+      "skill": "Salesforce Architecture",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "5+ years experience in Salesforce Platform Management or Salesforce Architecture",
+      "status": "Partial",
+      "evidence": "Resume states '4+ years of hands-on Salesforce platform experience' \u2014 falls short of the 5-year minimum, though total IT experience is 6+ years."
+    },
+    {
+      "skill": "Expert-level proficiency with Copado for CI/CD and release orchestration",
+      "status": "Met",
+      "evidence": "Holds four Copado certifications (SFP and Metadata formats), managed end-to-end Copado deployments reducing deployment time by 30%, and has used Copado CLI and pipelines across two enterprise roles."
+    },
+    {
+      "skill": "Deep understanding of Salesforce multi-tenant architecture",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Governor limits understanding",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Environment management",
+      "status": "Met",
+      "evidence": "Conducted environment refresh activities across Salesforce orgs and managed sandbox management explicitly cited under technical skills and experience."
+    },
+    {
+      "skill": "Communication and ability to translate complex technical releases into business-friendly roadmaps",
+      "status": "Partial",
+      "evidence": "Evidence of stakeholder management and cross-functional collaboration cited but no explicit mention of translating technical releases into business roadmaps or executive communication."
+    },
+    {
+      "skill": "Experience managing Business Critical production environments",
+      "status": "Partial",
+      "evidence": "Provided 24/7 production support and delivered critical production releases but no explicit 'Business Critical' tier designation or scale metrics mentioned."
+    },
+    {
+      "skill": "Work with Salesforce's premier support tiers",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Salesforce.com development environment",
+      "status": "Partial",
+      "evidence": "Salesforce CRM and administration experience cited; intern role included coding and QA, but deep development environment work is not demonstrated at a senior level."
+    },
+    {
+      "skill": "Custom objects",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Workflows",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Triggers",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "SOQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "SOSL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Best practices and design patterns",
+      "status": "Partial",
+      "evidence": "Enforced 'release best practices and governance standards' in Copado pipelines, but no evidence of applying Salesforce development design patterns specifically."
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [
+    {
+      "name": "Copado Fundamentals I \u2013 Metadata Format",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II \u2013 Metadata Format",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Copado Fundamentals I \u2013 Source Format (SFP)",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II \u2013 Source Format (SFP)",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Platform Developer I",
+      "tier": "Practitioner"
+    }
+  ],
+  "composite_score": 46.73529411764706,
+  "reasoning": "Borderline \u2014 hold pending clarification on Salesforce development depth and architecture exposure. This candidate is a strong Copado specialist and release engineer, not a Salesforce Platform Manager. Her most differentiating signal is genuine Copado expertise across both SFP and Metadata formats with four certifications and a measurable 30% deployment time reduction \u2014 that is rare and directly relevant. However, the role demands a Platform Manager who can architect a federated development strategy, establish a Center of Excellence, and manage governor limits and multi-tenant architecture \u2014 none of which appear in this resume. The entire development stack required (custom objects, workflows, triggers, SOQL, SOSL, Apex, LWC) is absent from her profile. She also falls short at 4+ years of Salesforce-specific experience versus the 5-year minimum. With a 0.35 must-have coverage ratio and missing the architectural and development pillars of this senior role, she is operating at a Mid-level Release Engineer scope, not a Platform Manager scope. Do not advance for this specific role; redirect to a Salesforce DevOps Engineer or Release Manager opening where she would be a strong hire.",
+  "strengths": [
+    "COPADO MASTERY: Holds four Copado certifications spanning both SFP and Metadata formats, has actively managed Copado CI/CD pipelines across two enterprise roles, and delivered a verified 30% reduction in deployment time \u2014 a rare, quantified outcome that signals genuine platform depth, not credential collecting.",
+    "PRODUCTION RELEASE GOVERNANCE: Delivered 24/7 production support, managed hotfix coordination, conducted release risk assessments, and maintained multi-environment release schedules across enterprise telecom and tech clients \u2014 directly aligned to the production stability custodianship this role requires.",
+    "AGENTFORCE EXPOSURE: Explicitly executed Agentforce AI component deployments via VS Code and Copado CLI at Trimble \u2014 a cutting-edge capability listed as a nice-to-have that very few candidates at this level can demonstrate in a current production context."
+  ],
+  "gaps": [
+    "MISSING SALESFORCE DEVELOPMENT STACK: The role requires hands-on proficiency with custom objects, workflows, triggers, SOQL, SOSL, Apex, Visualforce, and LWC \u2014 none of these appear anywhere in the resume. A Platform Manager must understand what developers are deploying; without this foundation, she cannot architect a federated development strategy or govern a Center of Excellence effectively.",
+    "NO ARCHITECTURE OR COE EXPERIENCE: The core mandate of this role is architecting a modern development strategy and establishing a Center of Excellence. There is zero evidence of Salesforce architecture work, multi-tenant architecture depth, governor limits management, or strategic platform design \u2014 making her fundamentally mismatched for a 'Manager' and 'Architect' level scope."
+  ],
+  "recommendation": "hold",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "JD does not specify a maximum notice period, so no penalty is applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "JD does not specify a work structure or location requirement, so no location penalty applies."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 4+ years of Salesforce experience, which is above the half-of-minimum threshold of 2.5 years."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD specifies 'Any' gender preference, so no penalty is applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "JD specifies no college preference or exclusion, so no adjustment is applied."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Current",
+  "cv_narrative_style": "Unknown",
+  "availability_signal": "Unknown",
+  "availability_reason": "",
+  "alternative_role_fit": "",
+  "rare_assets": [],
+  "self_reported_unverified": [],
+  "interview_flags": [],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-06T09:11:53.252099"
+}

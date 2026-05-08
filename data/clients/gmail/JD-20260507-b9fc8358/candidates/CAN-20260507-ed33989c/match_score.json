@@ -1,0 +1,157 @@
+{
+  "fitment_score": 4.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "System engineering principles",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Knowledge of ASPICE",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ISO26262",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "System Requirements writing and System Architecture Design",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System (End User function) and Product knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience on system service function (Diagnostics, Flashability, FOTA, etc) development",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "CAN/LIN/Ethernet/LVDS",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Embedded System",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Basic Functional Safety and Cyber Security knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience in RADAR function validation (HIL and vehicle environment)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Requirement management tools DOORs, Code Beamer and Configuration management tools such as CoreALM",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Modeling tool Catia Magic",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [
+    {
+      "name": "Cisco Certified Support Technician \u2013 Networking 2025",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Oracle Cloud Infrastructure AI Foundations 2025 Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Oracle Cloud Infrastructure Certified Foundations Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "IT Specialist \u2013 Data Analytics (Certiport / Pearson VUE)",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 4.666666666666666,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a software/web developer and MCA student with no intersection with automotive radar systems engineering. Zero of 12 must-have skills are met \u2014 no ASPICE, no ISO26262, no RADAR domain knowledge, no embedded systems, no CAN/LIN/Ethernet protocols, no functional safety, no HIL validation, no DOORs or Catia Magic. The profile is centered on Python, FastAPI, React, and AI/ML for web applications. Even the academic background (MCA, BCA) is misaligned \u2014 this role requires automotive systems engineering experience. The email address on the resume matches the client email posting the job, suggesting this may be a test submission or accidental self-submission. Do not proceed \u2014 reject immediately.",
+  "strengths": [
+    "PYTHON AND AI/ML CAPABILITY: Demonstrates hands-on AI/ML work including a CNN-based speech enhancement system using PyTorch and Whisper ASR, with end-to-end pipeline development \u2014 irrelevant to this radar systems role but shows genuine technical depth in a different domain.",
+    "MICROSERVICES AND BACKEND DEVELOPMENT: Built a 13-container microservices environment with FastAPI, Qdrant, and Gemini API at Fidelitus Corp, showing architectural thinking \u2014 but entirely in web/cloud context, not embedded or automotive.",
+    "COMPETITIVE CODING RECOGNITION: Global Rank ~1600 in TCS CodeVita Season 11 Round 2 signals strong problem-solving ability \u2014 a transferable trait but insufficient to bridge the domain gap for a senior radar systems role."
+  ],
+  "gaps": [
+    "ZERO AUTOMOTIVE/RADAR DOMAIN EXPERIENCE: The role requires senior-level RADAR system function ownership including HIL validation, vehicle-level testing, ASPICE compliance, and ISO26262 functional safety. The candidate has no evidence of any automotive, embedded, or radar work anywhere in their history \u2014 this is a complete domain mismatch, not a gap that can be bridged.",
+    "NO EMBEDDED SYSTEMS OR AUTOMOTIVE PROTOCOLS KNOWLEDGE: CAN, LIN, Ethernet (automotive), LVDS, diagnostics, FOTA, and flashability are all mandatory. The candidate's entire stack is web-based (React, FastAPI, MongoDB) with no embedded or hardware-adjacent experience \u2014 this is disqualifying at the foundational level."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated; candidate appears to be a student with an internship ending June 2026, so no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office presence in Chennai; candidate is based in Bengaluru."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "-10",
+      "reason": "JD requires 4 years relevant experience; candidate has zero relevant automotive/radar experience and is currently pursuing an MCA degree."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' so no penalty applies."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch",
+    "Experience below minimum"
+  ],
+  "role_level_detected": "Junior",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Available now",
+  "availability_reason": "Current internship at Fidelitus Corp ends June 2026 and candidate is an MCA student \u2014 effectively available immediately for a full-time role after that date.",
+  "alternative_role_fit": "Junior Python/AI Developer or Junior Backend Engineer",
+  "rare_assets": [],
+  "self_reported_unverified": [
+    "Selected by college for technical capability and reliability to work on the College ERP application \u2014 no verifying details such as scope, users impacted, or supervisor confirmation.",
+    "Core member of the JobOS product team at Fidelitus Corp \u2014 intern tenure starts April 2026 (future-dated at time of evaluation), making actual contribution unverifiable."
+  ],
+  "interview_flags": [
+    "Probe why this candidate applied for a senior automotive radar systems role given zero domain overlap \u2014 possible accidental or test submission given the email matches the client who posted the JD.",
+    "Fidelitus Corp internship is dated April 2026 to June 2026 \u2014 this is a future role at the time of most evaluations; confirm whether this is accurate or a data entry error.",
+    "Ask whether candidate has any exposure to embedded C, AUTOSAR, or automotive protocols through coursework or self-study not mentioned in the resume.",
+    "Clarify actual scope of the DSU ERP Automation Module \u2014 'selected by college' is a strong claim for a student; verify deliverables and real-world deployment status.",
+    "Confirm whether the candidate understands the nature of this role (automotive radar systems engineering at senior level) before investing any further recruiter time."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:30:36.601373"
+}

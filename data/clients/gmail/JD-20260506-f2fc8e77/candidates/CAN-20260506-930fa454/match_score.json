@@ -1,0 +1,113 @@
+{
+  "fitment_score": 42.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.35714285714285715,
+  "must_have_breakdown": [
+    {
+      "skill": "8+ years of experience in Car Rental / Fleet Management / Mobility industry",
+      "status": "Partial",
+      "evidence": "Candidate has ~9 years in Facilities and Transport Management, but focused on employee/corporate cab operations (IT company transport), not car rental or fleet management as a business."
+    },
+    {
+      "skill": "Strong experience in Operations Management + Sales / Business Development",
+      "status": "Partial",
+      "evidence": "Operations management is evident across all roles, but zero evidence of Sales or Business Development activity anywhere in the resume."
+    },
+    {
+      "skill": "Proven track record in P&L ownership and profitability management",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience handling corporate clients / B2B accounts",
+      "status": "Partial",
+      "evidence": "Managed corporate transport bookings and vendor billing at Ventra Health and EnviriIndia, but as an internal ops function, not as a revenue-generating B2B account manager."
+    },
+    {
+      "skill": "Strong leadership and team management experience",
+      "status": "Partial",
+      "evidence": "Holds 'Team Lead' title at Ventra Health with manpower management and team leadership listed, but no team size or direct reportee count mentioned."
+    },
+    {
+      "skill": "Good commercial acumen and negotiation skills",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Ability to work in a fast-paced target-driven environment",
+      "status": "Partial",
+      "evidence": "Managed 24/7 transport for 4000 employees at Cognizant, indicating operational pressure handling, but no evidence of target-driven sales or revenue metrics."
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [],
+  "composite_score": 36.738095238095234,
+  "reasoning": "Reject \u2014 wrong role level and scope. This candidate is an operations executor, not a Profit Centre Head. The JD demands P&L ownership, B2B sales, and branch profitability accountability \u2014 none of which appear anywhere in this resume. The candidate's 9 years is entirely in corporate employee transport operations (IT sector cab management), not in car rental or mobility-as-a-service, which the recruiter has explicitly flagged as a must-have domain. There is no evidence of revenue generation, sales pipeline ownership, or P&L management \u2014 the three most critical requirements for a Branch Head role. The highest-signal strength here is operational process management (MIS, vendor coordination, fleet compliance), but that maps to a Senior Transport Executive, not a Profit Centre Head. Unless the hiring pool is completely dry, pass on this candidate.",
+  "strengths": [
+    "FLEET & TRANSPORT OPERATIONS DEPTH: Nine years of end-to-end transport operations across Cognizant (4000-employee fleet, 24/7), RouteMatic, and EnviriIndia \u2014 covering vendor management, GPS tracking, compliance, EHS audits, and full MIS ownership, which gives a solid operational foundation.",
+    "COMPLIANCE AND SAFETY MANAGEMENT: Consistent evidence of driver training, vehicle safety checks, EHS audits, and female employee safety protocols across multiple employers, indicating disciplined process ownership in a regulated transport environment.",
+    "FACILITIES + TRANSPORT DUAL CAPABILITY: Manages both FM and transport functions simultaneously at Ventra Health and EnviriIndia, including budgeting, vendor contracts, and petty cash \u2014 showing broader operational accountability beyond pure transport."
+  ],
+  "gaps": [
+    "NO P&L OR REVENUE OWNERSHIP: The Profit Centre Head role requires full branch P&L accountability and revenue growth targets \u2014 this candidate has never owned a P&L, driven B2B sales, or been accountable for branch profitability in any capacity. This is the single most disqualifying gap.",
+    "WRONG INDUSTRY SEGMENT: Recruiter explicitly wants passenger management from car rental/fleet mobility (not goods, Rapido, or Uber) \u2014 this candidate's entire career is in IT-company internal employee transport, which is a cost-centre support function, not a commercial mobility business. Domain fit is fundamentally misaligned."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "Latest role ended March 2026 and candidate appears currently between roles, so no notice period penalty applies."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "No location stated on resume, but Cognizant and other employers suggest Hyderabad presence \u2014 cannot confirm mismatch, so no penalty applied."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 9 years total experience, well above the 4-year minimum threshold (half of 4 relevant years required)."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any', so no penalty applies."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Available now",
+  "availability_reason": "Latest role at Ventra Health ended March 2026 \u2014 candidate is currently between roles.",
+  "alternative_role_fit": "Senior Transport Operations Executive",
+  "rare_assets": [],
+  "self_reported_unverified": [
+    "Team leadership claim at Ventra Health \u2014 no team size, direct reports count, or org structure provided to validate scope of leadership.",
+    "Budgeting and cost control listed as a responsibility \u2014 no budget size, savings achieved, or financial outcomes quantified anywhere.",
+    "End-to-end MIS ownership claimed repeatedly \u2014 no examples of dashboards built, reporting tools used, or business decisions influenced by MIS outputs."
+  ],
+  "interview_flags": [
+    "Ask what the actual team size was under direct management at Ventra Health and what decisions the candidate owned vs. escalated.",
+    "Probe whether any experience involved commercial car rental, leasing, or mobility-as-a-service clients \u2014 as opposed to internal IT company transport.",
+    "Ask directly: has the candidate ever owned a revenue target, a sales quota, or a P&L line? What was the result?",
+    "Clarify the gap and role overlap: Ventra Health is listed as Aug 2024 to March 2026 \u2014 verify if March 2026 is accurate or a typo for 2025.",
+    "Ask what 'budgeting and cost control' meant in practice \u2014 what was the budget size, who approved it, and what cost reductions were achieved?"
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-06T11:41:59.894917"
+}

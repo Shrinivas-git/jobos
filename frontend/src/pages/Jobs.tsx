@@ -35,6 +35,7 @@ const Jobs: React.FC = () => {
   const [preferredCompanyType, setPreferredCompanyType] = useState<string[]>([]);
   const [preferredTeamSize, setPreferredTeamSize] = useState('Any');
   const [roleType, setRoleType] = useState('Any');
+  const [recruiterNotes, setRecruiterNotes] = useState('');
 
   const fetchJDs = async () => {
     try {
@@ -76,6 +77,7 @@ const Jobs: React.FC = () => {
     setPreferredCompanyType([]);
     setPreferredTeamSize('Any');
     setRoleType('Any');
+    setRecruiterNotes('');
   };
 
   const handleUploadSubmit = async (e: React.FormEvent) => {
@@ -94,6 +96,7 @@ const Jobs: React.FC = () => {
     preferredCompanyType.forEach(t => formData.append('preferred_company_type', t));
     formData.append('college_preference', collegePreference);
     formData.append('college_exclusion', collegeExclusion);
+    if (recruiterNotes.trim()) formData.append('recruiter_notes', recruiterNotes.trim());
 
     try {
       await axios.post(`${API}/jd/upload`, formData, {
@@ -138,7 +141,8 @@ const Jobs: React.FC = () => {
       college_exclusion: collegeExclusion,
       preferred_company_type: preferredCompanyType,
       preferred_team_size: preferredTeamSize,
-      role_type: roleType
+      role_type: roleType,
+      ...(recruiterNotes.trim() ? { recruiter_notes: recruiterNotes.trim() } : {}),
     };
 
     try {
@@ -538,6 +542,20 @@ const Jobs: React.FC = () => {
               </div>
             )}
 
+            {/* Recruiter Notes — shared between Upload and Direct tabs */}
+            <div>
+              <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">
+                Recruiter Notes <span className="text-slate-500 normal-case font-normal">(Optional)</span>
+              </label>
+              <textarea
+                value={recruiterNotes}
+                onChange={(e) => setRecruiterNotes(e.target.value)}
+                rows={3}
+                placeholder="Describe the ideal candidate in your own words — personality, specific expectations, deal-breakers, or anything the JD doesn't capture..."
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors resize-none placeholder-slate-600"
+              />
+            </div>
+
             {status && (
               <div className={`p-4 rounded-xl flex items-center space-x-3 ${status.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
                 {status.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
@@ -566,7 +584,7 @@ const Jobs: React.FC = () => {
               Active Job Requirements
             </h3>
             <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest bg-slate-900 px-3 py-1 rounded-full border border-slate-800">
-              {jds.length} Total
+              {jds.filter((jd: any) => (jd.num_positions || 1) > (jd.joined_count || 0)).length} Active
             </span>
           </div>
 
@@ -581,22 +599,47 @@ const Jobs: React.FC = () => {
               </div>
               <p className="text-slate-400 font-medium max-w-xs">No job descriptions found. Start by uploading one or check the email intake address.</p>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {jds.map((jd, i) => (
-                <div key={i} className="flex flex-col p-6 bg-slate-900/40 rounded-2xl border border-slate-800/50 hover:border-slate-700 transition-all group relative overflow-hidden">
+          ) : (() => {
+            const isFilled = (jd: any) => (jd.num_positions || 1) <= (jd.joined_count || 0);
+            const activeJds = jds.filter(jd => !isFilled(jd));
+            const filledJds = jds.filter(jd => isFilled(jd));
+
+            const renderCard = (jd: any, i: number) => {
+              const filled = isFilled(jd);
+              return (
+                <div key={i} className={`flex flex-col p-6 rounded-2xl border transition-all group relative overflow-hidden ${filled ? 'bg-slate-900/20 border-slate-800/30 opacity-75' : 'bg-slate-900/40 border-slate-800/50 hover:border-slate-700'}`}>
                   <div className="flex items-start justify-between mb-4">
-                    <div className="bg-slate-800 p-3 rounded-xl text-blue-400 border border-slate-700">
+                    <div className={`p-3 rounded-xl border ${filled ? 'bg-slate-800/50 text-slate-500 border-slate-700/50' : 'bg-slate-800 text-blue-400 border-slate-700'}`}>
                       <FileText size={20} />
                     </div>
-                    <div className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border ${
-                      jd.status === 'received' ? 'text-blue-400 border-blue-500/20 bg-blue-500/5' : 'text-emerald-400 border-emerald-500/20 bg-emerald-500/5'
-                    }`}>
-                      {jd.status}
+                    <div className="flex items-center gap-2">
+                      {filled && (
+                        <span className="text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border text-emerald-400 border-emerald-500/30 bg-emerald-500/10">
+                          ✓ Filled
+                        </span>
+                      )}
+                      <div className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border ${
+                        jd.status === 'received' ? 'text-blue-400 border-blue-500/20 bg-blue-500/5' : 'text-emerald-400 border-emerald-500/20 bg-emerald-500/5'
+                      }`}>
+                        {jd.status}
+                      </div>
                     </div>
                   </div>
-                  
-                  <h5 className="font-bold text-white group-hover:text-blue-400 transition-colors mb-2 truncate pr-4">{jd.title}</h5>
+
+                  <h5 className={`font-bold mb-2 truncate pr-4 ${filled ? 'text-slate-400' : 'text-white group-hover:text-blue-400'} transition-colors`}>{jd.title}</h5>
+
+                  {/* Positions progress */}
+                  {jd.num_positions && (
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${filled ? 'bg-emerald-500' : 'bg-blue-500'}`}
+                          style={{ width: `${Math.min(100, ((jd.joined_count || 0) / jd.num_positions) * 100)}%` }}
+                        />
+                      </div>
+                      <span className="text-[9px] text-slate-400 font-bold shrink-0">{jd.joined_count || 0}/{jd.num_positions} joined</span>
+                    </div>
+                  )}
 
                   {jd.quality_flag && (
                     <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-yellow-500/10 border border-yellow-500/30 rounded-lg mt-2 mb-2">
@@ -622,16 +665,40 @@ const Jobs: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Obfuscation Badge */}
                   {jd.structured_data?.obfuscate && (
                     <div className="absolute top-2 right-12">
                       <Shield size={12} className="text-blue-500/50" />
                     </div>
                   )}
                 </div>
-              ))}
-            </div>
-          )}
+              );
+            };
+
+            return (
+              <div className="space-y-6">
+                {/* Active JDs */}
+                {activeJds.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {activeJds.map((jd, i) => renderCard(jd, i))}
+                  </div>
+                )}
+
+                {/* Filled JDs */}
+                {filledJds.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="h-px flex-1 bg-slate-700/50" />
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Filled Positions ({filledJds.length})</span>
+                      <div className="h-px flex-1 bg-slate-700/50" />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {filledJds.map((jd, i) => renderCard(jd, i))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
         </div>
       </div>
     </div>

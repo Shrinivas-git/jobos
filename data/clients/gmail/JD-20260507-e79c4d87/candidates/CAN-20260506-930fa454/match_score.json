@@ -1,0 +1,146 @@
+{
+  "fitment_score": 2.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Python (3.x)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Django",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Flask",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "FastAPI",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MySQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "PostgreSQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MongoDB",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "SQLite",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Git/GitHub/Bitbucket",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Docker",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Jenkins",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RESTful APIs",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "OOP / Data Structures / Algorithms",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Unit Testing (PyTest/Unittest)",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [],
+  "composite_score": 3.1666666666666665,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate has nine years of Facilities and Transportation Management experience and holds a B.Com (Computers) degree. There is zero evidence of Python development, any programming language, web frameworks, databases, version control tools, or AI/ML model training \u2014 every single must-have skill is absent. The recruiter explicitly wants someone with Python projects and AI model training experience; this candidate has neither. No further consideration is warranted regardless of how thin the pipeline is.",
+  "strengths": [
+    "OPERATIONAL SCALE: Managed end-to-end transport operations for 4,000+ employees at Cognizant across 24x7 shifts, demonstrating ability to handle large-scale logistics \u2014 irrelevant to this role but evidence of operational competence.",
+    "TEAM LEADERSHIP: Held a Team Lead title at Ventra Health covering FM and Transport, including vendor management, budgeting, and manpower management \u2014 shows seniority in their own domain, not transferable here.",
+    "MIS REPORTING: Consistent end-to-end MIS ownership across multiple employers including KPI, OTA/OTD, compliance summaries \u2014 indicates data literacy at a basic level, but far below the technical bar required."
+  ],
+  "gaps": [
+    "ZERO PYTHON OR SOFTWARE DEVELOPMENT SKILLS: Not a single line of code, framework, database, or developer tool appears anywhere in this resume. This is the core requirement for a Python Developer role and it is entirely absent \u2014 disqualifying.",
+    "NO AI/ML EXPERIENCE: The recruiter specifically requires Python projects and AI model training experience. This candidate has no exposure to machine learning, data science, or any adjacent technical discipline \u2014 a complete miss against the hiring manager's top priority."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated; latest role end date is March 2026, so candidate appears currently between roles \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate location is not stated in the resume, so location match cannot be confirmed, but penalty is waived given the candidate is already rejected on domain grounds."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "JD requires 0 years relevant experience as minimum, so no experience gap penalty applies."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is Any \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in JD \u2014 no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Lead",
+  "role_level_match": "Over-qualified",
+  "tool_currency": "None",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Available now",
+  "availability_reason": "Latest role at Ventra Health listed end date as March 2026, indicating the candidate is currently between roles.",
+  "alternative_role_fit": "Facilities & Transport Manager",
+  "rare_assets": [],
+  "self_reported_unverified": [
+    "Claims transport operations for '4,000 employees 24x7' at Cognizant \u2014 scale is impressive but no supporting metrics or management sign-off referenced.",
+    "States role tenure at Ventra Health as 'Aug 2024 \u2013 March 2026' \u2014 end date of March 2026 is in the future relative to most evaluation timelines, raising questions about current employment status."
+  ],
+  "interview_flags": [
+    "Clarify why the candidate applied for a Python Developer role given no technical background \u2014 possible mismatch in application targeting.",
+    "Confirm actual end date at Ventra Health (listed as March 2026) \u2014 is this a current role or has the candidate already left?",
+    "Probe whether 'B Com Computers' involved any programming coursework \u2014 if so, is there any self-taught or hobbyist Python experience not reflected on the resume?",
+    "Ask directly: have you ever written Python code, built a software project, or worked with any AI/ML tools?"
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:57:10.223318"
+}

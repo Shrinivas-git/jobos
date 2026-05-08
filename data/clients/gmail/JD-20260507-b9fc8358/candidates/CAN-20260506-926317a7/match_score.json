@@ -1,0 +1,160 @@
+{
+  "fitment_score": 4.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "System engineering principles",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Knowledge of ASPICE and ISO26262",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "System Requirements writing and System Architecture Design",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System (End User function) and Product knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience on system service function (Diagnostics, Flashability, FOTA, etc) development",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "CAN/LIN/Ethernet/LVDS",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Embedded System",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Basic Functional Safety and Cyber Security knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience in RADAR function validation (HIL and vehicle environment)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Requirement management tools DOORs, Code Beamer and configuration management tools such as CoreALM",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Modeling tool Catia Magic",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 3,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [
+    {
+      "name": "Copado Fundamentals I \u2013 Metadata Format",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II \u2013 Metadata Format",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Copado Fundamentals I \u2013 Source Format (SFP)",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II \u2013 Source Format (SFP)",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Platform Developer I",
+      "tier": "Practitioner"
+    }
+  ],
+  "composite_score": 6.333333333333332,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Salesforce Copado DevOps/Release Engineer with zero overlap with the automotive radar systems engineering role. Every single must-have \u2014 RADAR system knowledge, ASPICE, ISO26262, Embedded Systems, CAN/LIN/Ethernet/LVDS, Functional Safety, DOORS/CodeBeamer, Catia Magic \u2014 is completely absent from the resume. The candidate's entire career is Salesforce CRM platform deployments and CI/CD pipelines in telecom and enterprise software. There is no crossover to automotive systems engineering, ADAS, or embedded development. Do not shortlist \u2014 this is a domain mismatch, not a seniority mismatch.",
+  "strengths": [
+    "COPADO DEVOPS DEPTH: 4+ years of hands-on Copado CI/CD pipeline ownership across SFP and Metadata formats with a measurable 30% reduction in deployment time \u2014 strong signal within Salesforce DevOps domain.",
+    "RELEASE GOVERNANCE: Led enterprise-level Salesforce release management at Atos Syntel for telecom clients with 24/7 production support, risk assessments, and hotfix coordination \u2014 demonstrates senior-level operational maturity.",
+    "CERTIFICATIONS BREADTH: Holds four Copado certifications (Fundamentals I and II in both Metadata and Source Format) plus Salesforce Admin and Platform Developer I \u2014 well-credentialed within the Salesforce ecosystem."
+  ],
+  "gaps": [
+    "ZERO RADAR/AUTOMOTIVE DOMAIN EXPERIENCE: The role requires deep RADAR system product knowledge, HIL and vehicle validation experience, and automotive-specific protocols (CAN/LIN/Ethernet/LVDS). The candidate has no exposure to any of these \u2014 this is a fundamental domain disqualification.",
+    "NO EMBEDDED OR SYSTEMS ENGINEERING BACKGROUND: The JD demands ASPICE, ISO26262, Functional Safety, Cyber Security, DOORS, CodeBeamer, and Catia Magic. The candidate's entire skillset is cloud-based Salesforce CRM. There is no pathway to bridge this gap without a complete career change."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated in the resume; no JD maximum specified, so no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate's most recent role is listed as Chennai, which matches the JD location requirement."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 6+ years of IT experience, exceeding the minimum threshold of half the 4-year relevant experience requirement."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD specifies 'Any' gender preference, so no penalty is applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD, so no adjustment is applied."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Senior",
+  "role_level_match": "Match",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at Trimble Inc. is listed as March 2025 to Present with no end date or notice period stated.",
+  "alternative_role_fit": "Senior Salesforce Release Engineer / Salesforce DevOps Lead",
+  "rare_assets": [
+    "Dual-format Copado certification coverage (both SFP and Metadata Format at Fundamentals I and II levels) \u2014 uncommon combination in the Salesforce DevOps market."
+  ],
+  "self_reported_unverified": [
+    "30% reduction in deployment time \u2014 no baseline metrics, team size, or audit trail provided to substantiate this claim.",
+    "Certificate of Appreciation for Trimble Console Platform \u2014 award described without scope, delivery criteria, or independent validation.",
+    "Bronze Accolade Award at Eviden/Atos Group \u2014 described as 'exceptional contribution to organisational activities' with no specific technical outcome linked."
+  ],
+  "interview_flags": [
+    "Probe whether the candidate has any awareness of automotive or embedded systems \u2014 even at a hobbyist or academic level \u2014 to rule out any hidden domain crossover.",
+    "Clarify the actual scale of deployments managed: number of orgs, user counts, and release frequency to validate the seniority claim.",
+    "Ask how the 30% deployment time reduction was measured \u2014 what was the baseline, what changed, and who validated the outcome.",
+    "Explore the MBA in HR Management (December 2025) \u2014 is the candidate pivoting away from engineering, and does this affect long-term retention in a technical role?",
+    "Verify gap period: internship ended August 2020, next role started March 2021 \u2014 clarify what the candidate did during this 7-month gap."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:31:15.368162"
+}

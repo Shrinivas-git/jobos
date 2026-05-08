@@ -1,0 +1,196 @@
+{
+  "fitment_score": 8.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.13333333333333333,
+  "must_have_breakdown": [
+    {
+      "skill": "Python (3.x)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Django",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Flask",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "FastAPI",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MySQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "PostgreSQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MongoDB",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "SQLite",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Git/GitHub/Bitbucket",
+      "status": "Met",
+      "evidence": "Resume explicitly lists GitHub and Bitbucket under tools and mentions 'Managed version control using GitHub' at CGI."
+    },
+    {
+      "skill": "Docker",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Jenkins",
+      "status": "Partial",
+      "evidence": "Jenkins is listed as a DevOps tool and used in the PMI project for CI/CD pipelines, but strictly for Salesforce deployments, not Python back-end services."
+    },
+    {
+      "skill": "HTML5/CSS3/JavaScript",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RESTful APIs/JSON",
+      "status": "Partial",
+      "evidence": "Postman is listed in tools, implying API interaction, but no evidence of building or designing RESTful APIs or working with JSON programmatically."
+    },
+    {
+      "skill": "OOP/Data Structures/Algorithms",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Unit Testing (PyTest/Unittest)",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 8,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Platform Developer I",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce App Builder",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Business Analyst",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Agentforce Specialist",
+      "tier": "Expert"
+    },
+    {
+      "name": "Salesforce AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Copado AI Certified",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Infosys Agile Certification",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Flosum Professional Level Certification",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Flosum Expert Level Certification",
+      "tier": "Expert"
+    },
+    {
+      "name": "Copado Mentorship Program (Mentor selection)",
+      "tier": "Mentor"
+    }
+  ],
+  "composite_score": 12.333333333333334,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a 7-year Salesforce Release and DevOps Specialist with zero evidence of Python development, back-end frameworks, databases (MySQL/PostgreSQL/MongoDB), or unit testing with PyTest. The JD requires a Junior Python Developer who can build back-end services, write Django/Flask/FastAPI code, and \u2014 per recruiter notes \u2014 has Python projects and AI model training experience. Vaishnavi's strongest signals (Copado mastery, Salesforce CI/CD, 7 years at Technology Lead level) are entirely irrelevant to this role. The only marginal overlap is Git/Bitbucket version control and peripheral API exposure via Postman. Do not proceed \u2014 this is a domain mismatch, not a level mismatch.",
+  "strengths": [
+    "SALESFORCE DEVOPS MASTERY: 7 years of hands-on CI/CD automation using Copado, Flosum, and Jenkins across major clients including Apple and Philip Morris International \u2014 but this is entirely irrelevant to a Python back-end developer role.",
+    "GIT/VERSION CONTROL: Demonstrated use of GitHub and Bitbucket across multiple enterprise projects at Infosys and CGI, which is the only transferable skill to the JD requirements.",
+    "CERTIFICATIONS DEPTH: Holds 13+ Salesforce and DevOps certifications including Copado Mentor-level recognition \u2014 impressive pedigree, but exclusively in a domain unrelated to this Python Developer role."
+  ],
+  "gaps": [
+    "NO PYTHON SKILLS WHATSOEVER: The JD's core requirement is Python (3.x) with frameworks like Django, Flask, or FastAPI. The resume contains zero mention of Python, any back-end framework, or related database work \u2014 this is an absolute disqualifier for a Python Developer role.",
+    "NO AI MODEL TRAINING OR PYTHON PROJECTS: The recruiter explicitly wants candidates who have built Python projects and trained AI models. This candidate's only AI exposure is a 'Salesforce AI Associate' certification and Agentforce \u2014 neither involves Python or ML model training, making her a complete mismatch on the recruiter's priority criteria."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated in resume; JD has no specified maximum, so no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate is based in Bengaluru/Bangalore, matching the JD's In-office Bangalore requirement."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "JD requires 0 relevant experience as minimum; no experience gap penalty applicable."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD specifies 'Any' gender preference; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion set in JD; Lovely Professional University is neither penalised nor rewarded."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Lead",
+  "role_level_match": "Over-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Unknown",
+  "availability_signal": "Unknown",
+  "availability_reason": "",
+  "alternative_role_fit": "",
+  "rare_assets": [],
+  "self_reported_unverified": [],
+  "interview_flags": [],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:55:31.933235"
+}

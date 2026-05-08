@@ -1,0 +1,75 @@
+{
+  "fitment_score": 62.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 59.4881388,
+  "reasoning": "Vaishnavi Gupta brings 7 years of Salesforce DevOps experience with strong hands-on expertise in Copado, CI/CD pipeline automation, and multi-org release management \u2014 all directly aligned with the JD's core requirements. She has worked on enterprise-scale clients (Apple, Philip Morris International, Advance Auto Parts) and holds an impressive stack of Salesforce and Copado certifications including Agentforce Specialist. However, she operates at a Technology Lead/Senior individual contributor level rather than a Platform Manager level \u2014 there is no evidence of team management, headcount ownership, Center of Excellence (CoE) establishment, or strategic governance responsibilities. Her background lacks explicit experience with Salesforce Data Cloud, premier support tier management, and translating technical releases into business-facing roadmaps. Additionally, her college (Lovely Professional University) is on the exclusion list, which triggers a mandatory penalty.",
+  "strengths": [
+    "Expert-level Copado proficiency: Holds Copado Fundamentals I & II, Copado AI Certified, and is a selected Copado Mentor \u2014 a rare, high-signal credential that demonstrates recognised expertise in the JD's primary CI/CD tool.",
+    "Broad enterprise client exposure: Delivered Salesforce DevOps for Apple, Philip Morris International, and Advance Auto Parts, demonstrating experience managing complex, multi-org production environments at scale.",
+    "Full-lifecycle release management: Has hands-on experience with cutover planning, pre/post deployment activities, hotfix management, and environment strategy across Dev-to-Production pipelines.",
+    "Agentforce and AI alignment: Certified Salesforce Agentforce Specialist and AI Associate, directly matching the JD's call-out for Agentforce and Data Cloud support \u2014 a differentiating and emerging skills area.",
+    "Extensive certification portfolio: Holds 10+ relevant Salesforce and DevOps certifications (Admin, PD1, App Builder, Business Analyst, Flosum Professional and Expert), indicating strong platform breadth and commitment to continuous learning."
+  ],
+  "gaps": [
+    "No people management or CoE leadership evidence: The JD requires establishing a Center of Excellence and managing product teams; Vaishnavi's resume shows no direct reports, team leadership, or governance framework ownership.",
+    "No Data Cloud experience mentioned: The JD explicitly calls out Data Cloud as a key platform in scope; there is zero mention of Data Cloud in the resume, which is a meaningful gap.",
+    "No business stakeholder or roadmap translation experience: The JD requires translating complex releases into business-friendly roadmaps; the resume is entirely technical and operational with no mention of executive communication or product roadmap ownership.",
+    "No Salesforce premier support tier management: The JD specifies experience working directly with Salesforce's premier support tiers for 'Business Critical' environments; this is absent from the resume.",
+    "Limited seniority signals and no management track: The candidate is titled 'Technology Lead' but shows no budget ownership, vendor management, or strategic platform governance responsibilities that would qualify her for a Senior Manager-level role."
+  ],
+  "recommendation": "hold",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period is stated in the resume and the JD does not specify a maximum notice period, so no penalty is applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "The JD does not specify a work structure or location, so no location-based penalty is applicable."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 7 years of experience, well above the minimum threshold of 2.5 years (half of the 5-year JD requirement)."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "The JD specifies 'Any' gender preference, so no gender-based penalty is applied."
+    },
+    {
+      "factor": "College",
+      "impact": "-10",
+      "reason": "Candidate's undergraduate institution, Lovely Professional University, is explicitly listed in the JD's college exclusion list."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Lead",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Unknown",
+  "rare_assets": [
+    "Selected as a Copado Mentor \u2014 a formal recognition by Copado itself, signalling top-tier expertise in the platform's ecosystem.",
+    "Dual Flosum certifications (Professional and Expert level) alongside Copado, making her proficient in two competing enterprise DevOps platforms.",
+    "Salesforce Agentforce Specialist certification \u2014 an emerging and scarce credential given how recently Agentforce was introduced to the market."
+  ],
+  "self_reported_unverified": [
+    "'Rise Insta Award' for exceptional performance \u2014 no context on the scope, criteria, or how competitive this award is within Infosys.",
+    "Claims of 'leading' Salesforce DevOps processes at PMI \u2014 no mention of team size, number of stakeholders managed, or scope of ownership.",
+    "POC evaluation for Apple comparing Copado and Flosum \u2014 scope, outcome, and decision-making authority in this POC are unverified."
+  ],
+  "interview_flags": [
+    "Probe whether she has ever managed direct reports or led a team \u2014 her title is 'Technology Lead' but no team size or people management evidence is visible.",
+    "Ask specifically about her experience with Salesforce Data Cloud, as it is a key JD requirement with zero mention in the resume.",
+    "Probe her actual authority level in the Apple engagement \u2014 she joined in August 2025 and appears to be in an assessment/discovery phase rather than delivery.",
+    "Ask how she has engaged with business stakeholders and translated release plans into non-technical roadmaps \u2014 the resume shows no evidence of this capability.",
+    "Clarify whether she has directly engaged with Salesforce's premier support team for Business Critical production issues, or if this was handled by others."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-05T10:57:52.245607"
+}

@@ -1,0 +1,183 @@
+{
+  "fitment_score": 4.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "System engineering principles",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Knowledge of ASPICE",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ISO26262",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "System Requirements writing and System Architecture Design",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System (End User function) and Product knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience on system service function (Diagnostics, Flashability, FOTA, etc) development",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "CAN/LIN/Ethernet/LVDS",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Embedded System",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Basic Functional Safety and Cyber Security knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience in RADAR function validation (in HIL and vehicle environment)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Requirement management tools DOORs, Code Beamer and Configuration management tools such as CoreALM",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Modeling tool Catia Magic",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 2,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 4,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Platform Developer I",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Platform App Builder",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Business Analyst",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified AI Specialist",
+      "tier": "Expert"
+    },
+    {
+      "name": "Salesforce Certified AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Salesforce Certified Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Microsoft Certified: Azure Fundamentals (AZ-900)",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 9.25,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Senior Salesforce Developer with 7 years in CRM platform engineering (Apex, LWC, Flows, DevOps). The JD demands an automotive radar systems engineer with ASPICE, ISO26262, embedded systems, CAN/LIN/Ethernet, HIL validation, DOORS, and RADAR product knowledge \u2014 none of which appear anywhere in this resume. The candidate's B.Tech in ECE is the only tangential connection and it is insufficient to bridge a 7-year career in Salesforce. There is zero coverage of any must-have skill, zero evidence of automotive or embedded domain experience, and zero evidence of systems engineering methodology. Do not proceed \u2014 this is a complete domain mismatch.",
+  "strengths": [
+    "SALESFORCE PLATFORM DEPTH: Led end-to-end delivery for a 1500+ user Salesforce org at IBM, architecting scalable Apex frameworks, Flow-first automation, and LDV optimization \u2014 genuinely senior-level CRM engineering but irrelevant to this automotive radar role.",
+    "DEVOPS AND DELIVERY OWNERSHIP: Acts as production owner at IBM using Copado for CI/CD across 500+ classes with 90%+ test coverage and a quantified 30% reduction in deployment defects \u2014 strong delivery signal for a Salesforce context only.",
+    "CERTIFICATION BREADTH: Holds 7 Salesforce certifications plus Copado Fundamentals I and II and Azure AZ-900, demonstrating structured learning and platform commitment \u2014 again, entirely in the wrong domain for this JD."
+  ],
+  "gaps": [
+    "ZERO AUTOMOTIVE/RADAR DOMAIN EXPERIENCE: The role requires RADAR system function ownership, ASPICE process compliance, ISO26262 functional safety, and HIL/vehicle validation experience. This candidate has spent 7 years exclusively in Salesforce CRM \u2014 there is no bridgeable overlap and no evidence of any automotive, embedded, or systems engineering work.",
+    "NO EMBEDDED OR COMMUNICATION PROTOCOL KNOWLEDGE: The JD mandates hands-on CAN/LIN/Ethernet/LVDS, embedded systems, diagnostics/FOTA service functions, and toolchains like DOORS and Catia Magic. This candidate's entire toolset is Salesforce-native (Apex, LWC, Copado, SFDX) with no hardware or protocol layer exposure whatsoever."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated in resume; no JD maximum specified, so no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office work in Chennai; candidate location is not stated in the resume, cannot confirm match."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 7+ years total experience, well above the minimum threshold relative to 4 years relevant experience required."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any'; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD; no penalty or bonus applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch"
+  ],
+  "role_level_detected": "Senior",
+  "role_level_match": "Match",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Unknown",
+  "availability_reason": "Candidate is currently employed at IBM (Nov 2021 to Present) with no notice period stated in the resume.",
+  "alternative_role_fit": "Senior Salesforce Developer / Salesforce Technical Lead",
+  "rare_assets": [
+    "Salesforce Certified AI Specialist \u2014 a recently launched and relatively rare certification signalling early adoption of Salesforce Einstein AI capabilities.",
+    "Copado Fundamentals I and II combined with production DevOps ownership \u2014 uncommon pairing that signals real release engineering accountability in Salesforce orgs."
+  ],
+  "self_reported_unverified": [
+    "Claim of mentoring 5 developers and reducing deployment defects by 30% \u2014 no corroborating detail on measurement methodology or timeframe.",
+    "'Production owner' responsibility at IBM \u2014 seniority of this ownership versus a formal team lead or architect designation is unclear from the resume."
+  ],
+  "interview_flags": [
+    "Ask why this candidate applied for an automotive radar systems engineering role given an entirely Salesforce-focused career \u2014 possible misapplication or recruiter error.",
+    "Probe whether the B.Tech ECE background involved any embedded systems or hardware coursework that might be relevant to automotive domains.",
+    "Clarify current location \u2014 Chennai-based or relocation intent must be confirmed before any further steps even for alternative Salesforce roles.",
+    "Verify the 30% defect reduction claim \u2014 ask for the baseline metric, measurement period, and who validated it.",
+    "Clarify the 'production owner' title at IBM \u2014 understand whether this was a formal role designation or an informal responsibility to assess actual seniority level."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:26:51.644141"
+}

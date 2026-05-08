@@ -1,0 +1,74 @@
+{
+  "fitment_score": 72.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 68.813657,
+  "reasoning": "Nandhini brings solid Copado DevOps and release management experience with 4+ years of direct Salesforce platform work and 6+ years in IT, which technically falls just short of the 5-year relevant experience requirement but is close enough to be credible. She demonstrates expert-level Copado proficiency across both SFP and Metadata formats, CI/CD pipeline management, sandbox governance, and multi-environment release coordination across enterprise domains. However, the role demands a 'Platform Manager' seniority \u2014 overseeing a Salesforce ecosystem at a strategic level, establishing a Center of Excellence, managing Business Critical production environments with premier Salesforce support engagement, and translating releases into business roadmaps \u2014 competencies that are either absent or thinly evidenced in her resume. Her background is strong on execution and engineering but light on platform strategy, stakeholder leadership, and managerial scope required for a Senior Manager designation.",
+  "strengths": [
+    "Expert Copado proficiency across both Source Format (SFP) and Metadata Format, with certifications in all four Copado Fundamentals modules \u2014 directly satisfying the JD's primary technical requirement and rare among candidates at this level.",
+    "Quantified delivery impact: reduced deployment time by 30% through Copado-driven release process optimization at Trimble Inc., demonstrating measurable operational improvement in a production environment.",
+    "Hands-on Agentforce AI component deployment experience is explicitly listed, which is a niche and directly relevant skill given the JD specifically calls out Agentforce and Data Cloud environment support.",
+    "End-to-end release lifecycle ownership across multiple orgs including hotfix coordination, environment refresh, risk assessment, and post-deployment validation \u2014 closely mirrors the JD's full release lifecycle management responsibility.",
+    "Cross-domain enterprise exposure (telecom at Atos Syntel, technology at Trimble Inc.) with 24/7 production support and incident management, indicating familiarity with high-availability, business-critical Salesforce environments."
+  ],
+  "gaps": [
+    "No evidence of Center of Excellence (CoE) establishment or governance framework design \u2014 the JD explicitly requires this as a core deliverable, and the resume reflects an executor role rather than a platform architect or strategist.",
+    "No mention of experience engaging with Salesforce premier support tiers or managing 'Business Critical' designated production orgs \u2014 a specific JD requirement that signals enterprise-scale platform accountability.",
+    "Data Cloud experience is absent from the resume despite the JD specifically citing Data Cloud environment management as a key responsibility alongside Agentforce.",
+    "The role is titled 'Platform Manager' at Senior level, implying people management, budget ownership, and cross-functional leadership; the resume shows mentoring of junior staff but no direct team management, headcount ownership, or program-level governance.",
+    "No demonstrated ability to translate technical releases into business-friendly roadmaps or communicate with executive stakeholders \u2014 the JD lists this as a 'proven ability' requirement, and the resume is entirely technically oriented without business stakeholder communication evidence."
+  ],
+  "recommendation": "hold",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period is stated in the resume and the JD does not specify a maximum, so no penalty is applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "The JD does not specify a work structure or location requirement, so no location penalty applies."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 4+ years of relevant Salesforce experience, which exceeds half of the JD's 5-year requirement threshold of 2.5 years."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "The JD specifies no gender preference ('Any'), so no penalty is applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "Candidate's institutions (Pondicherry University and Manakula Vinayagar Institute of Technology) are not on the exclusion list and no college preference is specified."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Unknown",
+  "rare_assets": [
+    "Holds all four Copado Fundamentals certifications (both SFP and Metadata Format, Levels I and II) \u2014 an unusually complete Copado certification stack rare even among specialist DevOps engineers.",
+    "Hands-on Agentforce AI component deployment experience via Copado CLI, a highly emergent and scarce capability in the Salesforce ecosystem as of 2025."
+  ],
+  "self_reported_unverified": [
+    "'Reducing deployment time by 30%' \u2014 cited at both Trimble and in the summary without supporting baseline metrics, team size context, or independent validation.",
+    "'Certificate of Appreciation for outstanding delivery of the Trimble Console Platform' \u2014 internal award with no scope, scale, or business impact context provided.",
+    "'24/7 production support' across multiple Salesforce orgs \u2014 scope of environments managed, org count, and team size are unquantified, making it difficult to assess actual operational complexity."
+  ],
+  "interview_flags": [
+    "Probe actual strategic scope: has she ever designed or led a Salesforce Center of Excellence from scratch, or only operated within one?",
+    "Ask about experience engaging with Salesforce's premier support tiers \u2014 can she describe a specific Business Critical escalation she managed directly with Salesforce?",
+    "Clarify Data Cloud exposure: the JD lists it explicitly, yet it is entirely absent from the resume \u2014 is there any unreported experience?",
+    "Explore the managerial dimension: has she ever owned a team budget, hired/fired, or held formal people management accountability beyond mentoring juniors?",
+    "Probe the 30% deployment time reduction claim: what was the baseline, what specific changes drove the improvement, and how was it measured?"
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-05T10:56:15.271486"
+}

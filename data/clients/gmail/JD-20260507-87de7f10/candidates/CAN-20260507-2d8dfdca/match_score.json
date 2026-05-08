@@ -1,0 +1,123 @@
+{
+  "fitment_score": 62.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.5714285714285714,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Met",
+      "evidence": "Resume lists C and Embedded C as primary programming languages with 6.5+ years of automotive embedded development."
+    },
+    {
+      "skill": "Well aware of MISRA coding Guideline",
+      "status": "Met",
+      "evidence": "MISRA (2004) is explicitly listed under Standards and referenced across multiple project roles."
+    },
+    {
+      "skill": "Experienced in Autosar",
+      "status": "Met",
+      "evidence": "Deep AUTOSAR involvement across all major roles \u2014 DCM stack, RTE configuration, EB Tresos, DaVinci Configurator \u2014 spanning 6.5 years."
+    },
+    {
+      "skill": "RTOS knowledge is mandatory",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ADAS knowledge is added advantage",
+      "status": "Partial",
+      "evidence": "Worked on Volvo EDSW/PESW project for Lane Departure Warning (ADAS feature) and HPC project covering RADAR/CAMERA/LIDAR sensors, but no deep ADAS algo work claimed."
+    },
+    {
+      "skill": "RADAR System knowledge",
+      "status": "Partial",
+      "evidence": "HPC project at Wipro mentions RADAR sensors in context of an autonomous vehicle HPC, but no standalone RADAR system design or development is evidenced."
+    },
+    {
+      "skill": "RADAR Algo development added advantage",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [
+    {
+      "name": "BEC Preliminary (Cambridge University)",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 35,
+  "reasoning": "Borderline \u2014 hold until RTOS experience and RADAR depth are verified. This candidate brings solid AUTOSAR credentials across 6.5 years with evidence of DCM stack, RTE configuration, and DaVinci toolchain work that directly maps to the JD's core requirements. The HPC project at Wipro (Motional client) is the single highest-signal differentiator \u2014 working on a platform that fuses RADAR, CAMERA, LIDAR, and GPS for an autonomous vehicle program shows domain adjacency to ADAS and RADAR. However, the most critical gap is a complete absence of RTOS knowledge anywhere on the resume \u2014 this is listed as mandatory in the JD, and its absence is a hard red flag for a senior embedded role in RADAR systems. RADAR algorithm development is also absent, though it was listed as 'added advantage'. The candidate's current location is Pune while the role is in Chennai (in-office), which adds a relocation friction risk. Shortlist only if the hiring manager confirms RTOS exposure can be assessed at interview and relocation to Chennai is feasible.",
+  "strengths": [
+    "AUTOSAR DEPTH: Six-plus years of hands-on AUTOSAR work across DCM stack, RTE, COM stack, and EB Tresos/DaVinci toolchain \u2014 directly evidenced in five distinct client projects including BMW CCU and a Motional autonomous HPC platform.",
+    "ADAS-ADJACENT SENSOR FUSION EXPOSURE: The Wipro/Motional HPC project involved RADAR, CAMERA, LIDAR, GPS, and MSP sensor integration on a high-performance autonomous compute platform, providing meaningful context for the ADAS/RADAR requirements in this JD.",
+    "MULTI-CLIENT AUTOMOTIVE PEDIGREE: Delivered AUTOSAR solutions for Tier-1 clients including ZF, BMW, Volvo (via L&T), and Motional \u2014 demonstrating adaptability across OEM standards and diagnostics specs (ISO-14229, ISO-26262)."
+  ],
+  "gaps": [
+    "RTOS KNOWLEDGE ABSENT: The JD states RTOS knowledge is mandatory, yet there is zero mention of any RTOS (FreeRTOS, OSEK, AUTOSAR OS, etc.) anywhere in the resume \u2014 this is a disqualifying omission for a senior embedded SW developer role in RADAR systems.",
+    "RADAR SYSTEM AND ALGO DEVELOPMENT: Despite touching a RADAR-integrated HPC platform, the candidate has no demonstrated ownership of RADAR system architecture or algorithm development \u2014 the role explicitly targets these skills, making this a significant technical gap."
+  ],
+  "recommendation": "hold",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated in the resume; candidate appears to have started a new role in Nov 2025, so no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office presence in Chennai; candidate's resume is placed in Pune, indicating a location mismatch."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 6.5+ years total and relevant AUTOSAR/embedded experience well above the 4-year relevant experience minimum."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD specifies 'Any' gender preference; no penalty applies."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD; no penalty or bonus applies."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch \u2014 candidate based in Pune, role requires in-office presence in Chennai"
+  ],
+  "role_level_detected": "Senior",
+  "role_level_match": "Match",
+  "tool_currency": "Current",
+  "key_tool_recency": "Current",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Unknown",
+  "availability_reason": "Candidate lists current role at S2 Technology Gmbh starting Nov 2025 with no end date or notice period mentioned.",
+  "alternative_role_fit": "",
+  "rare_assets": [
+    "Motional (autonomous vehicle OEM) HPC project exposure \u2014 sensor fusion platform covering RADAR, CAMERA, LIDAR, and GPS in an autonomous driving context is a rare resume credential at this level.",
+    "BMW BEV/PHEV Combined Charging Unit (CCU) integration experience \u2014 EV charging domain expertise is a high-demand niche in automotive embedded."
+  ],
+  "self_reported_unverified": [
+    "'Knowledge of computer vision, AI/ML model integration, and sensor fusion, stitching' \u2014 listed in summary but no project evidence or deliverables support this claim.",
+    "'Received Appreciation for organizing Autosar Training at ZF, ITC Hyderabad' \u2014 impressive but unverified; no supporting detail on scope or impact.",
+    "6.5+ years experience claimed but there is a gap between June 2019 (Epitome exit) and November 2020 (Supremology start) of approximately 17 months that is unexplained."
+  ],
+  "interview_flags": [
+    "Probe the 17-month gap between Epitome (June 2019) and Supremology (Nov 2020) \u2014 what was the candidate doing during this period?",
+    "Directly assess RTOS knowledge \u2014 ask for specific RTOS used, scheduling experience, and task/interrupt handling in an automotive context since it is completely absent from the resume.",
+    "Verify AI/ML and computer vision claims \u2014 listed in profile summary but no project deliverable or tool supports this; may be aspirational padding.",
+    "Clarify RADAR involvement in the Wipro/Motional HPC project \u2014 was the candidate actually developing RADAR software or simply integrating signals from RADAR sensors into the HPC?",
+    "Confirm relocation willingness to Chennai \u2014 candidate is currently in Pune and appears to have an active role; assess commitment to relocate before advancing."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T08:57:41.315185"
+}

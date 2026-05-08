@@ -1,0 +1,195 @@
+{
+  "fitment_score": 78.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.7045454545454546,
+  "must_have_breakdown": [
+    {
+      "skill": "Python (3.x)",
+      "status": "Met",
+      "evidence": "Python listed as primary language; used across multiple projects including FastAPI backend, AI speech system, and ERP automation."
+    },
+    {
+      "skill": "Django",
+      "status": "Met",
+      "evidence": "Django listed under Web/Frameworks in skills section."
+    },
+    {
+      "skill": "Flask",
+      "status": "Met",
+      "evidence": "Flask explicitly listed and used in the DSU ERP Automation Module project."
+    },
+    {
+      "skill": "FastAPI",
+      "status": "Met",
+      "evidence": "FastAPI used as the backend framework in the AI-Driven Speech Clarity Enhancement System project."
+    },
+    {
+      "skill": "MySQL",
+      "status": "Met",
+      "evidence": "MySQL listed under Databases and used in the AI Speech project."
+    },
+    {
+      "skill": "PostgreSQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MongoDB",
+      "status": "Met",
+      "evidence": "MongoDB listed under Databases and used in BookMyShow Clone and Netshot projects."
+    },
+    {
+      "skill": "SQLite",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Git",
+      "status": "Met",
+      "evidence": "Git listed under Tools with a GitHub profile linked on the resume."
+    },
+    {
+      "skill": "GitHub",
+      "status": "Met",
+      "evidence": "GitHub profile 'github.com/Shrinivas-git' explicitly listed on resume."
+    },
+    {
+      "skill": "Bitbucket",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Docker",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Jenkins",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "HTML5",
+      "status": "Met",
+      "evidence": "HTML5 listed under Web/Frameworks skills section."
+    },
+    {
+      "skill": "CSS3",
+      "status": "Met",
+      "evidence": "CSS3 listed under Web/Frameworks skills section."
+    },
+    {
+      "skill": "JavaScript",
+      "status": "Met",
+      "evidence": "JavaScript used in the Netshot Athletic Equipment Hub project."
+    },
+    {
+      "skill": "RESTful APIs",
+      "status": "Met",
+      "evidence": "REST APIs listed in Tools; FastAPI-based RESTful services built across multiple projects."
+    },
+    {
+      "skill": "JSON",
+      "status": "Partial",
+      "evidence": "Implied through REST API and FastAPI usage; not explicitly mentioned but standard in his stack."
+    },
+    {
+      "skill": "Object-Oriented Programming (OOP)",
+      "status": "Met",
+      "evidence": "OOP listed under Concepts in skills section."
+    },
+    {
+      "skill": "Data Structures",
+      "status": "Met",
+      "evidence": "DSA listed under Concepts; Global Rank ~1600 in TCS CodeVita Round 2 corroborates this."
+    },
+    {
+      "skill": "Algorithms",
+      "status": "Met",
+      "evidence": "DSA listed under Concepts; TCS CodeVita competitive coding achievement signals algorithmic competence."
+    },
+    {
+      "skill": "Unit Testing (PyTest/Unittest)",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [
+    {
+      "name": "Cisco Certified Support Technician \u2013 Networking 2025",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Oracle Cloud Infrastructure AI Foundations Associate 2025",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Oracle Cloud Infrastructure Certified Foundations Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "IT Specialist \u2013 Data Analytics (Certiport / Pearson VUE)",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 65.54545454545455,
+  "reasoning": "Shortlist with confidence \u2014 this candidate is a strong fit for a Junior Python Developer role with the added bonus of real AI/ML project experience the recruiter specifically asked for. His AI-Driven Speech Clarity Enhancement System is a standout differentiator: he built an end-to-end CNN-based audio model using PyTorch and Whisper, deployed via FastAPI \u2014 this is exactly the 'trained AI models + Python projects' combination the recruiter flagged. His framework coverage across Django, Flask, and FastAPI is rare for a fresher and directly maps to the JD. The ERP Automation project at DSU \u2014 where he was selected by the college \u2014 signals real-world deployment credibility beyond typical academic work. Key gaps are Docker/Jenkins (no DevOps exposure), PostgreSQL/SQLite, Bitbucket, and no evidence of PyTest/Unittest usage, which matters for a role that explicitly requires unit testing. These are learnable for a junior role. Schedule a technical screen immediately; probe his PyTest knowledge and Docker basics before extending an offer.",
+  "strengths": [
+    "AI MODEL TRAINING WITH PYTHON: Built a production-grade CNN-based speech enhancement model using PyTorch and Whisper ASR \u2014 directly fulfilling the recruiter's explicit requirement for someone who has trained AI models with Python. This is rare at junior level.",
+    "FULL-STACK PYTHON FRAMEWORK COVERAGE: Demonstrates hands-on project experience across all three JD-required Python frameworks \u2014 Django, Flask, and FastAPI \u2014 a breadth that most fresh graduates lack and that signals accelerated self-development.",
+    "COLLEGE-SELECTED ERP PROJECT: Chosen by Dayanand Sagar University for technical capability to build an ERP automation module with Flask and Python, indicating peer-recognised reliability and real-world deployment beyond classroom assignments."
+  ],
+  "gaps": [
+    "NO DOCKER/JENKINS OR DEVOPS TOOLING: Docker and Jenkins are explicitly listed in the JD skills; the candidate shows zero evidence of containerisation or CI/CD pipeline experience \u2014 a gap that will require onboarding investment and could slow contribution to team deployments.",
+    "NO UNIT TESTING EVIDENCE (PyTest/Unittest): The JD explicitly requires unit testing skills; no mention of PyTest or Unittest appears anywhere in the resume or project descriptions, which is a direct miss for a role where writing tests is a stated responsibility."
+  ],
+  "recommendation": "shortlist",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated and candidate is a student/fresher \u2014 assumed immediately available."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate is based in Bengaluru, matching the JD's in-office Bangalore requirement."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "JD requires 0 relevant experience; fresher candidate meets this threshold with no penalty."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD; no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Junior",
+  "role_level_match": "Match",
+  "tool_currency": "Current",
+  "key_tool_recency": "Current",
+  "cv_narrative_style": "Unknown",
+  "availability_signal": "Unknown",
+  "availability_reason": "",
+  "alternative_role_fit": "",
+  "rare_assets": [],
+  "self_reported_unverified": [],
+  "interview_flags": [],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:52:55.607480"
+}

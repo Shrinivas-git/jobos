@@ -1,0 +1,7 @@
+{
+  "jd_id": "JD-2026-TEST",
+  "title": "Python Developer",
+  "skills_required": ["python", "django", "postgresql"],
+  "location": "Bengaluru",
+  "experience_years": { "min": 2, "max": 6 }
+}

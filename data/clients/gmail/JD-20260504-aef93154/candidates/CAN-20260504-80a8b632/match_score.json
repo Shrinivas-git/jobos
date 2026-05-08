@@ -1,0 +1,24 @@
+{
+  "fitment_score": 80.0,
+  "completeness_score": 50.0,
+  "context_bonus": 0.0,
+  "composite_score": 67.813538,
+  "reasoning": "The candidate has relevant experience in Salesforce development, configuration, and customization, with expertise in Apex programming, SOQL, and Copado. However, there is limited evidence of experience in managing full lifecycles of Salesforce releases, establishing Centers of Excellence, and architecting federated development strategies.",
+  "strengths": [
+    "The candidate has expertise in Apex programming, SOQL, and Copado, with experience in designing and developing Apex classes, triggers, and validating them with test classes.",
+    "The candidate has worked on multiple Salesforce projects, including Macquarie Group, Google Play Merch, and Johnson & Johnson, demonstrating ability to work on diverse projects.",
+    "The candidate has experience in automation tools like Flows, Process Builder, and Workflows, with ability to create custom objects, datasets, and custom apps.",
+    "The candidate has excellent communication and interpersonal skills, with ability to work in collaborative team environments and articulate thoughts and ideas well.",
+    "The candidate has relevant certifications, including Salesforce Certified Platform Developer, Administrator, and Associate, demonstrating expertise in Salesforce technologies."
+  ],
+  "gaps": [
+    "The candidate lacks direct experience in serving as the primary custodian of environments to ensure production stability, which is a critical responsibility in the job description.",
+    "There is limited evidence of experience in establishing a Center of Excellence to enable product teams to deploy code safely, which is a key requirement in the job description.",
+    "The candidate has not demonstrated experience in architecting a modern, federated development strategy, which is a critical aspect of the job description.",
+    "There is no clear evidence of experience in managing the full lifecycle of Salesforce releases, including release management and testing environments.",
+    "The candidate lacks experience in streamlining release management and testing environments, which is an important aspect of the job description."
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T18:38:07.517607"
+}

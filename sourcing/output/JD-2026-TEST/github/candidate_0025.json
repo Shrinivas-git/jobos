@@ -1,0 +1,43 @@
+{
+  "_meta": {
+    "source": "github",
+    "jd_id": "JD-2026-TEST",
+    "fetched_at": "2026-05-08T06:33:00.531847",
+    "index": 25
+  },
+  "profile": {
+    "login": "koshikraj",
+    "id": 4023530,
+    "node_id": "MDQ6VXNlcjQwMjM1MzA=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/4023530?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/koshikraj",
+    "html_url": "https://github.com/koshikraj",
+    "followers_url": "https://api.github.com/users/koshikraj/followers",
+    "following_url": "https://api.github.com/users/koshikraj/following{/other_user}",
+    "gists_url": "https://api.github.com/users/koshikraj/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/koshikraj/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/koshikraj/subscriptions",
+    "organizations_url": "https://api.github.com/users/koshikraj/orgs",
+    "repos_url": "https://api.github.com/users/koshikraj/repos",
+    "events_url": "https://api.github.com/users/koshikraj/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/koshikraj/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false,
+    "name": "Koshik Raj",
+    "company": "@zhentanme @brewitmoney",
+    "blog": "koshik.chat",
+    "location": "Bengaluru",
+    "email": null,
+    "hireable": true,
+    "bio": "🕸️ Open web3 evangelist |  Barista @brewitmoney  | 📖  Authored @blockchainbook | 🔑 PGP: 02D9 4C3B BBA9 A627| ENS: koshik.eth",
+    "twitter_username": "rajkoshik",
+    "public_repos": 179,
+    "public_gists": 7,
+    "followers": 103,
+    "following": 237,
+    "created_at": "2013-04-01T04:19:32Z",
+    "updated_at": "2026-04-27T18:06:24Z"
+  }
+}

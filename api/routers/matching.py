@@ -17,6 +17,16 @@ class MatchingResultResponse(BaseModel):
     composite_score: Optional[float] = None
     completeness_score: Optional[float] = None
     context_bonus: float = 0.0 # Contextual match bonus
+    must_have_coverage_ratio: Optional[float] = None
+    must_have_breakdown: Optional[List[dict]] = None
+    rare_asset_bonus: Optional[float] = None
+    cert_tier_bonus: Optional[float] = None
+    outcome_bonus: Optional[float] = None
+    quantified_outcomes_count: Optional[int] = None
+    certifications_assessed: Optional[List[dict]] = None
+    key_tool_recency: Optional[str] = None
+    availability_reason: Optional[str] = None
+    alternative_role_fit: Optional[str] = None
     reasoning: Optional[str] = None
     strengths: Optional[List[str]] = None
     gaps: Optional[List[str]] = None

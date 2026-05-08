@@ -1,0 +1,159 @@
+{
+  "fitment_score": 3.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MISRA coding guideline",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Autosar",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR Algo development",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 2,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 4,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Platform Developer I",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Platform App Builder",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Business Analyst",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified AI Specialist",
+      "tier": "Expert"
+    },
+    {
+      "name": "Salesforce Certified AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Salesforce Certified Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Microsoft Certified: Azure Fundamentals (AZ-900)",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 8.5,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Senior Salesforce Developer with 7+ years in CRM, Apex, Lightning, and DevOps. The JD demands an embedded C/AUTOSAR/RTOS engineer with RADAR and ADAS experience \u2014 a completely different engineering discipline. Not a single must-have skill from the JD appears anywhere in this resume. There is zero overlap between Salesforce cloud development and automotive embedded systems. Do not shortlist; move immediately to reject and source from automotive/embedded talent pools.",
+  "strengths": [
+    "SALESFORCE ARCHITECTURE DEPTH: Led end-to-end delivery for a 1500+ user Salesforce org at IBM, building scalable Apex frameworks, LWC, and Flow-first architectures \u2014 strong signal for Salesforce roles, but entirely irrelevant here.",
+    "DEVOPS AND DEPLOYMENT MATURITY: Used Copado for CI/CD, achieved 90%+ test coverage across 500+ classes, and reduced deployment defects by 30% \u2014 impressive metrics, but zero transferability to embedded C/AUTOSAR context.",
+    "CERTIFICATIONS BREADTH: Holds 7 Salesforce certifications plus Copado and Azure credentials \u2014 demonstrates a credentialed professional, but none are relevant to automotive embedded systems or RADAR development."
+  ],
+  "gaps": [
+    "NO EMBEDDED SYSTEMS EXPERIENCE WHATSOEVER: The role requires C programming, MISRA guidelines, AUTOSAR, and RTOS \u2014 core mandatory skills for any embedded automotive SW developer. This candidate has never worked in embedded or automotive domains.",
+    "ZERO RADAR/ADAS DOMAIN KNOWLEDGE: RADAR system knowledge and ADAS familiarity are explicit requirements. This candidate's entire career is in Salesforce CRM \u2014 there is no bridge to automotive sensing or perception engineering."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated in resume; no JD maximum specified, so no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate location not explicitly stated in resume; cannot confirm Chennai mismatch with available data."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 7+ years total experience, well above the minimum threshold of 2 years (half of 4 relevant required)."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any'; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college exclusion or preference set in JD; no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Wrong domain \u2014 no embedded C, AUTOSAR, or RTOS experience; candidate fails role relevance threshold"
+  ],
+  "role_level_detected": "Senior",
+  "role_level_match": "Match",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at IBM shows no end date and no notice period is stated in the resume.",
+  "alternative_role_fit": "Senior Salesforce Developer or Salesforce Technical Lead",
+  "rare_assets": [
+    "Salesforce Certified AI Specialist \u2014 a recently released, niche credential signalling early adoption of Salesforce Einstein/AI capabilities.",
+    "Copado Fundamentals I & II combined with hands-on CI/CD delivery \u2014 relatively rare combination of tooling certification and production DevOps execution in Salesforce ecosystem."
+  ],
+  "self_reported_unverified": [
+    "'Reduced deployment defects by 30%' \u2014 no baseline, measurement methodology, or external validation provided.",
+    "'Mentored 5 developers' \u2014 team size and actual mentoring outcomes beyond defect reduction are unverified.",
+    "'Production owner' claim at IBM \u2014 scope and authority of this role versus a formal production owner title is unclear from resume context."
+  ],
+  "interview_flags": [
+    "Confirm whether candidate has any background in C programming or low-level systems \u2014 even academic projects from ECE degree.",
+    "Probe whether B.Tech in Electronics and Communication Engineering included any embedded systems, RTOS, or signal processing coursework that could bridge to this role.",
+    "Ask directly: has candidate ever worked on automotive, ADAS, or any hardware-adjacent software project outside of Salesforce?",
+    "Verify the 'production owner' role at IBM \u2014 was this a formal designation or informal responsibility, and what did critical incident management involve?",
+    "Clarify career intent: is candidate actively looking to transition out of Salesforce into embedded/automotive, and if so, what retraining has been undertaken?"
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:00:28.464471"
+}

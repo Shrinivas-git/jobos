@@ -1,0 +1,198 @@
+{
+  "fitment_score": 72.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.8529411764705882,
+  "must_have_breakdown": [
+    {
+      "skill": "Salesforce Platform Management",
+      "status": "Met",
+      "evidence": "Led end-to-end delivery for Salesforce org with 1500+ users across Sales & Service Cloud, acting as production owner handling critical defects and release stability."
+    },
+    {
+      "skill": "Salesforce Architecture",
+      "status": "Met",
+      "evidence": "Designed scalable Apex frameworks, Flow-first architectures, data models, and security architecture across enterprise orgs."
+    },
+    {
+      "skill": "5+ years experience in Salesforce Platform Management or Salesforce Architecture",
+      "status": "Met",
+      "evidence": "7+ years of Salesforce experience across IBM (2021-present) and TCS (2018-2021) in developer and platform roles."
+    },
+    {
+      "skill": "Expert-level proficiency with Copado for CI/CD and release orchestration",
+      "status": "Met",
+      "evidence": "Used Copado for end-to-end delivery at IBM/Informa and holds Copado Fundamentals I & II certifications."
+    },
+    {
+      "skill": "Deep understanding of Salesforce multi-tenant architecture",
+      "status": "Partial",
+      "evidence": "Demonstrates governor-limit compliance and LDV optimization but does not explicitly reference multi-tenant architecture design thinking."
+    },
+    {
+      "skill": "Governor limits understanding",
+      "status": "Met",
+      "evidence": "Resume explicitly states 'strict governor-limit compliance' in Apex framework design across a 1500+ user org."
+    },
+    {
+      "skill": "Environment management",
+      "status": "Partial",
+      "evidence": "Managed deployments via Copado and maintained production stability, but no explicit mention of sandbox environment strategy or org topology management."
+    },
+    {
+      "skill": "Communication and ability to translate complex technical releases into business-friendly roadmaps",
+      "status": "Partial",
+      "evidence": "Mentored 5 developers and conducted code reviews, but no evidence of business-facing release communication or roadmap translation."
+    },
+    {
+      "skill": "Experience managing Business Critical production environments",
+      "status": "Met",
+      "evidence": "'Acted as production owner, handling critical defects and release stability' for a 1500+ user enterprise org at IBM."
+    },
+    {
+      "skill": "Work with Salesforce's premier support tiers",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Salesforce.com development environment",
+      "status": "Met",
+      "evidence": "7+ years of hands-on Salesforce development across Sales Cloud, Service Cloud, and platform tools."
+    },
+    {
+      "skill": "Custom objects",
+      "status": "Met",
+      "evidence": "Designed data models including custom objects and relationships across multiple client engagements."
+    },
+    {
+      "skill": "Workflows",
+      "status": "Met",
+      "evidence": "Implemented automation using Workflow Rules and replaced legacy Workflow & Process Builder automations with Flow-first architecture."
+    },
+    {
+      "skill": "Triggers",
+      "status": "Met",
+      "evidence": "Designed and implemented scalable Apex Trigger frameworks with governor-limit compliance."
+    },
+    {
+      "skill": "SOQL",
+      "status": "Met",
+      "evidence": "Developed Apex Triggers, Classes and Test Classes using SOQL/SOSL at TCS/Genworth Financial."
+    },
+    {
+      "skill": "SOSL",
+      "status": "Met",
+      "evidence": "Explicitly listed as part of development work at Genworth Financial alongside SOQL."
+    },
+    {
+      "skill": "Best practices and design patterns",
+      "status": "Met",
+      "evidence": "Enforced Salesforce best practices via code reviews, reusable frameworks, and Flow-first design patterns across enterprise orgs."
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 2,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Platform Developer I",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Platform App Builder",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Business Analyst",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified AI Specialist",
+      "tier": "Expert"
+    },
+    {
+      "name": "Salesforce Certified AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Salesforce Certified Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Microsoft Certified: Azure Fundamentals (AZ-900)",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Media & Entertainment Insights and Solutions (IBM Bronze)",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 63.779411764705884,
+  "reasoning": "Shortlist \u2014 strong Salesforce developer with credible platform depth, but verify platform manager and CoE readiness before proceeding. This candidate's highest-signal differentiators are: (1) Copado CI/CD at enterprise scale with 1500+ users confirmed in current role, backed by Copado Fundamentals I & II, (2) production ownership with quantified defect reduction (30% fewer deployment defects) and 90%+ test coverage across 500+ classes, and (3) a broad certification stack including Admin, Platform Developer I, and App Builder. The critical gaps for this specific role are the absence of any evidence of Salesforce Premier Support escalation experience \u2014 a named must-have \u2014 and no demonstrated experience establishing a Center of Excellence, federated dev strategy, or translating releases into business roadmaps, which are core to this 'Platform Manager' scope. This candidate operates as a Senior Developer / Tech Lead, not yet a Platform Manager. Shortlist, but probe CoE leadership, business stakeholder communication, and premier support experience before advancing.",
+  "strengths": [
+    "COPADO CI/CD AT SCALE: Currently using Copado for end-to-end delivery across a 1500+ user enterprise org at IBM/Informa, with Copado Fundamentals I & II certifications \u2014 this is direct, current-role evidence of the JD's single most critical tool requirement.",
+    "PRODUCTION OWNERSHIP WITH QUANTIFIED OUTCOMES: Acted as production owner handling critical defects and release stability; built a reusable test framework achieving 90%+ coverage across 500+ classes and reduced deployment defects by 30% \u2014 rare level of measurable production impact for a developer profile.",
+    "DEEP APEX AND PLATFORM ARCHITECTURE: Designed governor-limit-compliant Apex frameworks (Trigger, Batch, Queueable, Scheduler), LDV optimization, and Flow-first architecture replacing legacy automations \u2014 demonstrates the platform engineering depth needed to govern a Salesforce ecosystem, not just build on it."
+  ],
+  "gaps": [
+    "SALESFORCE PREMIER SUPPORT EXPERIENCE: The JD explicitly requires experience working with Salesforce's premier support tiers \u2014 a key indicator of managing business-critical production at scale. There is zero mention of this on the resume, which is a meaningful red flag for a Platform Manager role where escalation to Salesforce is a core responsibility.",
+    "CENTER OF EXCELLENCE AND BUSINESS ROADMAP OWNERSHIP: The role requires establishing a CoE, architecting a federated dev strategy, and translating complex releases into business-friendly roadmaps. This candidate's resume is entirely developer/tech-lead scoped with no evidence of org-wide governance, CoE setup, or executive-facing communication \u2014 a level gap that defines the difference between Senior Developer and Platform Manager."
+  ],
+  "recommendation": "shortlist",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period specified in JD or resume; no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "JD has no specified work structure or location requirement; no penalty applied."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 7+ years of Salesforce experience, well above the 5-year minimum required."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD specifies no gender preference; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "JD has no college preference or exclusion; no penalty applied."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Lead",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Current",
+  "cv_narrative_style": "Unknown",
+  "availability_signal": "Unknown",
+  "availability_reason": "",
+  "alternative_role_fit": "",
+  "rare_assets": [],
+  "self_reported_unverified": [],
+  "interview_flags": [],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-06T09:08:55.228382"
+}

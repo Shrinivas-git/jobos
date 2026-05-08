@@ -1,0 +1,174 @@
+{
+  "fitment_score": 62.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.3235294117647059,
+  "must_have_breakdown": [
+    {
+      "skill": "Salesforce Platform Management",
+      "status": "Partial",
+      "evidence": "Candidate managed Salesforce environments (Dev, QA, UAT, Production) at TCS but in a DevOps/Release Engineer capacity, not as a Platform Manager overseeing health, scalability, and platform strategy."
+    },
+    {
+      "skill": "Salesforce Architecture",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "5+ years experience in Salesforce Platform Management or Salesforce Architecture",
+      "status": "Partial",
+      "evidence": "5 years total experience but focused on DevOps/Release Engineering, not Platform Management or Architecture \u2014 the scope and seniority are narrower than required."
+    },
+    {
+      "skill": "Expert-level proficiency with Copado for CI/CD and release orchestration",
+      "status": "Met",
+      "evidence": "Owned end-to-end Salesforce release lifecycle using Copado at TCS for 4+ years; holds Copado Fundamentals I, II, and Copado Certified Consultant certifications."
+    },
+    {
+      "skill": "Deep understanding of Salesforce multi-tenant architecture",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Governor limits understanding",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Environment management",
+      "status": "Met",
+      "evidence": "Administered Salesforce org security, profiles, permission sets, and managed Dev, QA, UAT, and Production environments at TCS."
+    },
+    {
+      "skill": "Communication and ability to translate complex technical releases into business-friendly roadmaps",
+      "status": "Partial",
+      "evidence": "Coordinated with product owners, QA, and engineering teams for sprint releases, but no evidence of translating technical content into executive or business-friendly roadmaps."
+    },
+    {
+      "skill": "Experience managing Business Critical production environments",
+      "status": "Partial",
+      "evidence": "Managed Production environment deployments and implemented rollback strategies, but no explicit evidence of 'Business Critical' classification or premier support tier engagement."
+    },
+    {
+      "skill": "Work with Salesforce's premier support tiers",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Salesforce.com development environment",
+      "status": "Met",
+      "evidence": "Extensive use of Salesforce CLI, SFDX, Metadata API, and Salesforce Inspector across multiple roles."
+    },
+    {
+      "skill": "Custom objects",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Workflows",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Triggers",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "SOQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "SOSL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Best practices and design patterns",
+      "status": "Partial",
+      "evidence": "Enforced quality gates, security scans, and deployment governance, but no evidence of applying Salesforce development best practices or design patterns at the platform architecture level."
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 2,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Certified Consultant",
+      "tier": "Expert"
+    }
+  ],
+  "composite_score": 50.98529411764706,
+  "reasoning": "Borderline \u2014 hold pending clarification on platform architecture and development depth. This candidate is a strong Salesforce DevOps and Release Engineer, not a Salesforce Platform Manager. The role demands platform architecture ownership, Salesforce multi-tenant expertise, governor limits management, hands-on development (SOQL, SOSL, Apex, Triggers), and CoE leadership \u2014 none of which appear in this resume. What IS strong: Copado depth is genuine and certified (Fundamentals I, II, and Consultant), 4+ years of end-to-end release lifecycle ownership at TCS is directly relevant, and the CI/CD pipeline work is well-evidenced. However, the candidate has zero stated experience with Salesforce architecture, platform design patterns, custom object development, or Salesforce premier support \u2014 which are must-haves for this senior role. The current Capgemini role (May 2025) is GitHub Actions-focused and moves further away from the platform management scope required. At best, this candidate fits a Senior Salesforce DevOps Engineer role, not a Platform Manager. Do not advance without confirming hands-on development depth and any architecture or CoE experience.",
+  "strengths": [
+    "COPADO MASTERY: Holds three Copado certifications (Fundamentals I, Fundamentals II, Copado Certified Consultant) and owned end-to-end release lifecycle using Copado across Dev, QA, UAT, and Production at TCS for 4+ years \u2014 this is genuine, certified depth, not surface-level familiarity.",
+    "CI/CD PIPELINE OWNERSHIP: Designed and implemented scalable GitHub Actions pipelines at Capgemini with a quantified 30-40% reduction in deployment time, plus structured validation and rollback strategies that demonstrably improved production deployment success rates at TCS.",
+    "MULTI-TOOL DEVOPS BREADTH: Certified across Copado, Gearset (Gearset Fundamentals), and Flosum (Flosum Certified Professional) \u2014 a rare combination of cross-platform Salesforce DevOps tool coverage that few candidates can evidence with certifications."
+  ],
+  "gaps": [
+    "NO PLATFORM ARCHITECTURE OR DEVELOPMENT DEPTH: The role requires hands-on Salesforce development (SOQL, SOSL, Apex, Triggers, custom objects) and platform architecture ownership \u2014 the resume contains zero evidence of any declarative or programmatic Salesforce development, which is a fundamental disqualifier for a Platform Manager role.",
+    "NO CoE LEADERSHIP OR STRATEGIC PLATFORM OWNERSHIP: This role demands establishing a Center of Excellence, federated development strategy, and translating releases into business roadmaps. The candidate operates as an individual DevOps contributor with no evidence of team leadership, CoE build-out, or executive-level communication \u2014 a critical seniority gap."
+  ],
+  "recommendation": "hold",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period specified in the resume and JD has no stated maximum \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "JD work structure is not specified as In-office, so no location penalty applies."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 5 years of experience, which meets the half-threshold of the 5-year JD requirement."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "JD has no college preference or exclusion specified \u2014 no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Recent",
+  "cv_narrative_style": "Unknown",
+  "availability_signal": "Unknown",
+  "availability_reason": "",
+  "alternative_role_fit": "",
+  "rare_assets": [],
+  "self_reported_unverified": [],
+  "interview_flags": [],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-06T09:11:11.273518"
+}

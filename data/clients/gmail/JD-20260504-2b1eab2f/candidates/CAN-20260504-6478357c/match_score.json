@@ -1,0 +1,24 @@
+{
+  "fitment_score": 90.0,
+  "completeness_score": 100.0,
+  "context_bonus": 5.0,
+  "composite_score": 80.573684,
+  "reasoning": "The candidate has extensive experience in managing Salesforce ecosystems, with a strong background in Copado, CI/CD pipelines, and release orchestration, which aligns well with the job description. The candidate's technical expertise in Apex, LWC, and Visualforce, as well as their experience in establishing Centers of Excellence, makes them a strong fit for the role.",
+  "strengths": [
+    "The candidate has expert-level proficiency in Copado, with experience in managing full release lifecycles, including major seasonal updates and continuous delivery pipelines.",
+    "The candidate has a deep understanding of Salesforce multi-tenant architecture, governor limits, and environment management, with experience in architecting federated development strategies.",
+    "The candidate has hands-on technical depth across Apex, LWC, Aura, and Visualforce, with experience in developing scalable and maintainable solutions.",
+    "The candidate has a proven track record of managing business-critical production environments, with experience in working directly with Salesforce Premier Support to resolve platform-level issues.",
+    "The candidate has experience in establishing release governance frameworks, with a strong focus on security and compliance, including audit readiness and regulatory traceability."
+  ],
+  "gaps": [
+    "The candidate's experience in Data Cloud is not explicitly mentioned, which could be a gap considering the job description's requirement for Data Cloud skills.",
+    "The candidate's certifications, although impressive, do not include the Salesforce Certified Development Lifecycle and Deployment Designer certification, which is listed as a required skill in the job description.",
+    "The candidate's experience in managing teams is not explicitly mentioned, which could be a concern considering the role's requirement for leadership and communication skills.",
+    "The candidate's experience in specific industries, such as healthcare or finance, is not explicitly mentioned, which could be a gap considering the job description's requirement for experience in certain domains.",
+    "The candidate's education background, although adequate, does not include any advanced degrees or specialized training in computer science or a related field, which could be a gap considering the role's technical requirements."
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T12:44:58.473231"
+}

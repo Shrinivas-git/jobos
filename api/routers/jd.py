@@ -35,6 +35,7 @@ class StructuredJD(BaseModel):
     preferred_team_size: Optional[str] = "Any"
     role_type: Optional[str] = "Any"
     obfuscate: bool = False
+    recruiter_notes: Optional[str] = None
 
 class JDResponse(BaseModel):
     jd_id: str
@@ -49,6 +50,8 @@ class JDResponse(BaseModel):
     structured_data: Optional[dict] = None
     quality_flag: Optional[str] = None
     quality_flag_at: Optional[datetime] = None
+    pipeline_config: Optional[dict] = None
+    joined_count: Optional[int] = 0
 
     class Config:
         populate_by_name = True
@@ -57,8 +60,12 @@ class JDResponse(BaseModel):
 @router.get("/", response_model=List[JDResponse])
 async def get_jds(user: dict = Depends(check_role(["recruiter", "manager", "hod", "admin"]))):
     db = get_db()
-    # Sort by created_at descending
     jds = list(db.job_descriptions.find({}, {"_id": 0}).sort("created_at", -1))
+    # Enrich with joined_count
+    for jd in jds:
+        jd["joined_count"] = db.pipeline_stages.count_documents(
+            {"jd_id": jd["jd_id"], "current_stage": "joined"}
+        )
     return jds
 
 @router.post("/upload")
@@ -71,6 +78,7 @@ async def upload_jd(
     preferred_company_type: List[str] = Form(default=[]),
     college_preference: str = Form(default=""),
     college_exclusion: str = Form(default=""),
+    recruiter_notes: Optional[str] = Form(default=None),
     user: dict = Depends(check_role(["recruiter", "manager", "hod", "admin"]))
 ):
     try:
@@ -93,6 +101,7 @@ async def upload_jd(
             "client_id": client['_id'],
             "jd_id": jd_id,
             "title": title,
+            "client_email": client_email,
             "filename": file.filename,
             "folder_path": paths['jd_path'],
             "source": "web_form_upload",
@@ -103,7 +112,8 @@ async def upload_jd(
             "role_type": role_type,
             "preferred_company_type": preferred_company_type,
             "college_preference": college_preference,
-            "college_exclusion": college_exclusion
+            "college_exclusion": college_exclusion,
+            "recruiter_notes": recruiter_notes.strip() if recruiter_notes and recruiter_notes.strip() else None,
         }
         db.job_descriptions.insert_one(jd_data)
         
@@ -147,12 +157,14 @@ async def create_structured_jd(
             "client_id": client['_id'],
             "jd_id": jd_id,
             "title": data.title,
+            "client_email": str(data.client_email),
             "folder_path": paths['jd_path'],
             "source": "web_form_structured",
             "uploaded_by": user.get("preferred_username"),
-            "status": "received", # In Phase 2 this might jump to 'structured'
+            "status": "received",
             "created_at": datetime.now(),
-            "structured_data": data.dict()
+            "structured_data": data.dict(),
+            "recruiter_notes": data.recruiter_notes.strip() if data.recruiter_notes and data.recruiter_notes.strip() else None,
         }
         db.job_descriptions.insert_one(jd_data)
         
@@ -175,3 +187,25 @@ async def trigger_process_jd(jd_id: str):
     """Internal endpoint to trigger JD structuring."""
     process_jd_task.delay(jd_id)
     return {"message": f"Processing triggered for {jd_id}"}
+
+
+class PipelineConfigBody(BaseModel):
+    assessment_rounds: int = Field(default=0, ge=0, le=5)
+    interview_rounds: int = Field(default=1, ge=1, le=10)
+
+
+@router.patch("/{jd_id}/pipeline-config")
+async def set_pipeline_config(
+    jd_id: str,
+    body: PipelineConfigBody,
+    user: dict = Depends(check_role(["recruiter", "manager", "hod", "admin"])),
+):
+    db = get_db()
+    result = db.job_descriptions.update_one(
+        {"jd_id": jd_id},
+        {"$set": {"pipeline_config": {"assessment_rounds": body.assessment_rounds, "interview_rounds": body.interview_rounds}}}
+    )
+    if result.matched_count == 0:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="JD not found")
+    return {"ok": True, "jd_id": jd_id, "pipeline_config": body.dict()}

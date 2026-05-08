@@ -1,0 +1,146 @@
+{
+  "fitment_score": 4.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "8+ years of experience in Car Rental / Fleet Management / Mobility industry",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Strong experience in Operations Management + Sales / Business Development",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Proven track record in P&L ownership and profitability management",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience handling corporate clients / B2B accounts",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Strong leadership and team management experience",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Good commercial acumen and negotiation skills",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Ability to work in a fast-paced target-driven environment",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 2,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Certified Consultant",
+      "tier": "Expert"
+    },
+    {
+      "name": "Gearset Fundamentals Certificate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Flosum Certified Professional",
+      "tier": "Practitioner"
+    }
+  ],
+  "composite_score": 9.25,
+  "reasoning": "Reject \u2014 completely wrong domain. This candidate is a Salesforce DevOps Engineer with 5 years of CI/CD pipeline and release engineering experience at TCS and Capgemini. The role requires a Profit Centre Head with 8+ years in Car Rental/Fleet/Passenger Mobility, P&L ownership, B2B sales, and team leadership. There is zero overlap in domain, function, or seniority with this position. There is no fleet management, no operations management, no commercial sales experience, and no evidence of managing any revenue centre \u2014 let alone a branch P&L. The candidate also sits in Chennai, not Hyderabad, and the role is in-office. Do not advance this application under any circumstances.",
+  "strengths": [
+    "SALESFORCE DEVOPS EXPERTISE: Owns end-to-end release lifecycle using Copado, GitHub Actions, and Jenkins across enterprise environments at TCS and Capgemini \u2014 completely irrelevant to fleet/mobility operations but demonstrates technical seniority in their own field.",
+    "CERTIFICATIONS DEPTH: Holds 7 certifications including Copado Certified Consultant, Flosum Certified Professional, and Salesforce Certified Administrator \u2014 strong signal of domain mastery, though the domain is entirely wrong for this role.",
+    "QUANTIFIED DELIVERY OUTCOMES: Achieved 30-40% reduction in deployment time and improved deployment success rates through structured validation \u2014 shows results orientation, but in a context with no transferable value to passenger fleet management."
+  ],
+  "gaps": [
+    "WRONG INDUSTRY AND FUNCTION ENTIRELY: This candidate has zero experience in Car Rental, Fleet Management, or Passenger Mobility \u2014 the JD explicitly requires 8+ years in this space. There is no recoverable gap here; this is a fundamental domain mismatch.",
+    "NO P&L, SALES, OR OPERATIONS LEADERSHIP: The role demands branch-level P&L ownership, B2B sales, and team leadership across operations and sales functions. This candidate has never managed a revenue centre, corporate accounts, or a field operations team \u2014 disqualifying on every key dimension."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "Notice period not stated in resume; no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "Candidate is based in Chennai; the role is in-office in Hyderabad \u2014 location mismatch confirmed."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 5 years of total experience against a 4-year minimum threshold, so no penalty on raw years \u2014 though the experience is entirely in the wrong domain."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any'; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in JD; no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch \u2014 candidate in Chennai, role requires in-office presence in Hyderabad"
+  ],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at Capgemini is listed as May 2025 to Present with no end date or notice period stated.",
+  "alternative_role_fit": "Salesforce DevOps Engineer / Release Engineer (Mid-Senior level)",
+  "rare_assets": [
+    "Flosum Certified Professional \u2014 a niche certification held by very few Salesforce DevOps practitioners globally.",
+    "Copado Certified Consultant combined with Gearset and Flosum proficiency \u2014 rare multi-platform DevOps release toolchain expertise."
+  ],
+  "self_reported_unverified": [
+    "Claims 30-40% reduction in deployment time at Capgemini but no baseline metrics or project scale provided to validate the figure.",
+    "'Best Performer Award' and 'Special Achievement Award' at TCS \u2014 no verifiable team size, project scope, or business impact cited."
+  ],
+  "interview_flags": [
+    "Candidate profile is entirely misaligned \u2014 do not interview for this role. Clarify if this was an accidental application before investing any recruiter time.",
+    "If re-routing to a Salesforce DevOps role, probe actual team size managed at TCS \u2014 resume lists no direct reports despite 4+ years tenure.",
+    "Verify the Copado Certified Consultant credential directly; resume lists both Fundamentals I and II plus Consultant, which is unusual without an implementation project reference.",
+    "Probe the May 2025 Capgemini start date \u2014 this is the same month as TCS end, confirm if there was an overlap or immediate transition and the current notice period.",
+    "Clarify whether the 30-40% deployment time reduction was measured at org level or pipeline level \u2014 the scope of the claim is ambiguous."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-06T11:43:51.917436"
+}

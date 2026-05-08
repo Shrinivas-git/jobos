@@ -1,0 +1,139 @@
+{
+  "fitment_score": 3.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "System engineering principles",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Knowledge of ASPICE",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ISO26262",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "System Requirements writing and System Architecture Design",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System (End User function) and Product knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience on system service function (Diagnostics, Flashability, FOTA, etc) development",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "CAN/LIN/Ethernet/LVDS",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Embedded System",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Basic Functional Safety and Cyber Security knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience in RADAR function validation (in HIL and vehicle environment)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Requirement management tools DOORs, Code Beamer and Configuration management tools such as CoreALM",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Modeling tool Catia Magic",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 2,
+  "certifications_assessed": [],
+  "composite_score": 3.9166666666666665,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a transport and fleet operations professional with 10+ years managing EV buses, ambulance fleets, and FMCG distribution vehicles. The role demands a senior embedded systems engineer with RADAR system ownership, ASPICE/ISO26262 functional safety expertise, CAN/LIN/Ethernet protocol knowledge, and HIL validation experience. Not a single must-have skill is present in this resume. There is zero overlap with automotive embedded systems, radar product engineering, or systems engineering tooling (DOORs, Code Beamer, Catia Magic). Even the automotive adjacency (EV buses) is purely operational, not engineering. Do not engage this candidate for this role.",
+  "strengths": [
+    "EV FLEET OPERATIONS: Manages 51 electric buses across 76 live schedules at GreenCell Mobility \u2014 demonstrates real-time operational discipline, but this is ground-level transport execution, not systems engineering.",
+    "LARGE-SCALE FLEET MANAGEMENT: Oversaw fuel operations for 1,000+ emergency vehicles at GVK EMRI, with fuel card systems, vendor reconciliation, and GPS telematics \u2014 operationally strong but entirely irrelevant to RADAR system development.",
+    "MULTI-DOMAIN TRANSPORT EXPERIENCE: 10+ years spanning EV mobility, emergency services, FMCG distribution, and corporate transport \u2014 broad but none of it intersects with automotive embedded systems or radar product engineering."
+  ],
+  "gaps": [
+    "ZERO EMBEDDED SYSTEMS OR RADAR DOMAIN KNOWLEDGE: The role requires hands-on RADAR system function ownership, HIL validation, ASPICE compliance, and ISO26262 functional safety \u2014 none of these appear anywhere in the candidate's background, making them fundamentally unqualified.",
+    "NO SYSTEMS ENGINEERING TOOLING OR PROTOCOLS: CAN/LIN/Ethernet/LVDS, DOORs, Code Beamer, CoreALM, and Catia Magic are all hard requirements \u2014 the candidate's tools are GPS telematics, fuel card systems, and RTO documentation, which are entirely unrelated."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period specified in resume; no JD maximum set."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office presence in Chennai; candidate is based in Hyderabad."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 10+ years total experience, well above the minimum threshold of 2 years (half of 4 required relevant years)."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any'; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college exclusion or preference specified in JD; no penalty or bonus applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch"
+  ],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "None",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Available now",
+  "availability_reason": "Most recent role at GreenCell Mobility shows Apr 2025 as start with no end date, suggesting currently employed; however, domain mismatch makes availability irrelevant.",
+  "alternative_role_fit": "Fleet Operations Manager or Transport Operations Lead",
+  "rare_assets": [],
+  "self_reported_unverified": [
+    "Claims management of 1,000+ emergency vehicles at GVK EMRI \u2014 scale of direct personal accountability versus team responsibility is unclear.",
+    "States 'Acting as operational bridge between control room, depots, and field teams' \u2014 actual decision-making authority versus coordination role is not quantified."
+  ],
+  "interview_flags": [
+    "Confirm if candidate is aware this is an automotive embedded systems role \u2014 application may have been misdirected.",
+    "Probe whether candidate has any background in automotive engineering, electronics, or embedded software outside of their stated experience.",
+    "Ask about the gap between Jan 2025 (Bisleri end) and Apr 2025 (GreenCell start).",
+    "Clarify educational background \u2014 B.Com and ITI suggest no engineering foundation relevant to this role.",
+    "Ask why candidate applied for a RADAR system engineering role given entirely operational background."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:27:56.463378"
+}

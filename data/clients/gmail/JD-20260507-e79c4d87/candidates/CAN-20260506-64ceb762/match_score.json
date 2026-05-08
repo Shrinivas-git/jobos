@@ -1,0 +1,149 @@
+{
+  "fitment_score": 4.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Python (3.x)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Django",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Flask",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "FastAPI",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MySQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "PostgreSQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MongoDB",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "SQLite",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Git / GitHub / Bitbucket",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Docker",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Jenkins",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RESTful APIs / JSON",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "OOP / Data Structures / Algorithms",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Unit Testing (PyTest/Unittest)",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [],
+  "composite_score": 4.666666666666666,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Transport and Facilities Manager with 10+ years in corporate logistics, vendor management, and employee transportation operations. There is zero evidence of Python development, any programming language, frameworks (Django, Flask, FastAPI), databases, APIs, version control, or AI model training \u2014 every single technical must-have is missing. The recruiter specifically wants someone with Python projects AND AI model training experience; this candidate has neither. Do not shortlist under any circumstances.",
+  "strengths": [
+    "OPERATIONAL SCALE: Managed end-to-end transportation for 2000+ employees across multiple large enterprises (Microsoft India R&D, Novartis), demonstrating strong execution capability \u2014 irrelevant to this Python Developer role.",
+    "CAREER PROGRESSION: Promoted from Executive to Deputy Manager within Microsoft India R&D over 7 years, signalling consistent performance \u2014 again, entirely in a non-technical domain.",
+    "STAKEHOLDER MANAGEMENT: Prepared MOR and QBR reports for senior management and coordinated cross-functional procurement and finance teams \u2014 a soft skill with zero transferability to back-end Python development."
+  ],
+  "gaps": [
+    "ZERO TECHNICAL SKILLS: The candidate has no Python, no programming, no databases, no APIs, no DevOps tools \u2014 0 of 14 must-have technical skills are met. This is a complete domain mismatch and disqualifies the candidate immediately.",
+    "NO AI/ML EXPERIENCE: The recruiter explicitly requires Python projects and AI model training experience. The resume contains no reference to machine learning, AI, data science, or any adjacent technical field, making this a hard fail against the stated hiring intent."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated; no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "Candidate is based in Hyderabad; JD requires In-office presence in Bangalore."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "JD requires 0 years relevant experience so no experience-gap penalty is triggered."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is Any; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion set in JD; no penalty or bonus applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch"
+  ],
+  "role_level_detected": "Manager",
+  "role_level_match": "Over-qualified",
+  "tool_currency": "None",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Available now",
+  "availability_reason": "Current role at Novartis is listed as 'May 2025 \u2013 Present' but the resume appears active; however no Python or tech role is available to evaluate \u2014 treat as available but irrelevant.",
+  "alternative_role_fit": "Transport / Facilities Manager",
+  "rare_assets": [],
+  "self_reported_unverified": [
+    "Claims management of 2000+ employees in transportation at both Microsoft and Novartis without supporting throughput or cost-saving metrics.",
+    "'Successfully completed business transition of employees from MS Campus to SSKC' \u2014 no timeline, scale detail, or outcome data provided to verify impact."
+  ],
+  "interview_flags": [
+    "Do not interview \u2014 candidate has no technical background relevant to a Python Developer role.",
+    "If mistakenly progressed, ask: Have you ever written a single line of Python or any programming language professionally or academically?",
+    "Probe whether the candidate intended to apply to a different role (e.g. Transport Manager or Facilities Manager).",
+    "Verify whether the 'Diploma in Computer Science and Engineering' (2012) involved any actual coding coursework that might indicate latent technical potential.",
+    "Clarify the gap between the end of the Northern Tools role (Nov 2024) and the start of TJX (Feb 2025) \u2014 roughly 2 months unaccounted for."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:57:40.133090"
+}

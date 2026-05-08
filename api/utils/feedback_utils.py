@@ -1,5 +1,5 @@
 import logging
-from utils.gemini_utils import _call_claude, REASON_MODEL
+from utils.gemini_utils import _call_groq, GROQ_REASON_MODEL
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ Rules:
 FEEDBACK:"""
 
     try:
-        return _call_claude(REASON_MODEL, prompt, max_tokens=512)
+        return _call_groq(GROQ_REASON_MODEL, prompt, max_tokens=512)
     except Exception as e:
         logger.error(f"Feedback generation failed: {e}")
         return (

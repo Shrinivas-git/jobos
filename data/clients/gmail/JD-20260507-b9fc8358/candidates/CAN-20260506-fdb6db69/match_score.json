@@ -1,0 +1,166 @@
+{
+  "fitment_score": 4.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "System engineering principles",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Knowledge of ASPICE / ISO26262",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "System Requirements writing and System Architecture Design",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System (End User function) and Product knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience on system service function (Diagnostics, Flashability, FOTA, etc) development",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "CAN/LIN/Ethernet/LVDS",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Embedded System",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Basic Functional Safety and Cyber Security knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience in RADAR function validation (HIL and vehicle environment)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Requirement management tools DOORs / Code Beamer and Configuration management tools such as CoreALM",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Modeling tool Catia Magic",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 2,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Certified Consultant",
+      "tier": "Expert"
+    },
+    {
+      "name": "Gearset Fundamentals Certificate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Flosum Certified Professional",
+      "tier": "Practitioner"
+    }
+  ],
+  "composite_score": 9.25,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Salesforce DevOps Engineer with zero relevance to the System Radar Function Owner role. Not a single must-have skill is met: no RADAR systems knowledge, no ASPICE or ISO26262 exposure, no embedded systems or automotive protocol experience (CAN/LIN/Ethernet/LVDS), no system requirements writing or architecture design, and no requirement management tools like DOORs or Code Beamer. The candidate's entire career has been in Salesforce CI/CD pipelines and release engineering \u2014 a completely different industry and technology stack. There is no ambiguity here and no pool-thin exception applies. Do not proceed with this profile.",
+  "strengths": [
+    "SALESFORCE DEVOPS DEPTH: Five years of hands-on ownership across Jenkins, GitHub Actions, Copado, Gearset, and Flosum \u2014 but entirely irrelevant to this automotive radar systems role.",
+    "CI/CD PIPELINE DELIVERY: Quantified deployment time reduction of 30-40% through incremental deployment strategy at Capgemini \u2014 impressive in its own domain but zero transferability to embedded radar system engineering.",
+    "CERTIFICATIONS PORTFOLIO: Holds seven Salesforce and DevOps-specific certifications including Copado Certified Consultant and multiple Salesforce credentials \u2014 again, none applicable to automotive systems engineering."
+  ],
+  "gaps": [
+    "ZERO AUTOMOTIVE / RADAR DOMAIN EXPERIENCE: The candidate has no exposure to RADAR systems, embedded systems, automotive communication protocols (CAN/LIN/Ethernet/LVDS), or vehicle-level validation environments \u2014 these are the core competencies the role demands.",
+    "NO FUNCTIONAL SAFETY OR STANDARDS KNOWLEDGE: ASPICE, ISO26262, Functional Safety, and Cyber Security are all mandatory for this role and are completely absent from the candidate's background, making this a hard disqualification."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated; current role is active at Capgemini but irrelevant given domain mismatch."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate is based in Chennai, matching the JD's in-office location requirement \u2014 no penalty."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 5 years total experience vs 4 years relevant required, so no experience-volume penalty, though domain is entirely wrong."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applicable."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD; SRM Institute is not flagged."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Wrong domain \u2014 candidate has zero relevant experience in automotive radar systems engineering"
+  ],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at Capgemini shows 'May 2025 \u2013 Present' with no end date or notice period stated.",
+  "alternative_role_fit": "Senior Salesforce DevOps Engineer / Salesforce Release Engineer",
+  "rare_assets": [
+    "Flosum Certified Professional \u2014 a niche certification rarely seen even among senior Salesforce DevOps practitioners.",
+    "Multi-tool Salesforce DevOps expertise spanning Copado, Gearset, Flosum, and GitHub Actions simultaneously \u2014 uncommon breadth within the Salesforce ecosystem."
+  ],
+  "self_reported_unverified": [
+    "'Reduced deployment time by 30-40%' \u2014 no baseline deployment count or org size provided to substantiate scale of impact.",
+    "Three achievement awards (Best Performer, Special Achievement, Learning Achievement) listed without context on scope, team size, or adjudicating body."
+  ],
+  "interview_flags": [
+    "Clarify why this candidate is applying for an automotive radar systems engineering role given zero domain overlap \u2014 potential application error or role misunderstanding.",
+    "Probe whether candidate has any undisclosed exposure to embedded systems or automotive projects not reflected in the resume.",
+    "Ask about the nature of 'security scans' using Checkmarx \u2014 verify if any functional safety awareness exists even tangentially.",
+    "Verify the actual scale of Salesforce orgs managed at TCS \u2014 headcount, transaction volume, and org complexity are missing from the resume.",
+    "Confirm employment continuity \u2014 TCS end date (May 2025) overlaps with Capgemini start date (May 2025), which should be clarified."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:29:14.791948"
+}

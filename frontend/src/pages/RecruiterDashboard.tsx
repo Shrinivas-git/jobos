@@ -6,7 +6,7 @@ import {
 import keycloak from '../keycloak';
 import {
   API, getAuthHeaders, JD, MatchResult, CandidateLookup,
-  PipelineRecord, PipelineBreach, PipelineStageEntry,
+  PipelineRecord, PipelineBreach, PipelineStageEntry, CandidateOfferResponse,
 } from '../utils/api';
 import { recommendationBadge } from '../utils/badges';
 
@@ -30,12 +30,21 @@ const REJECTION_REASONS = [
 
 const STAGE_LABELS: Record<string, string> = {
   shortlist: 'Shortlisted',
-  interview_1: 'Interview 1',
+  interview_1: 'Interview Round 1',
   interview_final: 'Final Interview',
   offer: 'Offer',
   joined: 'Joined',
 };
 const STAGE_ORDER = ['shortlist', 'interview_1', 'interview_final', 'offer', 'joined'];
+
+const getStagLabel = (stage: string): string => {
+  if (STAGE_LABELS[stage]) return STAGE_LABELS[stage];
+  const im = stage.match(/^interview_(\d+)$/);
+  if (im) return `Interview Round ${im[1]}`;
+  const am = stage.match(/^assessment_(\d+)$/);
+  if (am) return `Assessment Round ${am[1]}`;
+  return stage.replace(/_/g, ' ');
+};
 
 const statusPill = (status: string) => {
   const map: Record<string, string> = {
@@ -169,6 +178,41 @@ const RecruiterDashboard: React.FC = () => {
   const [assessments, setAssessments] = useState<Record<string, { status: string; score: number | null; assessment_id: string }>>({});
   const [sendingAssessment, setSendingAssessment] = useState<string | null>(null);
 
+  // Send to client state
+  const [clientSubmission, setClientSubmission] = useState<{ sent: boolean; sent_at?: string; client_email?: string; candidates_sent?: number } | null>(null);
+  const [sendingToClient, setSendingToClient] = useState(false);
+  const [clientSendError, setClientSendError] = useState<string | null>(null);
+
+  // Interview outcome state
+  const [interviewOutcomeLoading, setInterviewOutcomeLoading] = useState<string | null>(null);
+  const [outcomeModal, setOutcomeModal] = useState<{ candidateId: string; currentStage: string } | null>(null);
+  const [outcomeNextStep, setOutcomeNextStep] = useState<'next_round' | 'offer'>('next_round');
+  const [outcomeForm, setOutcomeForm] = useState({
+    date: '', time: '', mode: 'online' as 'online' | 'in-person',
+    meeting_link: '', location: '', duration: '1hour', notes: '',
+  });
+
+  // Configure pipeline modal
+  const [pipelineConfigModal, setPipelineConfigModal] = useState(false);
+  const [pipelineConfigForm, setPipelineConfigForm] = useState({ assessment_rounds: 0, interview_rounds: 1 });
+  const [pipelineConfigSaving, setPipelineConfigSaving] = useState(false);
+
+  // Candidate response message modal
+  const [responseMessageModal, setResponseMessageModal] = useState<{ name: string; message: string } | null>(null);
+
+  // Give Offer modal
+  const [offerModal, setOfferModal] = useState<{ candidateId: string } | null>(null);
+  const [offerForm, setOfferForm] = useState({ joining_date: '', work_location: '' });
+  const [offerSubmitting, setOfferSubmitting] = useState(false);
+
+  // Stage type picker modal (Assessment vs Interview)
+  const [stageTypeModal, setStageTypeModal] = useState<{ jdId: string; candidateId: string; candidateName: string } | null>(null);
+
+  // Assessment scheduling modal
+  const [assessmentModal, setAssessmentModal] = useState<{ jdId: string; candidateId: string } | null>(null);
+  const [assessmentForm, setAssessmentForm] = useState({ date: '', time: '', mode: 'online' as 'online' | 'in-person', platform: '', location: '', duration: '1hour', notes: '' });
+  const [assessmentSubmitting, setAssessmentSubmitting] = useState(false);
+
   // Interview scheduling modal
   const [interviewModal, setInterviewModal] = useState<{ candidateId: string; nextStage: string } | null>(null);
   const [interviewForm, setInterviewForm] = useState({
@@ -224,13 +268,20 @@ const RecruiterDashboard: React.FC = () => {
     setError(null);
     setPipelineRecords([]);
     setPipelineError(null);
+    setClientSubmission(null);
+    setClientSendError(null);
 
     try {
-      const res = await fetch(`${API}/matching/results/${jdId}`, { headers: getAuthHeaders() });
-      if (!res.ok) return;
-      const data = await res.json();
+      const [matchRes, subRes] = await Promise.all([
+        fetch(`${API}/matching/results/${jdId}`, { headers: getAuthHeaders() }),
+        fetch(`${API}/pipeline/submission-status/${jdId}`, { headers: getAuthHeaders() }),
+      ]);
       if (pendingJdRef.current !== jdId) return;
-      setResults(Array.isArray(data) ? data : []);
+      if (matchRes.ok) {
+        const data = await matchRes.json();
+        setResults(Array.isArray(data) ? data : []);
+      }
+      if (subRes.ok) setClientSubmission(await subRes.json());
     } catch {
       // silently ignore — empty results state already set above
     }
@@ -275,9 +326,13 @@ const RecruiterDashboard: React.FC = () => {
   };
 
   const handleAdvanceClick = (jdId: string, record: PipelineRecord) => {
-    const stageIdx = STAGE_ORDER.indexOf(record.current_stage);
-    const nextStage = STAGE_ORDER[stageIdx + 1];
-    if (nextStage === 'interview_1' || nextStage === 'interview_final') {
+    const order = record.planned_stages && record.planned_stages.length > 0 ? record.planned_stages : STAGE_ORDER;
+    const stageIdx = order.indexOf(record.current_stage);
+    const nextStage = order[stageIdx + 1];
+    if (record.current_stage === 'shortlist') {
+      // Ask recruiter: assessment or interview?
+      setStageTypeModal({ jdId, candidateId: record.candidate_id, candidateName: candidateNames[record.candidate_id] || record.candidate_id });
+    } else if (nextStage && nextStage.startsWith('interview_')) {
       setInterviewForm({ date: '', time: '', mode: 'online', meeting_link: '', location: '', duration: '1hour', notes: '' });
       setInterviewModal({ candidateId: record.candidate_id, nextStage });
     } else {
@@ -307,10 +362,83 @@ const RecruiterDashboard: React.FC = () => {
     }
   };
 
+  const submitGiveOffer = async () => {
+    if (!offerModal || !offerForm.joining_date || !offerForm.work_location) return;
+    setOfferSubmitting(true);
+    try {
+      const r = await fetch(`${API}/pipeline/give-offer/${selectedJdId}/${offerModal.candidateId}`, {
+        method: 'POST',
+        headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(offerForm),
+      });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      setOfferModal(null);
+      setOfferForm({ joining_date: '', work_location: '' });
+      await loadPipeline(selectedJdId);
+    } catch (e: any) {
+      setPipelineError('Give offer failed: ' + e.message);
+    } finally {
+      setOfferSubmitting(false);
+    }
+  };
+
+  const savePipelineConfig = async () => {
+    if (!selectedJdId) return;
+    setPipelineConfigSaving(true);
+    try {
+      const r = await fetch(`${API}/jd/${selectedJdId}/pipeline-config`, {
+        method: 'PATCH',
+        headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(pipelineConfigForm),
+      });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      setPipelineConfigModal(false);
+    } catch (e: any) {
+      setPipelineError('Failed to save pipeline config: ' + e.message);
+    } finally {
+      setPipelineConfigSaving(false);
+    }
+  };
+
   const interviewFormValid =
     !!interviewForm.date &&
     !!interviewForm.time &&
     (interviewForm.mode === 'online' ? !!interviewForm.meeting_link : !!interviewForm.location);
+
+  const submitSelectedOutcome = async () => {
+    if (!outcomeModal || !selectedJdId) return;
+    const { candidateId } = outcomeModal;
+    if (outcomeNextStep === 'next_round') {
+      if (!outcomeForm.date || !outcomeForm.time) return;
+    }
+    setInterviewOutcomeLoading(candidateId);
+    try {
+      const body: any = { outcome: 'selected', next_step: outcomeNextStep };
+      if (outcomeNextStep === 'next_round') {
+        body.interview_details = {
+          date: outcomeForm.date,
+          time: outcomeForm.time,
+          mode: outcomeForm.mode,
+          meeting_link: outcomeForm.meeting_link || null,
+          location: outcomeForm.location || null,
+          duration: outcomeForm.duration,
+          notes: outcomeForm.notes || null,
+        };
+      }
+      const r = await fetch(`${API}/pipeline/interview-outcome/${selectedJdId}/${candidateId}`, {
+        method: 'POST',
+        headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (r.ok) {
+        setOutcomeModal(null);
+        setOutcomeForm({ date: '', time: '', mode: 'online', meeting_link: '', location: '', duration: '1hour', notes: '' });
+        await loadPipeline(selectedJdId);
+      }
+    } finally {
+      setInterviewOutcomeLoading(null);
+    }
+  };
 
   const requestExtension = async (jdId: string, candidateId: string) => {
     const form = extensionForms[candidateId];
@@ -421,6 +549,28 @@ const RecruiterDashboard: React.FC = () => {
       setRejectReason('');
       fetch(`${API}/feedback/generate/${candidateId}/${selectedJdId}`, { method: 'POST', headers: getAuthHeaders() });
     });
+  };
+
+  const handleSendToClient = async () => {
+    if (!selectedJdId) return;
+    setSendingToClient(true);
+    setClientSendError(null);
+    try {
+      const res = await fetch(`${API}/pipeline/send-to-client/${selectedJdId}`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail ?? `HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      setClientSubmission({ sent: true, sent_at: data.sent_at, client_email: data.client_email, candidates_sent: data.candidates_sent });
+    } catch (e: any) {
+      setClientSendError(e.message);
+    } finally {
+      setSendingToClient(false);
+    }
   };
 
   const toggleExpand = (id: string) => {
@@ -800,19 +950,42 @@ const RecruiterDashboard: React.FC = () => {
           </section>
         )}
 
+        {/* Configure Pipeline button */}
+        <div className="flex justify-end">
+          <button
+            onClick={() => {
+              const selJd = jds.find(j => j.jd_id === selectedJdId);
+              if (selJd?.pipeline_config) {
+                setPipelineConfigForm({ assessment_rounds: selJd.pipeline_config.assessment_rounds, interview_rounds: selJd.pipeline_config.interview_rounds });
+              } else {
+                setPipelineConfigForm({ assessment_rounds: 0, interview_rounds: 1 });
+              }
+              setPipelineConfigModal(true);
+            }}
+            className="flex items-center space-x-1.5 px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg border border-slate-600/50 transition-colors"
+          >
+            <Calendar size={12} />
+            <span>Configure Pipeline Rounds</span>
+          </button>
+        </div>
+
         {/* Pipeline cards */}
         <div className="space-y-3">
-          {pipelineRecords.map(record => {
+          {pipelineRecords.filter(r => r.current_stage !== 'rejected').map(record => {
             const currentStageEntry = record.stages.find(s => s.name === record.current_stage);
             if (!currentStageEntry) return null;
 
             const { pct, barColor, textColor } = getSlaProgress(currentStageEntry);
             const timeLabel = formatTimeRemaining(currentStageEntry);
-            const stageIdx = STAGE_ORDER.indexOf(record.current_stage);
+            // Use candidate's own planned_stages if available, else fall back to global
+            const cardStageOrder = record.planned_stages && record.planned_stages.length > 0
+              ? record.planned_stages
+              : STAGE_ORDER;
+            const stageIdx = cardStageOrder.indexOf(record.current_stage);
             const extForm = extensionForms[record.candidate_id];
             const ext = currentStageEntry.extension;
             const hasPendingExt = !!(ext && !ext.approved_at);
-            const isLastStage = record.current_stage === STAGE_ORDER[STAGE_ORDER.length - 1];
+            const isLastStage = record.current_stage === cardStageOrder[cardStageOrder.length - 1];
 
             return (
               <div key={record.candidate_id} className="bg-slate-800/40 border border-slate-700/50 rounded-2xl overflow-hidden">
@@ -825,19 +998,31 @@ const RecruiterDashboard: React.FC = () => {
                       </p>
                       <p className="text-[11px] text-slate-400">{record.candidate_id}</p>
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded bg-blue-500/20 text-blue-400 shrink-0">
-                      {STAGE_LABELS[record.current_stage] || record.current_stage}
-                    </span>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {record.on_hold && (
+                        <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded bg-yellow-500/20 text-yellow-400">
+                          On Hold
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Current stage label */}
+                  <div className="mb-1.5">
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{getStagLabel(record.current_stage)}</span>
                   </div>
 
                   {/* Stage progression dots */}
                   <div className="flex items-center">
-                    {STAGE_ORDER.map((s, i) => (
+                    {cardStageOrder.map((s, i) => (
                       <React.Fragment key={s}>
-                        <div className={`h-2 w-2 rounded-full shrink-0 ${
-                          i < stageIdx ? 'bg-emerald-500' : i === stageIdx ? 'bg-blue-400' : 'bg-slate-700'
-                        }`} />
-                        {i < STAGE_ORDER.length - 1 && (
+                        <div
+                          className={`h-2 w-2 rounded-full shrink-0 ${
+                            i < stageIdx ? 'bg-emerald-500' : i === stageIdx ? 'bg-blue-400' : 'bg-slate-700'
+                          }`}
+                          title={getStagLabel(s)}
+                        />
+                        {i < cardStageOrder.length - 1 && (
                           <div className={`h-px flex-1 ${i < stageIdx ? 'bg-emerald-500/50' : 'bg-slate-700'}`} />
                         )}
                       </React.Fragment>
@@ -943,6 +1128,187 @@ const RecruiterDashboard: React.FC = () => {
                       </span>
                     ) : (
                       <>
+                        {/* Assessment stage — Pass / Fail */}
+                        {record.current_stage.startsWith('assessment_') ? (
+                          <>
+                            <button
+                              onClick={() => advanceStage(selectedJdId, record.candidate_id)}
+                              className="flex items-center space-x-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-colors"
+                            >
+                              <CheckCircle size={12} />
+                              <span>Pass</span>
+                            </button>
+                            <button
+                              onClick={async () => {
+                                const r = await fetch(`${API}/pipeline/interview-outcome/${selectedJdId}/${record.candidate_id}`, {
+                                  method: 'POST',
+                                  headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ outcome: 'rejected' }),
+                                });
+                                if (r.ok) await loadPipeline(selectedJdId);
+                              }}
+                              className="flex items-center space-x-1.5 px-4 py-2 bg-red-600/80 hover:bg-red-500 text-white text-xs font-bold rounded-lg transition-colors"
+                            >
+                              <XCircle size={12} />
+                              <span>Fail</span>
+                            </button>
+                          </>
+                        ) : record.current_stage.startsWith('interview_') ? (
+                          <>
+                            <button
+                              onClick={() => {
+                                setOutcomeNextStep('next_round');
+                                setOutcomeForm({ date: '', time: '', mode: 'online', meeting_link: '', location: '', duration: '1hour', notes: '' });
+                                setOutcomeModal({ candidateId: record.candidate_id, currentStage: record.current_stage });
+                              }}
+                              className="flex items-center space-x-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-colors"
+                            >
+                              <CheckCircle size={12} />
+                              <span>Selected</span>
+                            </button>
+                            <button
+                              disabled={interviewOutcomeLoading === record.candidate_id}
+                              onClick={async () => {
+                                setInterviewOutcomeLoading(record.candidate_id);
+                                try {
+                                  const r = await fetch(`${API}/pipeline/interview-outcome/${selectedJdId}/${record.candidate_id}`, {
+                                    method: 'POST',
+                                    headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ outcome: 'on_hold' }),
+                                  });
+                                  if (r.ok) await loadPipeline(selectedJdId);
+                                } finally {
+                                  setInterviewOutcomeLoading(null);
+                                }
+                              }}
+                              className="flex items-center space-x-1.5 px-4 py-2 bg-yellow-600/80 hover:bg-yellow-500 disabled:opacity-40 text-white text-xs font-bold rounded-lg transition-colors"
+                            >
+                              <Clock size={12} />
+                              <span>On Hold</span>
+                            </button>
+                            <button
+                              disabled={interviewOutcomeLoading === record.candidate_id}
+                              onClick={async () => {
+                                setInterviewOutcomeLoading(record.candidate_id);
+                                try {
+                                  const r = await fetch(`${API}/pipeline/interview-outcome/${selectedJdId}/${record.candidate_id}`, {
+                                    method: 'POST',
+                                    headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ outcome: 'rejected' }),
+                                  });
+                                  if (r.ok) await loadPipeline(selectedJdId);
+                                } finally {
+                                  setInterviewOutcomeLoading(null);
+                                }
+                              }}
+                              className="flex items-center space-x-1.5 px-4 py-2 bg-red-600/80 hover:bg-red-500 disabled:opacity-40 text-white text-xs font-bold rounded-lg transition-colors"
+                            >
+                              <XCircle size={12} />
+                              <span>Rejected</span>
+                            </button>
+                          </>
+                        ) : record.current_stage === 'offer' ? (() => {
+                          const offerStage = record.stages.find(s => s.name === 'offer');
+                          const joiningDateSet = !!(offerStage as any)?.joining_date;
+                          const candidateResp = record.candidate_response as CandidateOfferResponse | null | undefined;
+
+                          if (!joiningDateSet) {
+                            // Recruiter hasn't sent the offer yet
+                            return (
+                              <button
+                                onClick={() => {
+                                  setOfferForm({ joining_date: '', work_location: '' });
+                                  setOfferModal({ candidateId: record.candidate_id });
+                                }}
+                                className="flex items-center space-x-1.5 px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold rounded-lg transition-colors"
+                              >
+                                <CheckCircle size={12} />
+                                <span>Give Offer</span>
+                              </button>
+                            );
+                          }
+
+                          if (!candidateResp) {
+                            // Offer sent, waiting for candidate
+                            return (
+                              <span className="text-[10px] font-bold text-slate-400 italic px-2">
+                                Awaiting candidate response…
+                              </span>
+                            );
+                          }
+
+                          if (candidateResp.response === 'accept') {
+                            return (
+                              <>
+                                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20">
+                                  Candidate Agreed ✓
+                                </span>
+                                <button
+                                  onClick={async () => {
+                                    const r = await fetch(`${API}/pipeline/confirm-joining/${selectedJdId}/${record.candidate_id}`, {
+                                      method: 'POST', headers: getAuthHeaders(),
+                                    });
+                                    if (r.ok) await loadPipeline(selectedJdId);
+                                    else setPipelineError('Confirm joining failed');
+                                  }}
+                                  className="flex items-center space-x-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-colors"
+                                >
+                                  <CheckCircle size={12} />
+                                  <span>Confirm Joining</span>
+                                </button>
+                                <button
+                                  onClick={async () => {
+                                    const r = await fetch(`${API}/pipeline/reject-from-offer/${selectedJdId}/${record.candidate_id}`, {
+                                      method: 'POST', headers: getAuthHeaders(),
+                                    });
+                                    if (r.ok) await loadPipeline(selectedJdId);
+                                  }}
+                                  className="flex items-center space-x-1.5 px-3 py-2 bg-red-600/20 hover:bg-red-600/40 text-red-400 text-xs font-bold rounded-lg border border-red-500/20 transition-colors"
+                                >
+                                  <XCircle size={12} />
+                                  <span>Reject</span>
+                                </button>
+                              </>
+                            );
+                          }
+
+                          // Candidate postponed / not interested
+                          return (
+                            <>
+                              <button
+                                onClick={() => setResponseMessageModal({
+                                  name: candidateNames[record.candidate_id] || record.candidate_id,
+                                  message: candidateResp.reason || 'Postpone / Not interested (no note left)',
+                                })}
+                                className="text-[10px] font-bold text-yellow-400 bg-yellow-500/10 px-2 py-1 rounded border border-yellow-500/20 max-w-[160px] truncate hover:bg-yellow-500/20 transition-colors text-left"
+                              >
+                                {candidateResp.reason ? `"${candidateResp.reason}"` : 'Postpone / Not interested'}
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setOfferForm({ joining_date: '', work_location: '' });
+                                  setOfferModal({ candidateId: record.candidate_id });
+                                }}
+                                className="flex items-center space-x-1.5 px-3 py-2 bg-violet-600/20 hover:bg-violet-600/40 text-violet-400 text-xs font-bold rounded-lg border border-violet-500/20 transition-colors"
+                              >
+                                <ArrowRight size={12} />
+                                <span>Update Date</span>
+                              </button>
+                              <button
+                                onClick={async () => {
+                                  const r = await fetch(`${API}/pipeline/reject-from-offer/${selectedJdId}/${record.candidate_id}`, {
+                                    method: 'POST', headers: getAuthHeaders(),
+                                  });
+                                  if (r.ok) await loadPipeline(selectedJdId);
+                                }}
+                                className="flex items-center space-x-1.5 px-3 py-2 bg-red-600/20 hover:bg-red-600/40 text-red-400 text-xs font-bold rounded-lg border border-red-500/20 transition-colors"
+                              >
+                                <XCircle size={12} />
+                                <span>Reject</span>
+                              </button>
+                            </>
+                          );
+                        })() : (
                         <button
                           onClick={() => handleAdvanceClick(selectedJdId, record)}
                           className="flex items-center space-x-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-colors"
@@ -950,8 +1316,9 @@ const RecruiterDashboard: React.FC = () => {
                           <ArrowRight size={12} />
                           <span>Advance Stage</span>
                         </button>
-                        {/* Assessment badge or Send Assessment button */}
-                        {(() => {
+                        )}
+                        {/* Assessment + Extension — hidden during interview outcome flow */}
+                        {!record.current_stage.startsWith('interview_') && (() => {
                           const asmt = assessments[record.candidate_id];
                           if (asmt?.status === 'completed') {
                             return (
@@ -961,39 +1328,11 @@ const RecruiterDashboard: React.FC = () => {
                             );
                           }
                           if (asmt?.status === 'pending') {
-                            return (
-                              <span className="px-3 py-2 text-[10px] font-bold rounded-lg bg-slate-700/50 text-slate-400 border border-slate-600/50">
-                                Assessment Sent
-                              </span>
-                            );
+                            return null;
                           }
-                          return (
-                            <button
-                              disabled={sendingAssessment === record.candidate_id}
-                              onClick={async () => {
-                                setSendingAssessment(record.candidate_id);
-                                try {
-                                  const r = await fetch(`${API}/assessments/generate/${selectedJdId}/${record.candidate_id}`, {
-                                    method: 'POST', headers: getAuthHeaders(),
-                                  });
-                                  if (r.ok) {
-                                    const d = await r.json();
-                                    setAssessments(prev => ({
-                                      ...prev,
-                                      [record.candidate_id]: { status: 'pending', score: null, assessment_id: d.assessment_id },
-                                    }));
-                                  }
-                                } finally {
-                                  setSendingAssessment(null);
-                                }
-                              }}
-                              className="flex items-center space-x-1.5 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/40 disabled:opacity-40 text-blue-400 text-[10px] font-bold rounded-lg border border-blue-500/20 transition-colors"
-                            >
-                              {sendingAssessment === record.candidate_id ? '…' : 'Send Assessment'}
-                            </button>
-                          );
+                          return null;
                         })()}
-                        {!hasPendingExt && (
+                        {!record.current_stage.startsWith('interview_') && !hasPendingExt && (
                           <button
                             onClick={() => setExtensionForms(prev => ({
                               ...prev,
@@ -1150,6 +1489,49 @@ const RecruiterDashboard: React.FC = () => {
                 )}
               </section>
 
+              {/* Send to Client */}
+              {results.some(r => r.status === 'pass_2_complete') && (
+                <section>
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Client Submission</p>
+                  </div>
+                  {clientSubmission?.sent ? (
+                    <div className="flex items-center space-x-3 px-4 py-3 bg-emerald-900/10 border border-emerald-500/20 rounded-xl">
+                      <CheckCircle size={16} className="text-emerald-400 shrink-0" />
+                      <div>
+                        <p className="text-xs font-bold text-emerald-400">
+                          Sent {clientSubmission.candidates_sent} candidate{clientSubmission.candidates_sent !== 1 ? 's' : ''} to {clientSubmission.client_email}
+                        </p>
+                        <p className="text-[10px] text-slate-500 mt-0.5">
+                          {clientSubmission.sent_at ? new Date(clientSubmission.sent_at).toLocaleString() : ''}
+                        </p>
+                      </div>
+                      <button
+                        onClick={handleSendToClient}
+                        disabled={sendingToClient}
+                        className="ml-auto px-3 py-1.5 text-[10px] font-bold text-slate-400 hover:text-white bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600/50 transition-colors disabled:opacity-40"
+                      >
+                        {sendingToClient ? '…' : 'Resend'}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center space-x-3">
+                      <button
+                        onClick={handleSendToClient}
+                        disabled={sendingToClient}
+                        className="flex items-center space-x-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-xs font-bold rounded-xl transition-colors"
+                      >
+                        <ArrowRight size={14} />
+                        <span>{sendingToClient ? 'Sending…' : `Send ${results.filter(r => r.status === 'pass_2_complete').length} Candidate Assessments to Client`}</span>
+                      </button>
+                      {clientSendError && (
+                        <p className="text-xs text-red-400">{clientSendError}</p>
+                      )}
+                    </div>
+                  )}
+                </section>
+              )}
+
               {/* Pipeline Stats */}
               {results.length > 0 && (
                 <section>
@@ -1177,6 +1559,419 @@ const RecruiterDashboard: React.FC = () => {
       )}
 
       {/* Interview scheduling modal */}
+      {/* Interview Outcome Modal (Selected flow) */}
+      {outcomeModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#1e293b] border border-slate-700/50 rounded-2xl p-8 w-full max-w-lg shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="bg-emerald-600/20 p-2 rounded-xl border border-emerald-500/30">
+                  <CheckCircle size={18} className="text-emerald-400" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">Candidate Selected</h3>
+                  <p className="text-xs text-slate-400">{candidateNames[outcomeModal.candidateId] || outcomeModal.candidateId} — {getStagLabel(outcomeModal.currentStage)}</p>
+                </div>
+              </div>
+              <button onClick={() => setOutcomeModal(null)} className="text-slate-400 hover:text-white">
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Next step choice */}
+            <div className="mb-5">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Next Step</p>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setOutcomeNextStep('next_round')}
+                  className={`px-4 py-3 rounded-xl border text-sm font-bold transition-colors ${outcomeNextStep === 'next_round' ? 'bg-blue-600/20 border-blue-500/50 text-blue-300' : 'bg-slate-800/50 border-slate-600/50 text-slate-400 hover:border-slate-500'}`}
+                >
+                  Schedule Next Round
+                </button>
+                <button
+                  onClick={() => setOutcomeNextStep('offer')}
+                  className={`px-4 py-3 rounded-xl border text-sm font-bold transition-colors ${outcomeNextStep === 'offer' ? 'bg-violet-600/20 border-violet-500/50 text-violet-300' : 'bg-slate-800/50 border-slate-600/50 text-slate-400 hover:border-slate-500'}`}
+                >
+                  Move to Offer
+                </button>
+              </div>
+            </div>
+
+            {/* Interview details — shown only for next_round */}
+            {outcomeNextStep === 'next_round' && (
+              <div className="space-y-4 mb-6">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Interview Details</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[10px] text-slate-400 uppercase tracking-widest">Date</label>
+                    <input type="date" value={outcomeForm.date} onChange={e => setOutcomeForm(f => ({ ...f, date: e.target.value }))}
+                      className="mt-1 w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-slate-400 uppercase tracking-widest">Time</label>
+                    <input type="time" value={outcomeForm.time} onChange={e => setOutcomeForm(f => ({ ...f, time: e.target.value }))}
+                      className="mt-1 w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[10px] text-slate-400 uppercase tracking-widest">Mode</label>
+                    <select value={outcomeForm.mode} onChange={e => setOutcomeForm(f => ({ ...f, mode: e.target.value as 'online' | 'in-person' }))}
+                      className="mt-1 w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                      <option value="online">Online</option>
+                      <option value="in-person">In-Person</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-slate-400 uppercase tracking-widest">Duration</label>
+                    <select value={outcomeForm.duration} onChange={e => setOutcomeForm(f => ({ ...f, duration: e.target.value }))}
+                      className="mt-1 w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                      <option value="30min">30 min</option>
+                      <option value="45min">45 min</option>
+                      <option value="1hour">1 hour</option>
+                    </select>
+                  </div>
+                </div>
+                {outcomeForm.mode === 'online' ? (
+                  <div>
+                    <label className="text-[10px] text-slate-400 uppercase tracking-widest">Meeting Link</label>
+                    <input type="url" placeholder="https://meet.google.com/..." value={outcomeForm.meeting_link} onChange={e => setOutcomeForm(f => ({ ...f, meeting_link: e.target.value }))}
+                      className="mt-1 w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                  </div>
+                ) : (
+                  <div>
+                    <label className="text-[10px] text-slate-400 uppercase tracking-widest">Location</label>
+                    <input type="text" placeholder="Office address..." value={outcomeForm.location} onChange={e => setOutcomeForm(f => ({ ...f, location: e.target.value }))}
+                      className="mt-1 w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                  </div>
+                )}
+                <div>
+                  <label className="text-[10px] text-slate-400 uppercase tracking-widest">Notes (optional)</label>
+                  <textarea rows={2} value={outcomeForm.notes} onChange={e => setOutcomeForm(f => ({ ...f, notes: e.target.value }))}
+                    className="mt-1 w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500 resize-none" />
+                </div>
+              </div>
+            )}
+
+            {outcomeNextStep === 'offer' && (
+              <div className="mb-6 px-4 py-3 bg-violet-500/10 border border-violet-500/20 rounded-xl text-xs text-violet-300">
+                Candidate will be moved to Offer stage and an offer response email will be sent automatically.
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              <button
+                onClick={submitSelectedOutcome}
+                disabled={interviewOutcomeLoading === outcomeModal.candidateId || (outcomeNextStep === 'next_round' && (!outcomeForm.date || !outcomeForm.time))}
+                className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl transition-colors"
+              >
+                {interviewOutcomeLoading === outcomeModal.candidateId ? 'Saving…' : outcomeNextStep === 'next_round' ? 'Confirm & Schedule' : 'Move to Offer'}
+              </button>
+              <button onClick={() => setOutcomeModal(null)} className="px-5 py-3 text-slate-400 hover:text-white text-sm rounded-xl border border-slate-700/50 hover:border-slate-500 transition-colors">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Configure Pipeline Rounds modal */}
+      {pipelineConfigModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#1e293b] border border-slate-600/50 rounded-2xl p-8 w-full max-w-sm shadow-2xl">
+            <h3 className="text-base font-bold text-white mb-1">Configure Pipeline Rounds</h3>
+            <p className="text-xs text-slate-400 mb-6">Set assessment and interview rounds for <span className="text-slate-200 font-medium">{selectedJdId}</span></p>
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">Assessment Rounds (0–5)</label>
+                <input
+                  type="number"
+                  min={0}
+                  max={5}
+                  value={pipelineConfigForm.assessment_rounds}
+                  onChange={e => setPipelineConfigForm(f => ({ ...f, assessment_rounds: Math.min(5, Math.max(0, Number(e.target.value))) }))}
+                  className="w-full bg-slate-900/60 border border-slate-700/50 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500/60"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">Interview Rounds (1–10)</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={pipelineConfigForm.interview_rounds}
+                  onChange={e => setPipelineConfigForm(f => ({ ...f, interview_rounds: Math.min(10, Math.max(1, Number(e.target.value))) }))}
+                  className="w-full bg-slate-900/60 border border-slate-700/50 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500/60"
+                />
+              </div>
+            </div>
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setPipelineConfigModal(false)}
+                className="flex-1 px-4 py-2.5 bg-slate-700/50 hover:bg-slate-700 text-slate-300 text-sm font-semibold rounded-xl transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={savePipelineConfig}
+                disabled={pipelineConfigSaving}
+                className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors"
+              >
+                {pipelineConfigSaving ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Candidate response message modal */}
+      {responseMessageModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#1e293b] border border-yellow-500/30 rounded-2xl p-8 w-full max-w-md shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="bg-yellow-500/20 p-2 rounded-xl border border-yellow-500/30">
+                  <Clock size={18} className="text-yellow-400" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">Candidate's Message</h3>
+                  <p className="text-xs text-slate-400">{responseMessageModal.name}</p>
+                </div>
+              </div>
+              <button onClick={() => setResponseMessageModal(null)} className="text-slate-400 hover:text-white">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="bg-slate-900/60 border border-slate-700/50 rounded-xl px-5 py-4">
+              <p className="text-sm text-slate-200 leading-relaxed">"{responseMessageModal.message}"</p>
+            </div>
+            <button
+              onClick={() => setResponseMessageModal(null)}
+              className="mt-5 w-full py-2.5 text-slate-400 hover:text-white text-sm rounded-xl border border-slate-700/50 hover:border-slate-500 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Give Offer Modal */}
+      {offerModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#1e293b] border border-slate-700/50 rounded-2xl p-8 w-full max-w-md shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="bg-violet-600/20 p-2 rounded-xl border border-violet-500/30">
+                  <CheckCircle size={18} className="text-violet-400" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">Give Offer</h3>
+                  <p className="text-xs text-slate-400">{candidateNames[offerModal.candidateId] || offerModal.candidateId}</p>
+                </div>
+              </div>
+              <button onClick={() => setOfferModal(null)} className="text-slate-400 hover:text-white">
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="text-[10px] text-slate-400 uppercase tracking-widest">Joining Date <span className="text-red-400">*</span></label>
+                <input
+                  type="date"
+                  value={offerForm.joining_date}
+                  onChange={e => setOfferForm(f => ({ ...f, joining_date: e.target.value }))}
+                  className="mt-1 w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-violet-500"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] text-slate-400 uppercase tracking-widest">Work Location <span className="text-red-400">*</span></label>
+                <input
+                  type="text"
+                  placeholder="e.g. Mumbai HQ, Remote, Hybrid - Bangalore"
+                  value={offerForm.work_location}
+                  onChange={e => setOfferForm(f => ({ ...f, work_location: e.target.value }))}
+                  className="mt-1 w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-violet-500 placeholder-slate-600"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={submitGiveOffer}
+                disabled={offerSubmitting || !offerForm.joining_date || !offerForm.work_location.trim()}
+                className="flex-1 py-3 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl transition-colors"
+              >
+                {offerSubmitting ? 'Confirming…' : 'Confirm Offer & Mark Joined'}
+              </button>
+              <button onClick={() => setOfferModal(null)} className="px-5 py-3 text-slate-400 hover:text-white text-sm rounded-xl border border-slate-700/50 hover:border-slate-500 transition-colors">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Stage type picker — Assessment or Interview */}
+      {stageTypeModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#1e293b] border border-slate-700/50 rounded-2xl p-8 w-full max-w-sm shadow-2xl">
+            <h3 className="text-base font-bold text-white mb-1">What's the next round?</h3>
+            <p className="text-xs text-slate-400 mb-6">{stageTypeModal.candidateName}</p>
+            <div className="flex flex-col space-y-3">
+              <button
+                onClick={() => {
+                  setAssessmentForm({ date: '', time: '', mode: 'online', platform: '', location: '', duration: '1hour', notes: '' });
+                  setAssessmentModal({ jdId: stageTypeModal.jdId, candidateId: stageTypeModal.candidateId });
+                  setStageTypeModal(null);
+                }}
+                className="flex items-center justify-between px-5 py-4 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 rounded-xl transition-colors text-left"
+              >
+                <div>
+                  <p className="text-sm font-bold text-purple-300">Assessment</p>
+                  <p className="text-xs text-slate-400 mt-0.5">Schedule an assessment round for the candidate</p>
+                </div>
+                <ArrowRight size={16} className="text-purple-400 shrink-0" />
+              </button>
+              <button
+                onClick={() => {
+                  setStageTypeModal(null);
+                  setInterviewForm({ date: '', time: '', mode: 'online', meeting_link: '', location: '', duration: '1hour', notes: '' });
+                  setInterviewModal({ candidateId: stageTypeModal.candidateId, nextStage: 'interview_1' });
+                }}
+                className="flex items-center justify-between px-5 py-4 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-xl transition-colors text-left"
+              >
+                <div>
+                  <p className="text-sm font-bold text-blue-300">Interview</p>
+                  <p className="text-xs text-slate-400 mt-0.5">Schedule an interview round</p>
+                </div>
+                <ArrowRight size={16} className="text-blue-400 shrink-0" />
+              </button>
+            </div>
+            <button onClick={() => setStageTypeModal(null)} className="mt-4 w-full text-xs text-slate-500 hover:text-slate-300 transition-colors">Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* Assessment scheduling modal */}
+      {assessmentModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#1e293b] border border-slate-700/50 rounded-2xl p-8 w-full max-w-lg shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-600/20 rounded-xl">
+                  <Calendar className="text-purple-400" size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Schedule Assessment</h3>
+                  <p className="text-xs text-slate-400">{candidateNames[assessmentModal.candidateId] || assessmentModal.candidateId}</p>
+                </div>
+              </div>
+              <button onClick={() => setAssessmentModal(null)} className="text-slate-500 hover:text-white transition-colors"><X size={18} /></button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">Date <span className="text-red-400">*</span></label>
+                  <input type="date" value={assessmentForm.date} onChange={e => setAssessmentForm(f => ({ ...f, date: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">Time <span className="text-red-400">*</span></label>
+                  <input type="time" value={assessmentForm.time} onChange={e => setAssessmentForm(f => ({ ...f, time: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">Mode <span className="text-red-400">*</span></label>
+                  <select value={assessmentForm.mode} onChange={e => setAssessmentForm(f => ({ ...f, mode: e.target.value as 'online' | 'in-person' }))}
+                    className="w-full px-3 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <option value="online">Online</option>
+                    <option value="in-person">In-person</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">Duration</label>
+                  <select value={assessmentForm.duration} onChange={e => setAssessmentForm(f => ({ ...f, duration: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <option value="30min">30 minutes</option>
+                    <option value="45min">45 minutes</option>
+                    <option value="1hour">1 hour</option>
+                    <option value="2hours">2 hours</option>
+                  </select>
+                </div>
+              </div>
+
+              {assessmentForm.mode === 'online' ? (
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">Platform / Link <span className="text-red-400">*</span></label>
+                  <input type="text" placeholder="e.g. HackerRank link, Google Form URL..." value={assessmentForm.platform}
+                    onChange={e => setAssessmentForm(f => ({ ...f, platform: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">Location <span className="text-red-400">*</span></label>
+                  <input type="text" placeholder="Office address or room" value={assessmentForm.location}
+                    onChange={e => setAssessmentForm(f => ({ ...f, location: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-bold text-slate-300 mb-1.5">Notes for candidate <span className="text-slate-500">(optional)</span></label>
+                <textarea placeholder="Topics to prepare, tools required, instructions..." value={assessmentForm.notes}
+                  onChange={e => setAssessmentForm(f => ({ ...f, notes: e.target.value }))} rows={3}
+                  className="w-full px-3 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none" />
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                disabled={assessmentSubmitting || !assessmentForm.date || !assessmentForm.time || !(assessmentForm.mode === 'online' ? assessmentForm.platform : assessmentForm.location)}
+                onClick={async () => {
+                  if (!assessmentModal) return;
+                  setAssessmentSubmitting(true);
+                  try {
+                    const r = await fetch(`${API}/assessments/generate/${assessmentModal.jdId}/${assessmentModal.candidateId}`, {
+                      method: 'POST',
+                      headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        date: assessmentForm.date,
+                        time: assessmentForm.time,
+                        mode: assessmentForm.mode,
+                        platform: assessmentForm.mode === 'online' ? assessmentForm.platform : undefined,
+                        location: assessmentForm.mode === 'in-person' ? assessmentForm.location : undefined,
+                        duration: assessmentForm.duration,
+                        notes: assessmentForm.notes,
+                      }),
+                    });
+                    if (r.ok) {
+                      const d = await r.json();
+                      setAssessments(prev => ({ ...prev, [assessmentModal.candidateId]: { status: 'pending', score: null, assessment_id: d.assessment_id } }));
+                    }
+                    setAssessmentModal(null);
+                    await loadPipeline(selectedJdId);
+                  } finally {
+                    setAssessmentSubmitting(false);
+                  }
+                }}
+                className="flex-1 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/40 text-white font-semibold text-sm rounded-lg transition-colors"
+              >
+                {assessmentSubmitting ? 'Sending...' : 'Confirm & Send Assessment'}
+              </button>
+              <button onClick={() => setAssessmentModal(null)} disabled={assessmentSubmitting}
+                className="flex-1 py-2.5 bg-slate-700/50 hover:bg-slate-700 text-slate-300 font-semibold text-sm rounded-lg transition-colors">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {interviewModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-[#1e293b] border border-slate-700/50 rounded-2xl p-8 w-full max-w-lg shadow-2xl">

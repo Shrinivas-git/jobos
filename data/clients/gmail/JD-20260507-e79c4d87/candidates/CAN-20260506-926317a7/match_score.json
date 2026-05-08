@@ -1,0 +1,189 @@
+{
+  "fitment_score": 8.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0625,
+  "must_have_breakdown": [
+    {
+      "skill": "Python (3.x)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Django",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Flask",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "FastAPI",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MySQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "PostgreSQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MongoDB",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "SQLite",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Git / GitHub / Bitbucket",
+      "status": "Met",
+      "evidence": "Resume explicitly lists Bitbucket and Git as core tools used across 4+ years in CI/CD pipeline management."
+    },
+    {
+      "skill": "Docker",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Jenkins",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "HTML5 / CSS3 / JavaScript",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RESTful APIs / JSON",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "OOP / Data Structures / Algorithms",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Unit Testing (PyTest/Unittest)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "AI Model Training",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 9,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [
+    {
+      "name": "Copado Fundamentals I \u2013 Metadata Format",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II \u2013 Metadata Format",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Copado Fundamentals I \u2013 Source Format (SFP)",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II \u2013 Source Format (SFP)",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Platform Developer I",
+      "tier": "Practitioner"
+    }
+  ],
+  "composite_score": 8.291666666666666,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Salesforce Copado DevOps/Release Engineer with 6 years of IT experience, none of which is in Python development, back-end engineering, or AI model training. The JD requires a Junior Python Developer proficient in Python 3.x, Django/Flask/FastAPI, relational and NoSQL databases, Docker, Jenkins, and unit testing \u2014 the candidate demonstrates zero evidence of any of these. The only overlap is Git/Bitbucket usage, which is table-stakes and insufficient. The recruiter's explicit note about wanting Python project experience and AI model training makes this an even cleaner rejection. Do not proceed \u2014 this profile belongs in a Salesforce DevOps pipeline, not a Python developer search.",
+  "strengths": [
+    "GIT & CI/CD PIPELINE EXPERIENCE: Candidate has 4+ years of hands-on Git and Bitbucket usage for CI/CD pipeline management \u2014 the only JD skill with any overlap \u2014 but this is Salesforce-specific, not Python-based.",
+    "AGILE & DELIVERY TRACK RECORD: Reduced deployment time by 30% through Copado-driven processes and holds multiple corporate awards for on-time, critical production releases \u2014 strong delivery discipline, but irrelevant to this role.",
+    "SALESFORCE AI COMPONENT EXPOSURE: Resume mentions Agentforce AI component deployments \u2014 a modern signal \u2014 but this is Salesforce-native AI orchestration, not Python-based AI/ML model training as the recruiter requires."
+  ],
+  "gaps": [
+    "ZERO PYTHON OR BACK-END DEVELOPMENT EXPERIENCE: The candidate has no evidence of Python (3.x), Django, Flask, FastAPI, REST API development, or any back-end coding work. This is the entire job function \u2014 not a partial gap but a complete domain mismatch.",
+    "NO AI MODEL TRAINING EXPERIENCE: The recruiter explicitly requires someone who has trained AI models using Python. This candidate's 'AI' exposure is limited to deploying Salesforce Agentforce components \u2014 no ML frameworks, no model training, no data science tooling whatsoever."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated in the resume and JD specifies no maximum \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires In-office presence in Bangalore; candidate is based in Puducherry, India \u2014 location mismatch."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "JD requires 0 years relevant experience (fresher/entry level), so no experience gap penalty applies."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "JD specifies no college preference or exclusion \u2014 no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch"
+  ],
+  "role_level_detected": "Senior",
+  "role_level_match": "Over-qualified",
+  "tool_currency": "Previous",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Unknown",
+  "availability_reason": "Candidate is currently employed at Trimble Inc. with no end date or notice period stated on the resume.",
+  "alternative_role_fit": "Senior Salesforce Copado DevOps / Release Engineer",
+  "rare_assets": [
+    "Quadruple Copado certification (both SFP and Metadata formats, Fundamentals I and II) \u2014 rare depth in Copado release tooling.",
+    "Salesforce Agentforce AI component deployment experience \u2014 early adopter of Salesforce's newest AI orchestration platform.",
+    "30% deployment time reduction with quantified outcome across enterprise telecom domain \u2014 high-signal delivery credential."
+  ],
+  "self_reported_unverified": [
+    "'Reducing deployment time by 30%' \u2014 cited twice but no baseline numbers, deployment volume, or audit trail provided to validate the figure.",
+    "Certificate of Appreciation for 'Trimble Console Platform' \u2014 internal award with no external verifiability or scope detail.",
+    "Bronze Accolade Award from Eviden/Atos \u2014 described vaguely as 'exceptional contribution and involvement in organisational activities' with no deliverable context."
+  ],
+  "interview_flags": [
+    "Probe whether candidate has any Python coding experience outside the Salesforce ecosystem \u2014 even hobby projects or coursework.",
+    "Ask about the MBA in HR Management (completing December 2025) \u2014 does candidate intend to pivot to HR, and is the Python Developer application a genuine career interest?",
+    "Clarify notice period given current active employment at Trimble Inc. \u2014 critical for timeline planning.",
+    "Probe 'Salesforce Platform Developer I' certification \u2014 does this indicate any back-end or Apex coding depth that might transfer to Python logic?",
+    "Ask about any personal or academic AI/ML projects \u2014 recruiter specifically wants AI model training experience, and candidate mentions none."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:56:05.708508"
+}

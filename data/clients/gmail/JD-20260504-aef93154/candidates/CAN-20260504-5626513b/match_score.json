@@ -1,0 +1,24 @@
+{
+  "fitment_score": 85.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 77.026264,
+  "reasoning": "The candidate's extensive experience with Copado, Salesforce, and CI/CD pipeline management aligns well with the job requirements. However, the candidate's lack of direct experience as a Salesforce Platform Manager and limited information about their proficiency in Salesforce multi-tenant architecture and governor limits are notable gaps.",
+  "strengths": [
+    "The candidate has expert-level proficiency with Copado, evident from their experience with Copado-driven Salesforce deployments and certifications in Copado Fundamentals.",
+    "The candidate has a strong background in Salesforce release management, having led release management for enterprise telecom domain clients and managed end-to-end Copado deployments.",
+    "The candidate has experience with Agile/Scrum methodologies, having participated in Scrum ceremonies and contributed to continuous delivery improvement.",
+    "The candidate has a proven track record of reducing deployment time by 30% through streamlined Copado-driven release processes, demonstrating their problem-solving skills.",
+    "The candidate has excellent communication and collaboration skills, having worked with cross-functional teams, clients, and product owners to deliver reliable Salesforce releases."
+  ],
+  "gaps": [
+    "The candidate lacks direct experience as a Salesforce Platform Manager, which may impact their ability to serve as the primary custodian of environments and manage the full lifecycle of Salesforce releases.",
+    "The candidate's experience with Salesforce multi-tenant architecture is not explicitly mentioned, which is a critical requirement for the role.",
+    "The candidate's proficiency in governor limits and environment management is not clearly demonstrated, which is essential for ensuring production stability.",
+    "The candidate's experience with establishing a Center of Excellence is not mentioned, which is a key responsibility of the role.",
+    "The candidate's experience with streamlining release management and testing environments is limited, which may impact their ability to support the streamlining of release management and testing environments."
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T18:38:05.870154"
+}

@@ -1,0 +1,172 @@
+{
+  "fitment_score": 2.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "8+ years of experience in Car Rental / Fleet Management / Mobility industry",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Strong experience in Operations Management + Sales / Business Development",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Proven track record in P&L ownership and profitability management",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience handling corporate clients / B2B accounts",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Strong leadership and team management experience",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Good commercial acumen and negotiation skills",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Ability to work in a fast-paced target-driven environment",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 9,
+  "cert_tier_bonus": 8,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Platform Developer I",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce App Builder",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Business Analyst",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Agentforce Specialist",
+      "tier": "Expert"
+    },
+    {
+      "name": "Salesforce AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Copado AI Certified",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Infosys Agile Certification",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Flosum Professional level Certification",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Flosum Expert level Certification",
+      "tier": "Expert"
+    },
+    {
+      "name": "Copado Mentor Program",
+      "tier": "Mentor"
+    }
+  ],
+  "composite_score": 11.5,
+  "reasoning": "Reject \u2014 completely wrong domain. This candidate is a Salesforce Release and DevOps specialist with 7 years in IT, working on CI/CD pipelines, Copado deployments, and Salesforce platform administration for clients like Apple and Philip Morris. She has zero connection to Car Rental, Fleet Management, Mobility, Passenger Transport, or any related industry. There is no evidence of P&L ownership, branch operations, B2B sales, fleet management, driver/vendor management, or any of the core requirements for this Profit Centre Head role. The recruiter's note explicitly asks for passenger management experience and disqualifies logistics/goods backgrounds \u2014 this candidate is from IT services entirely. Do not proceed under any circumstances.",
+  "strengths": [
+    "SALESFORCE DEVOPS DEPTH: Hands-on Copado and Flosum implementation across major global clients including Apple and Philip Morris International, with full CI/CD pipeline ownership \u2014 strong technical execution in her actual domain.",
+    "CERTIFICATION PORTFOLIO: Holds 12+ Salesforce and DevOps certifications including Copado Fundamentals I and II, Copado AI, Flosum Professional and Expert, and multiple Salesforce platform certifications \u2014 rare depth for an IT specialist.",
+    "COPADO MENTOR RECOGNITION: Selected as a Copado Mentor for a 6-week program \u2014 a peer-recognised industry signal that differentiates her from typical Salesforce engineers."
+  ],
+  "gaps": [
+    "ZERO INDUSTRY RELEVANCE: Candidate has no experience in Car Rental, Fleet Management, Mobility, or Passenger Transport \u2014 the foundational requirement for this role. She is a pure IT/Salesforce professional and cannot be considered for a branch operations and P&L leadership role.",
+    "NO COMMERCIAL OR LEADERSHIP EXPERIENCE: There is no evidence of P&L ownership, revenue targets, B2B sales, team management of operations staff, or customer relationship management in any non-technical context \u2014 every core responsibility of this JD is unaddressed."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated in resume; no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "Candidate is based in Bengaluru; JD requires in-office presence in Hyderabad \u2014 location mismatch."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 7 years total experience which exceeds half of the 4-year JD minimum, so no penalty applied \u2014 though experience is entirely in the wrong domain."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any'; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in JD; no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch \u2014 candidate is in Bengaluru, role requires in-office presence in Hyderabad"
+  ],
+  "role_level_detected": "Lead",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at Infosys is listed as August 2025 to Present with no notice period stated; availability cannot be determined.",
+  "alternative_role_fit": "Salesforce Release Manager / DevOps Lead",
+  "rare_assets": [
+    "Copado Mentor \u2014 selected by Copado as a peer mentor, a highly uncommon industry recognition for a mid-level practitioner.",
+    "Dual Flosum certification at Professional and Expert level alongside Copado \u2014 extremely rare combination of competing DevOps platform certifications.",
+    "Agentforce Specialist certification \u2014 early adopter of Salesforce's newest AI agent platform, positioning her ahead of most Salesforce professionals."
+  ],
+  "self_reported_unverified": [
+    "'Rise Insta Award' for exceptional performance \u2014 no context on award criteria, scope, or how many recipients receive it.",
+    "Claims to have 'led' Salesforce DevOps processes for PMI but no team size or direct report count is mentioned to confirm management scope.",
+    "POC evaluation for Apple project described without any outcome, timeline, or success metric to validate impact."
+  ],
+  "interview_flags": [
+    "Do you have any experience in fleet management, car rental, passenger mobility, or branch operations \u2014 even indirectly?",
+    "Have you ever managed a P&L, revenue target, or commercial business unit in any capacity?",
+    "Your resume shows no team size for any role \u2014 how many people have you directly managed or mentored?",
+    "Why are you applying for a Profit Centre Head role given your entire background is in Salesforce DevOps?",
+    "Are you open to relocating from Bengaluru to Hyderabad on a permanent in-office basis?"
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-06T11:44:25.442508"
+}

@@ -1,0 +1,146 @@
+{
+  "fitment_score": 4.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MISRA coding guidelines",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "AUTOSAR experience",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR system knowledge",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 2,
+  "outcome_bonus": 3,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 5,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Platform Developer I",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Platform App Builder",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Business Analyst",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified AI Specialist",
+      "tier": "Expert"
+    },
+    {
+      "name": "Salesforce Certified AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Salesforce Certified Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Microsoft Certified: Azure Fundamentals (AZ-900)",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 12.583333333333332,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Senior Salesforce Developer with 7 years in enterprise CRM platforms (Apex, LWC, Flow, Copado) and has zero evidence of embedded systems, C programming, MISRA guidelines, AUTOSAR, RTOS, or RADAR expertise \u2014 every single must-have for this role is missing. The JD demands an embedded/automotive software engineer with deep AUTOSAR and RTOS experience for what is clearly an ADAS/RADAR development role based in Chennai. The candidate's ECE B.Tech background (2014-2018) is the only tangential connection, but 7 years of Salesforce CRM work has taken them in a completely opposite career direction. Do not proceed \u2014 this is a domain mismatch, not a skills gap.",
+  "strengths": [
+    "SALESFORCE DELIVERY LEADERSHIP: Led end-to-end Salesforce org delivery for 1500+ users at IBM/Informa, owning design through deployment using Copado \u2014 high-signal enterprise delivery credential, irrelevant to this role.",
+    "QUANTIFIED TEAM IMPACT: Mentored 5 developers and reduced deployment defects by 30%, demonstrating credible senior-level engineering influence \u2014 strong signal for a Salesforce role, not transferable here.",
+    "CERTIFICATION DEPTH: Holds 7 Salesforce certifications plus Azure AZ-900 and Copado credentials, indicating disciplined professional development \u2014 entirely misaligned with embedded/automotive domain requirements."
+  ],
+  "gaps": [
+    "ZERO EMBEDDED SYSTEMS EXPERIENCE: The role mandates C programming with MISRA compliance, AUTOSAR stack knowledge, and RTOS proficiency \u2014 the candidate has no evidence of any embedded or automotive software development in their entire career history.",
+    "NO ADAS OR RADAR DOMAIN KNOWLEDGE: Core role deliverables involve RADAR system and algorithm development within an ADAS context \u2014 the candidate's 7-year Salesforce CRM career provides no foundation whatsoever for this work."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period specified in resume and JD has no maximum notice period constraint."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate location is not explicitly stated in the resume, so no location penalty can be applied."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 7+ years total experience, well above the 2-year minimum threshold (half of 4 years required)."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any', so no penalty applies."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Senior",
+  "role_level_match": "Match",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at IBM shows no end date and no notice period is stated in the resume.",
+  "alternative_role_fit": "Senior Salesforce Developer",
+  "rare_assets": [
+    "Salesforce Certified AI Specialist \u2014 an early-mover credential in the Salesforce AI space that very few practitioners currently hold.",
+    "Copado DevOps certification paired with hands-on Copado deployment ownership across 500+ Apex classes \u2014 rare operational depth."
+  ],
+  "self_reported_unverified": [
+    "Claimed 30% reduction in deployment defects after mentoring 5 developers \u2014 no baseline metrics or third-party validation provided.",
+    "Claims production ownership and critical defect management for a 1500+ user org \u2014 scope and severity of incidents not quantified."
+  ],
+  "interview_flags": [
+    "Probe whether the ECE engineering background (2014-2018) included any embedded C or RTOS coursework that might indicate latent transferable skills.",
+    "Ask why a candidate with strong Salesforce credentials applied to an embedded AUTOSAR/RADAR role \u2014 potential CV misdirection or application error worth clarifying.",
+    "Verify the actual Copado usage depth \u2014 was it configuration-only or did they contribute to pipeline architecture and branching strategy design?",
+    "Probe the '500+ classes with 90%+ coverage' claim \u2014 ask for specifics on test architecture to assess genuine quality versus coverage gaming.",
+    "Clarify current notice period and whether candidate is actively exploring a domain switch or this is a mistaken application."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:03:10.152919"
+}

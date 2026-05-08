@@ -1,0 +1,142 @@
+{
+  "fitment_score": 3.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MISRA coding guidelines",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "AUTOSAR",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR Algo development",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [
+    {
+      "name": "Copado Fundamentals I \u2013 Metadata Format",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II \u2013 Metadata Format",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Copado Fundamentals I \u2013 Source Format (SFP)",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II \u2013 Source Format (SFP)",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Platform Developer I",
+      "tier": "Practitioner"
+    }
+  ],
+  "composite_score": 7.25,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Salesforce Copado DevOps Engineer with zero embedded systems, automotive, or radar engineering experience. The JD demands C programming, MISRA guidelines, AUTOSAR, RTOS, and RADAR system knowledge for an automotive/embedded Senior SW Developer role in Chennai. Not a single must-have skill is present in this resume. The candidate operates exclusively in Salesforce CRM, CI/CD pipelines, and release management \u2014 a completely orthogonal technology stack. There is no basis to consider this profile even for a different level of the same role. Do not engage further; reallocate sourcing effort immediately.",
+  "strengths": [
+    "COPADO DEVOPS MASTERY: Delivered 30% reduction in deployment time at Trimble Inc. through Copado SFP and Metadata Format CI/CD pipelines \u2014 a strong, quantified outcome in her actual domain.",
+    "ENTERPRISE RELEASE LEADERSHIP: 4+ years at Atos Syntel managing multi-environment Salesforce production releases with 24/7 support, hotfix coordination, and cross-functional stakeholder management for telecom enterprise clients.",
+    "CERTIFICATION DEPTH: Holds four Copado certifications (Fundamentals I and II in both Metadata and SFP formats) plus Salesforce Certified Administrator and Platform Developer I \u2014 unusually comprehensive credentialing for a release engineer profile."
+  ],
+  "gaps": [
+    "ZERO EMBEDDED/AUTOMOTIVE DOMAIN EXPERIENCE: The role requires C programming, MISRA, AUTOSAR, and RTOS \u2014 this candidate has never worked in embedded systems, automotive software, or any safety-critical software domain. This is a fundamental domain mismatch, not a skill gap.",
+    "NO RADAR OR ADAS KNOWLEDGE: The JD explicitly requires RADAR system knowledge and lists ADAS as an added advantage. The candidate has no signal \u2014 not even adjacent \u2014 to signal processing, sensor fusion, or automotive perception systems."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated in resume; no JD maximum specified, so no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate is based in Puducherry but worked in Chennai \u2014 location proximity is close enough not to apply a penalty, though in-office Chennai is technically a mismatch."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 4+ years of IT experience, meeting the minimum threshold of 4 years total experience required by the JD."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any', so no penalty applies."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college exclusion or preference specified in the JD; no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Domain mismatch \u2014 candidate profile is entirely outside the required embedded/automotive software engineering domain"
+  ],
+  "role_level_detected": "Senior",
+  "role_level_match": "Match",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at Trimble Inc. is listed as March 2025 to Present with no end date or notice period mentioned.",
+  "alternative_role_fit": "Senior Salesforce Release Engineer / Salesforce DevOps Lead",
+  "rare_assets": [
+    "Dual-format Copado certification stack (both SFP and Metadata Format, Fundamentals I and II) \u2014 rare to see all four Copado credentials held simultaneously.",
+    "Agentforce AI component deployment experience \u2014 early adopter signal on Salesforce's newest AI platform layer."
+  ],
+  "self_reported_unverified": [
+    "30% reduction in deployment time \u2014 claimed without specifying baseline deployment count, team size, or independent validation method.",
+    "Bronze Accolade Award and Spot Recognition Awards \u2014 internal awards with no third-party verification or context on award criteria scope."
+  ],
+  "interview_flags": [
+    "Probe: Has the candidate ever worked on any embedded C or firmware project, even academically or as a side project \u2014 any adjacent signal to the JD domain?",
+    "Probe: Why is this candidate applying for an automotive embedded SW Developer role given her entire career is in Salesforce DevOps?",
+    "Probe: Clarify notice period \u2014 current role is active at Trimble Inc. with no exit indication.",
+    "Probe: The MBA in HR Management (completing December 2025) suggests a possible career pivot \u2014 what is her actual long-term trajectory?",
+    "Probe: Confirm the 30% deployment time reduction \u2014 what was the absolute baseline deployment duration and how was measurement standardised?"
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:06:23.338564"
+}

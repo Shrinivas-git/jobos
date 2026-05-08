@@ -1,0 +1,108 @@
+{
+  "fitment_score": 62.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.7,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge of C programming",
+      "status": "Met",
+      "evidence": "Resume lists C and Embedded C as primary programming languages with 4+ years of automotive embedded software development."
+    },
+    {
+      "skill": "Good understanding of MISRA coding guidelines",
+      "status": "Met",
+      "evidence": "Dedicated project on MISRA-C compliance for ADAS Camera using QAC, with explicit mention of implementing MISRA fixes and refactoring code."
+    },
+    {
+      "skill": "Hands-on experience with AUTOSAR",
+      "status": "Partial",
+      "evidence": "Resume states 'Basic knowledge of AUTOSAR architecture' \u2014 exposure is self-described as basic, with no evidence of deep integration or configuration work."
+    },
+    {
+      "skill": "Strong RTOS knowledge (Mandatory)",
+      "status": "Partial",
+      "evidence": "FreeRTOS is listed under RTOS with 'RTOS configuration and integration' mentioned, but depth of real-time scheduling, task management, and driver development is not demonstrated clearly."
+    },
+    {
+      "skill": "Knowledge of Front Camera systems in automotive domain",
+      "status": "Partial",
+      "evidence": "Worked on ADAS Camera PVA module (MISRA compliance and unit testing), but no direct development work on Front Camera software pipelines or camera ECU integration."
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [],
+  "composite_score": 35,
+  "reasoning": "Borderline \u2014 hold pending verification of AUTOSAR depth and Front Camera development experience. This candidate has solid MISRA-C compliance credentials backed by a named ADAS Camera project and 4+ years of automotive embedded experience, which is directly relevant. The RTOS exposure via FreeRTOS is present but described at a configuration level rather than deep real-time systems design. The most disqualifying gap is AUTOSAR \u2014 self-described as 'basic knowledge', which falls short of the hands-on AUTOSAR integration the JD mandates. Additionally, the candidate has no direct Front Camera ECU development experience; the ADAS camera work was scoped to MISRA compliance and unit testing on a PVA module, not camera pipeline development. The candidate is also based in Bangalore while the role is in-office in Chennai, which is a hard filter failure. Before rejecting, verify whether AUTOSAR depth is understated in the resume and whether the candidate is open to relocation to Chennai.",
+  "strengths": [
+    "MISRA-C COMPLIANCE DEPTH: Led MISRA-C compliance analysis and code refactoring for an ADAS Camera PVA module using QAC, with documented unit testing via VectorCAST including MC/DC coverage \u2014 a direct match to the JD's MISRA requirement and highest-signal differentiator.",
+    "ADAS DOMAIN EXPOSURE: Active involvement in ADAS Camera and Instrument Cluster ECU projects with ISO 26262 functional safety support, demonstrating domain-relevant experience in safety-critical automotive embedded software.",
+    "TESTING AND DEBUGGING RIGOR: Hands-on use of Lauterbach Trace32, JTAG, VectorCAST, and CANalyzer for boundary, fault injection, regression, and HIL testing \u2014 signals a disciplined, validation-aware developer suitable for a senior embedded role."
+  ],
+  "gaps": [
+    "AUTOSAR DEPTH INSUFFICIENT: The candidate self-describes AUTOSAR knowledge as 'basic', with no evidence of hands-on AUTOSAR stack configuration, RTE generation, or BSW module integration. For a Senior role where AUTOSAR is a core requirement, this is a significant disqualifier unless the resume is understating actual experience.",
+    "NO FRONT CAMERA ECU DEVELOPMENT: The JD specifically targets Front Camera system development \u2014 the candidate's ADAS Camera work was limited to MISRA compliance and unit testing on a PVA module, not actual FC software development, camera signal processing, or driver assistance feature implementation. This is a role scope mismatch."
+  ],
+  "recommendation": "hold",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated; latest role end date is April 2026 suggesting the candidate may already be available."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires in-office presence in Chennai; candidate is based in Bangalore \u2014 location mismatch penalty applied."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 4+ years of experience, meeting the JD minimum of 4 years relevant experience \u2014 no penalty."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applicable."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD \u2014 no penalty applicable."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch \u2014 candidate is in Bangalore, role requires in-office presence in Chennai"
+  ],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Current",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Available now",
+  "availability_reason": "Latest role end date is listed as April 2026, indicating the candidate is currently between roles.",
+  "alternative_role_fit": "Mid-level Automotive Embedded Software Engineer (ADAS/MISRA focus)",
+  "rare_assets": [
+    "MC/DC coverage analysis experience via VectorCAST \u2014 a rare ISO 26262 ASIL-level testing skill not commonly seen at this experience level.",
+    "Hands-on use of Lauterbach Trace32 for JTAG debugging in automotive ECU environments \u2014 a specialist tool that signals genuine embedded debug depth."
+  ],
+  "self_reported_unverified": [
+    "ISO 26262 functional safety support \u2014 listed as an activity but no specific ASIL level, work product, or safety case contribution is described.",
+    "RTOS configuration and integration \u2014 claimed but no evidence of task scheduling design, ISR management, or real-time performance tuning.",
+    "Basic AUTOSAR knowledge \u2014 self-assessed without any named AUTOSAR tools (e.g. Vector DaVinci, ETAS), modules, or project outcomes."
+  ],
+  "interview_flags": [
+    "Probe actual AUTOSAR hands-on depth \u2014 what specific AUTOSAR layers (BSW, RTE, SWC) have they configured or developed, and which tools were used?",
+    "Ask what 'RTOS configuration and integration' means in practice \u2014 did they design task scheduling, handle priority inversion, or just modify existing RTOS configs?",
+    "Clarify the scope of the ADAS Camera PVA project \u2014 was this a camera ECU firmware role or purely a compliance/testing engagement with no camera pipeline development?",
+    "Confirm willingness and timeline for relocation to Chennai \u2014 this is a hard filter failure that must be resolved before proceeding.",
+    "No metrics anywhere in the resume \u2014 ask for quantified outcomes: defect reduction rates, code coverage targets achieved, or test cycle improvements to assess actual impact."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:34:14.109041"
+}

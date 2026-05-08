@@ -1,0 +1,124 @@
+{
+  "fitment_score": 2.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.1111111111111111,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MISRA coding guideline knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "AUTOSAR experience",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR Algo development",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Team collaboration",
+      "status": "Partial",
+      "evidence": "Resume mentions 'Team leadership and training' at Ventra Health, but in a Facilities context, not software engineering."
+    },
+    {
+      "skill": "Effective communication",
+      "status": "Partial",
+      "evidence": "Role involves vendor coordination and client approvals, suggesting communication capability, but not in a technical SW domain."
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [],
+  "composite_score": 4.277777777777778,
+  "reasoning": "Reject \u2014 completely wrong domain. This candidate is a Facilities and Transportation management professional with nine years of experience managing cab fleets, vendor contracts, and office administration. There is zero evidence of C programming, MISRA, AUTOSAR, RTOS, ADAS, or RADAR anywhere in this resume. The educational background is B.Com Computers \u2014 not an engineering degree. This resume has been submitted in error or through a severely mismatched application. Do not spend further recruiter time on this profile; reject immediately and move to the next candidate.",
+  "strengths": [
+    "TEAM LEADERSHIP IN OPERATIONS: Demonstrated multi-site facilities and transport leadership at Ventra Health managing vendors, fleet compliance, GPS monitoring, and manpower \u2014 credible operational leadership, but entirely irrelevant to embedded SW development.",
+    "END-TO-END MIS & REPORTING: Consistent evidence of building and maintaining MIS dashboards, KPI reports, OTA/OTD summaries, and billing audits across multiple employers \u2014 a transferable analytical habit, but not the signal this JD needs.",
+    "VENDOR & CONTRACT MANAGEMENT: Managed fleet vendors, driver compliance, and EHS audits across Cognizant (4,000 employees), RouteMatic, and Invesco \u2014 scale of operations is notable, but irrelevant to C/AUTOSAR/RADAR development."
+  ],
+  "gaps": [
+    "ZERO EMBEDDED SOFTWARE SKILLS: The JD mandates C programming, MISRA guidelines, AUTOSAR, and RTOS as hard requirements. This candidate has no software development background of any kind \u2014 not a gap that can be bridged; it is a domain mismatch.",
+    "WRONG EDUCATIONAL AND PROFESSIONAL DOMAIN: A B.Com Computers degree and nine years in Facilities and Transport management disqualify this candidate from a Senior Embedded SW Developer role requiring RADAR/ADAS expertise \u2014 this is a fundamental career domain mismatch."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated and latest role end-date is March 2026 \u2014 no penalty applied as information is indeterminate."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate location is not explicitly stated in the resume, so no location penalty can be confirmed."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has nine years of experience, exceeding the four-year minimum threshold, so no penalty applies \u2014 though the experience is entirely in the wrong domain."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any', so no penalty applies."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD, so no adjustment applies."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Wrong domain \u2014 zero technical skill match for an embedded SW Developer role"
+  ],
+  "role_level_detected": "Lead",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "None",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Available now",
+  "availability_reason": "Latest role end-date listed as March 2026, indicating the candidate is currently between roles.",
+  "alternative_role_fit": "Senior Facilities & Transport Manager",
+  "rare_assets": [],
+  "self_reported_unverified": [
+    "Claims to manage transport for 4,000 employees 24x7 at Cognizant \u2014 scale is impressive but no supporting metrics or headcount data are provided.",
+    "End-date of 'March 2026' at Ventra Health is listed as a future date relative to most evaluation windows \u2014 raises question of whether role is active or ended."
+  ],
+  "interview_flags": [
+    "Confirm why this resume was submitted for an Embedded C/AUTOSAR SW Developer role \u2014 likely a misapplication or recruiter database error.",
+    "Probe whether the candidate has any unreported software engineering background or side projects in C/embedded systems.",
+    "Clarify employment status \u2014 role end-date of March 2026 at Ventra Health appears to be in the future or very recent; confirm if currently employed.",
+    "Verify the B.Com Computers degree \u2014 assess if any coursework covered C programming or embedded systems fundamentals.",
+    "Ask if candidate intended to apply for a Facilities or Operations Manager role instead \u2014 redirect appropriately."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:00:49.671972"
+}

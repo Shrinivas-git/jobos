@@ -1,0 +1,165 @@
+{
+  "fitment_score": 2.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.07142857142857142,
+  "must_have_breakdown": [
+    {
+      "skill": "8+ years of experience in Car Rental / Fleet Management / Mobility industry",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Strong experience in Operations Management + Sales / Business Development",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Proven track record in P&L ownership and profitability management",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Experience handling corporate clients / B2B accounts",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Strong leadership and team management experience",
+      "status": "Partial",
+      "evidence": "Candidate mentored 5 developers and led end-to-end Salesforce delivery, but this is technical team mentorship \u2014 not branch/profit-centre leadership."
+    },
+    {
+      "skill": "Good commercial acumen and negotiation skills",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Ability to work in a fast-paced target-driven environment",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 9,
+  "cert_tier_bonus": 2,
+  "outcome_bonus": 3,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 5,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Platform Developer I",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Platform App Builder",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified Business Analyst",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce Certified AI Specialist",
+      "tier": "Expert"
+    },
+    {
+      "name": "Salesforce Certified AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Salesforce Certified Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Microsoft Certified: Azure Fundamentals (AZ-900)",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Media & Entertainment Insights and Solutions (IBM Bronze)",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 13.464285714285715,
+  "reasoning": "Reject \u2014 completely wrong domain. This candidate is a Senior Salesforce Developer with 7 years of enterprise IT experience; they have zero footprint in car rental, fleet management, passenger mobility, branch operations, P&L ownership, or B2B sales. The role demands a Profit Centre Head who can own branch P&L, manage fleet utilisation, and drive corporate accounts in the passenger mobility space \u2014 none of which appears anywhere in this resume. The recruiter note specifically excludes goods/ride-hailing operators and requires passenger management experience, which is also absent. The single partial signal \u2014 mentoring 5 developers \u2014 is irrelevant in this context. Do not proceed; this is a domain mismatch with no recoverable overlap.",
+  "strengths": [
+    "SALESFORCE TECHNICAL DEPTH: Led end-to-end delivery for a 1500+ user Salesforce org at IBM, owning architecture through deployment using Copado \u2014 strong signal of senior IC capability in his actual domain.",
+    "TEAM MENTORSHIP & DELIVERY OWNERSHIP: Mentored 5 developers, reduced deployment defects by 30%, and held production owner accountability \u2014 demonstrates some leadership instinct, though purely in a software engineering context.",
+    "CERTIFICATIONS BREADTH: Holds 7 Salesforce certifications including Platform Developer I, Business Analyst, and AI Specialist, plus Copado Fundamentals I and II \u2014 unusually deep certification stack for a developer, but irrelevant to this role."
+  ],
+  "gaps": [
+    "ZERO MOBILITY / FLEET INDUSTRY EXPERIENCE: The role mandates 8+ years in car rental, fleet management, or passenger mobility. This candidate has spent his entire career in enterprise Salesforce development for financial services and media companies \u2014 there is no bridge to this role.",
+    "NO P&L, OPERATIONS, OR SALES EXPERIENCE: Branch head roles require ownership of revenue targets, cost control, vendor management, and B2B client relationships. This resume contains no commercial, operational, or sales responsibilities of any kind \u2014 this is a fundamental disqualification."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated on resume; no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate location is not explicitly stated on resume; cannot confirm mismatch \u2014 no penalty applied by default."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 7 years of total experience, which exceeds the minimum threshold of 2 years (half of JD relevant_experience of 4), so no penalty on this factor alone."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any'; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion set in JD; no penalty applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch \u2014 candidate location unconfirmed for Hyderabad in-office role",
+    "Wrong domain \u2014 candidate has zero experience in fleet/mobility/operations required for this role"
+  ],
+  "role_level_detected": "Senior",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Unknown",
+  "availability_reason": "Candidate is currently employed at IBM with no end date or notice period mentioned on the resume.",
+  "alternative_role_fit": "Senior Salesforce Developer / Salesforce Tech Lead",
+  "rare_assets": [
+    "Salesforce Certified AI Specialist \u2014 early adopter certification in an emerging area, rare among developers at this experience level.",
+    "Copado Fundamentals I and II combined with hands-on Copado deployment experience \u2014 relatively uncommon pairing in the Salesforce DevOps space.",
+    "Production owner accountability for a 1500+ user Salesforce org with 500+ classes \u2014 unusually large org footprint for a non-architect role."
+  ],
+  "self_reported_unverified": [
+    "'Reduced deployment defects by 30%' \u2014 no baseline metric, timeframe, or methodology provided to validate this figure.",
+    "'90%+ test coverage across 500+ classes' \u2014 impressive claim but no audit trail or third-party validation referenced.",
+    "Mentored 5 developers \u2014 no clarity on whether this was formal mentorship with structured outcomes or informal peer guidance."
+  ],
+  "interview_flags": [
+    "Completely wrong domain \u2014 do not interview for this role. Candidate should be screened for Salesforce technical positions only.",
+    "If somehow reconsidered, ask whether candidate has any unreported experience in logistics, fleet, or mobility operations outside of IT.",
+    "Probe whether the 'production owner' title carried genuine business accountability or was purely a technical on-call designation.",
+    "Clarify the 30% defect reduction claim \u2014 what was the measurement period, baseline, and who validated it?",
+    "Confirm current notice period and location, as neither is stated on the resume."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-06T11:45:03.593648"
+}

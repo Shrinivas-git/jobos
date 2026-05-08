@@ -1,0 +1,114 @@
+{
+  "fitment_score": 2.0,
+  "completeness_score": 66.66666666666666,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MISRA coding guidelines",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "AUTOSAR experience",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR system knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR algo development",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [],
+  "composite_score": 3.1666666666666665,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Facilities and Transportation Operations professional with nine years in corporate transport logistics, vendor management, and office administration. There is zero overlap with the SW Developer role requiring C programming, MISRA coding guidelines, AUTOSAR, RTOS, and RADAR system knowledge. Not a single technical software or embedded systems skill appears anywhere in the resume. This is a complete domain mismatch \u2014 do not spend any further recruiter time on this candidate for this role.",
+  "strengths": [
+    "TRANSPORT OPS LEADERSHIP: Nine years of progressive leadership in facilities and transport management, scaling to Team Lead level managing 4000+ employees' transportation at Cognizant with GPS/GPRS fleet tracking.",
+    "VENDOR AND COMPLIANCE MANAGEMENT: Demonstrated end-to-end MIS, billing audits, EHS compliance, and multi-vendor coordination across multiple enterprise clients \u2014 strong operational discipline.",
+    "TEAM LEADERSHIP: Currently operating as Team Lead at Ventra Health covering manpower management, training, budgeting, and health/safety compliance \u2014 genuine people leadership experience."
+  ],
+  "gaps": [
+    "ZERO EMBEDDED SOFTWARE SKILLS: The role mandates C programming, MISRA coding, AUTOSAR, and RTOS \u2014 none of these appear anywhere in the candidate's resume. This is a hard disqualifier with no path to remedy.",
+    "WRONG DOMAIN ENTIRELY: Candidate's entire career is in facilities management and corporate transport logistics, not embedded systems or automotive software development. There is no relevant experience to evaluate for this JD."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated and JD does not specify a maximum \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate location is not stated in the resume \u2014 cannot confirm Chennai match but no explicit mismatch either."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 9 years total experience, well above the minimum threshold \u2014 no penalty on tenure grounds."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD \u2014 no penalty applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Wrong domain \u2014 no embedded software or relevant technical skills matching the JD requirements"
+  ],
+  "role_level_detected": "Lead",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "None",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Available now",
+  "availability_reason": "Latest role at Ventra Health listed end date as March 2026 \u2014 candidate appears to be between roles currently.",
+  "alternative_role_fit": "Facilities and Transport Manager",
+  "rare_assets": [],
+  "self_reported_unverified": [
+    "Claims to have managed transportation for 4000 employees 24x7 at Cognizant \u2014 scale is notable but no supporting metrics on cost savings or efficiency improvement are provided.",
+    "Team Lead title at Ventra Health with end date of March 2026 listed \u2014 future end date raises authenticity questions about whether role has actually concluded."
+  ],
+  "interview_flags": [
+    "Clarify why the Ventra Health role end date is listed as March 2026 \u2014 is the candidate currently employed or has the role already ended?",
+    "Ask why this candidate applied for a software developer role \u2014 possible misapplication or incorrect resume submitted.",
+    "Probe any technical background \u2014 does the candidate have any hidden software or engineering education not reflected in resume?",
+    "Gap between Oct 2017 and present shows continuous employment but verify actual reasons for each transition.",
+    "B.Com Computers degree \u2014 clarify whether this included any programming coursework relevant to embedded systems."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T08:58:05.623316"
+}

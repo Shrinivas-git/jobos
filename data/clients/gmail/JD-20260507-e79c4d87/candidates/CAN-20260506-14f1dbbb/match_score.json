@@ -1,0 +1,157 @@
+{
+  "fitment_score": 2.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Python (3.x)",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Django",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Flask",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "FastAPI",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MySQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "PostgreSQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MongoDB",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "SQLite",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Git/GitHub/Bitbucket",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Docker",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Jenkins",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "HTML5/CSS3/JavaScript",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RESTful APIs",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "OOP/Data Structures/Algorithms",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Unit Testing (PyTest/Unittest)",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 2,
+  "certifications_assessed": [],
+  "composite_score": 6.5,
+  "reasoning": "Reject \u2014 completely wrong domain. This candidate is a transport and fleet operations professional with 10+ years in EV mobility, ambulance fleet management, and driver/vendor coordination. There is zero evidence of Python development, any programming language, back-end frameworks, databases, or software engineering of any kind. The recruiter specifically wants someone with Python projects and AI model training experience \u2014 this candidate has none. With 0 of 15 must-have technical skills met, this resume should not advance under any circumstances, regardless of how thin the hiring pool is.",
+  "strengths": [
+    "OPERATIONS SCALE: Manages 51 electric buses across 76 live schedules and previously oversaw fuel operations for 1,000+ emergency vehicles \u2014 demonstrates strong execution at scale, but this is fleet ops, not software engineering.",
+    "DOMAIN DEPTH: 10+ years of progressive experience across EV mobility, FMCG fleet, and emergency services with hands-on GPS/telematics and MIS reporting \u2014 highly specialised in transport, entirely irrelevant to Python development.",
+    "COMPLIANCE & COORDINATION: Proven vendor management, RTO regulatory compliance, and real-time control room operations \u2014 useful in operations roles but contributes nothing to a software developer evaluation."
+  ],
+  "gaps": [
+    "ZERO TECHNICAL SKILLS: Not a single Python, Django, Flask, FastAPI, SQL, Git, Docker, or any software development skill is present anywhere in the resume. This candidate cannot write code, and interviewing them for a Python Developer role would be a waste of everyone's time.",
+    "NO AI/ML EXPOSURE WHATSOEVER: The recruiter explicitly requires Python project experience and AI model training. This candidate has no educational or professional background in computer science, data science, or machine learning \u2014 this is a complete and total mismatch on the key differentiator."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period stated; candidate appears currently employed but this is irrelevant given domain mismatch."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires In-office in Bangalore; candidate is based in Hyderabad."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "JD requires 0 years relevant experience so no experience gap penalty applies, but candidate has 0 Python experience regardless."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is Any; no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in JD; no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch"
+  ],
+  "role_level_detected": "Senior",
+  "role_level_match": "Over-qualified",
+  "tool_currency": "None",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Task-focused",
+  "availability_signal": "Unknown",
+  "availability_reason": "Current role at GreenCell Mobility is listed as Apr 2025 to Present with no notice period stated.",
+  "alternative_role_fit": "Fleet Operations Manager / Transport Operations Lead",
+  "rare_assets": [
+    "10+ years of EV fleet operations experience including electric bus network management \u2014 rare in the transport domain.",
+    "Fuel and fleet management for 1,000+ emergency ambulance vehicles across a state-level government health service."
+  ],
+  "self_reported_unverified": [
+    "Claims real-time monitoring and operational bridge responsibilities across multiple depots \u2014 scope and individual contribution versus team effort unverifiable.",
+    "'Earlier Experience (2013-2021)' is summarised in one line with no employer names, roles, or verifiable details."
+  ],
+  "interview_flags": [
+    "Do not interview \u2014 candidate is in the wrong domain entirely and should be redirected to transport/logistics/operations roles.",
+    "If contacted in error, ask: 'Do you have any background in software development, Python programming, or AI/ML projects?' \u2014 expected answer: No.",
+    "Clarify if candidate applied intentionally or if there was a resume submission error.",
+    "Probe the 2013-2021 gap narrative \u2014 eight years compressed into one line with no employer names raises resume integrity concerns.",
+    "Ask about any technical tools used in fleet operations (GPS platforms, MIS systems) to determine if there is any adjacent tech exposure worth noting for future ops-tech hybrid roles."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T05:58:08.843702"
+}

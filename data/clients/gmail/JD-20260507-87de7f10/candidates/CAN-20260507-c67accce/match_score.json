@@ -1,0 +1,134 @@
+{
+  "fitment_score": 4.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MISRA coding guidelines",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "AUTOSAR",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR Algorithm development",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 3,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 1,
+  "certifications_assessed": [
+    {
+      "name": "Cisco Certified Support Technician \u2013 Networking 2025",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Oracle Cloud Infrastructure AI Foundations Associate 2025",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Oracle Cloud Infrastructure Certified Foundations Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "IT Specialist \u2013 Data Analytics (Certiport / Pearson VUE)",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 6.333333333333332,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a web/backend software engineer with a Python, React, and FastAPI stack, targeting AI/ML and data science work. The JD demands an embedded systems Senior SW Developer with mandatory C, MISRA, AUTOSAR, and RTOS expertise for a RADAR/ADAS automotive role based in Chennai. Not a single must-have skill from the JD appears anywhere in this resume \u2014 no C, no MISRA, no AUTOSAR, no RTOS, no RADAR, no ADAS. The candidate is also still completing a Master's degree (graduating Aug 2026), has only internship-level experience, and is located in Bengaluru \u2014 not Chennai. This is a complete domain mismatch with zero transferable embedded skills. Do not proceed.",
+  "strengths": [
+    "AI/ML PIPELINE DEVELOPMENT: Built an end-to-end AI speech enhancement system using CNN, Whisper ASR, and FastAPI \u2014 demonstrates ability to take ML models from research to deployment, a differentiating signal for a junior AI/ML role.",
+    "MICROSERVICES & BACKEND DEPTH: Delivered a 13-container microservices environment with Qdrant vector search and Gemini API integration at Fidelitus Corp, showing backend architecture awareness beyond typical intern profiles.",
+    "COMPETITIVE PROGRAMMING: Global Rank ~1600 in TCS CodeVita Season 11 Round 2 (2025) signals strong algorithmic fundamentals and problem-solving capability relative to their experience level."
+  ],
+  "gaps": [
+    "ZERO EMBEDDED SYSTEMS EXPERIENCE: The JD mandates C programming, MISRA guidelines, AUTOSAR, and RTOS \u2014 none of which appear anywhere in this resume. This candidate has never worked in embedded or automotive software, making them entirely unqualified for this role.",
+    "WRONG DOMAIN AND LEVEL: The candidate is a web/AI/ML intern still pursuing a Master's degree with no production automotive software experience, operating at Junior level. The JD requires a Senior SW Developer with 4+ years of relevant embedded/RADAR experience and 8 years total \u2014 a gap of roughly 8 years and a completely different technical discipline."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period specified; candidate appears to be between roles or in academic program \u2014 no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "-5",
+      "reason": "JD requires In-office work in Chennai; candidate is based in Bengaluru."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "-10",
+      "reason": "Candidate has only internship experience (effectively 0-1 year) against a JD requiring 4 years of relevant embedded experience \u2014 well below the 2-year minimum threshold."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD \u2014 no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Location mismatch",
+    "Experience below minimum"
+  ],
+  "role_level_detected": "Junior",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Available now",
+  "availability_reason": "Current internship at Fidelitus Corp ends June 2026 and MCA graduation is August 2026 \u2014 candidate is effectively available or near-available with no blocking notice period.",
+  "alternative_role_fit": "Junior Python/AI-ML Developer or Backend API Developer",
+  "rare_assets": [
+    "Global Rank ~1600 in TCS CodeVita Season 11 Round 2 \u2014 a high-signal competitive programming achievement at early career stage."
+  ],
+  "self_reported_unverified": [
+    "'Core member of the JobOS product team' at Fidelitus Corp \u2014 intern contribution scope and actual ownership level cannot be verified from the resume alone.",
+    "ERP Automation Module described as 'Selected by the college for technical capability and reliability' \u2014 no third-party validation or measurable outcome provided."
+  ],
+  "interview_flags": [
+    "Clarify actual contribution scope at Fidelitus Corp \u2014 was this a production system or an internal prototype, and what was the candidate's specific ownership versus team output?",
+    "Probe any exposure to C programming or low-level systems \u2014 any embedded, microcontroller, or hardware-adjacent coursework in MCA program?",
+    "Clarify graduation timeline \u2014 resume shows MCA ongoing until Aug 2026 but internship listed as 04/2026\u201306/2026, suggesting overlapping commitments.",
+    "Ask whether the candidate applied intentionally to this embedded RADAR role or if it was an accidental application \u2014 domain mismatch is total.",
+    "Verify the TCS CodeVita Global Rank ~1600 claim \u2014 ask for certificate or leaderboard screenshot as this is the strongest signal on the resume."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:02:54.694948"
+}

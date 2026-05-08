@@ -1,0 +1,141 @@
+{
+  "fitment_score": 4.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.0,
+  "must_have_breakdown": [
+    {
+      "skill": "Strong knowledge in C",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MISRA coding guidelines",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "AUTOSAR experience",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RTOS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "RADAR System knowledge",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "ADAS knowledge",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 6,
+  "cert_tier_bonus": 2,
+  "outcome_bonus": 1,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 2,
+  "certifications_assessed": [
+    {
+      "name": "Salesforce Certified Administrator",
+      "tier": "Practitioner"
+    },
+    {
+      "name": "Salesforce AI Associate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals I",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Fundamentals II",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Copado Certified Consultant",
+      "tier": "Expert"
+    },
+    {
+      "name": "Gearset Fundamentals Certificate",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Flosum Certified Professional",
+      "tier": "Practitioner"
+    }
+  ],
+  "composite_score": 9.25,
+  "reasoning": "Reject \u2014 wrong domain entirely. This candidate is a Salesforce DevOps Engineer with zero overlap with the embedded/automotive software engineering role being hired for. The JD demands C programming, MISRA guidelines, AUTOSAR, RTOS, and RADAR system knowledge \u2014 none of which appear anywhere in this resume. The candidate's entire 5-year career is built on Salesforce CI/CD tooling (Copado, Jenkins, GitHub Actions, SFDX) and cloud-based release engineering \u2014 a completely different technology stack and domain. There is no salvageable partial match here. Do not shortlist; reject immediately and move to next candidate.",
+  "strengths": [
+    "SALESFORCE DEVOPS DEPTH: Five years of end-to-end Salesforce release engineering across Copado, Jenkins, GitHub Actions, and SFDX \u2014 strong in its own domain but entirely irrelevant to this embedded automotive role.",
+    "CERTIFICATION PORTFOLIO: Holds seven certifications including Copado Certified Consultant, Flosum Certified Professional, and Salesforce Certified Administrator \u2014 demonstrates structured learning, but none applicable to C/AUTOSAR/RTOS development.",
+    "QUANTIFIED DELIVERY OUTCOMES: Documented 30-40% deployment time reduction and improved deployment success rates \u2014 shows results-orientation, but the domain is Salesforce, not embedded or automotive software."
+  ],
+  "gaps": [
+    "COMPLETE DOMAIN MISMATCH \u2014 C, MISRA, AUTOSAR, RTOS, RADAR: The candidate has zero exposure to embedded C development, automotive coding standards, or any AUTOSAR/RTOS/RADAR technology. This is not a gap that can be trained quickly \u2014 it represents a fundamentally different engineering discipline. This alone is disqualifying.",
+    "NO AUTOMOTIVE OR EMBEDDED EXPERIENCE WHATSOEVER: The entire career history is Salesforce cloud DevOps. There is no EE systems background, no firmware or driver-level work, and no signal of transitioning into automotive embedded software. The B.Tech in EEE is the only tangential link, but it is 5+ years old with no applied evidence."
+  ],
+  "recommendation": "reject",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No notice period specified and candidate is currently employed; no penalty applied as JD has no stated maximum."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate is based in Chennai, matching the JD's in-office Chennai requirement \u2014 no location penalty."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "Candidate has 5 years total experience, which exceeds the minimum threshold of 2 years (half of 4 required) \u2014 no penalty, though experience is in the wrong domain."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any' \u2014 no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD \u2014 no adjustment applied."
+    }
+  ],
+  "hard_filters_passed": false,
+  "hard_filter_failures": [
+    "Domain mismatch \u2014 candidate has zero relevant technical skills for an embedded automotive SW Developer role (no C, no AUTOSAR, no RTOS, no RADAR)"
+  ],
+  "role_level_detected": "Mid-level",
+  "role_level_match": "Under-qualified",
+  "tool_currency": "Current",
+  "key_tool_recency": "Never",
+  "cv_narrative_style": "Mixed",
+  "availability_signal": "Unknown",
+  "availability_reason": "Candidate is currently employed at Capgemini (May 2025 \u2013 Present) with no notice period stated on the resume.",
+  "alternative_role_fit": "Senior Salesforce DevOps Engineer / Salesforce Release Engineer",
+  "rare_assets": [
+    "Flosum Certified Professional \u2014 a rare certification for a niche Salesforce DevOps tool held by very few practitioners in the market.",
+    "Multi-tool Salesforce DevOps stack coverage (Copado, Gearset, Flosum, DevOps Center) \u2014 unusual breadth across competing platforms."
+  ],
+  "self_reported_unverified": [
+    "'Best Performer Award' and 'Special Achievement Award' \u2014 no context on team size, scope, or verifying authority provided.",
+    "30-40% deployment time reduction claim \u2014 no baseline deployment count, time frame, or business context given to validate the scale of impact."
+  ],
+  "interview_flags": [
+    "Probe whether the candidate has any embedded C or automotive software exposure from their B.Tech EEE background or personal projects \u2014 the degree is the only possible link.",
+    "Ask why the candidate is applying for an embedded automotive SW Developer role given an entirely Salesforce-focused career \u2014 understand motivation and whether there has been any self-study in C or AUTOSAR.",
+    "Clarify current notice period at Capgemini \u2014 role started May 2025 and current date context matters for availability.",
+    "Ask about the transition from TCS (Salesforce DevOps) to Capgemini (also Salesforce DevOps) \u2014 verify whether any embedded or systems work was undertaken in between.",
+    "Probe depth of the 'Copado Certified Consultant' credential \u2014 consultant-level cert suggests client-facing advisory experience, but resume reads more like an internal engineer; clarify actual scope."
+  ],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-07T09:04:39.317094"
+}

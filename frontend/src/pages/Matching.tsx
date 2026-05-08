@@ -48,13 +48,13 @@ const Matching: React.FC = () => {
     fetchInitial();
   }, []);
 
-  const fetchResults = async (jd_id: string) => {
+  const fetchResults = async (jd_id: string, fromTrigger = false) => {
     try {
       const res = await fetch(`${API}/matching/results/${jd_id}`, { headers: getAuthHeaders() });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data: MatchResult[] = await res.json();
       setResults(data);
-      if (data.length > 0) setLastRunTime(new Date());
+      if (fromTrigger && data.length > 0) setLastRunTime(new Date());
       return data;
     } catch (e: any) {
       setError('Failed to fetch results: ' + e.message);
@@ -62,7 +62,7 @@ const Matching: React.FC = () => {
     }
   };
 
-  const handleJdChange = (jd_id: string) => {
+  const handleJdChange = async (jd_id: string) => {
     setSelectedJdId(jd_id);
     setResults([]);
     setLastRunTime(null);
@@ -70,6 +70,7 @@ const Matching: React.FC = () => {
     setExpandedRows(new Set());
     setRunMessage(null);
     setError(null);
+    if (jd_id) await fetchResults(jd_id);
   };
 
   const handleRunMatching = async () => {
@@ -98,7 +99,7 @@ const Matching: React.FC = () => {
     const maxAttempts = 20;
     const interval = setInterval(async () => {
       attempts++;
-      const data = await fetchResults(jd_id);
+      const data = await fetchResults(jd_id, true);
       const allPass2 = data.length > 0 && data.every(r => r.status === 'pass_2_complete');
       if (allPass2 || attempts >= maxAttempts) {
         clearInterval(interval);
@@ -211,8 +212,10 @@ const Matching: React.FC = () => {
                 {results.length} candidate{results.length !== 1 ? 's' : ''} matched
                 {pass2Done ? ' — Pass 2 complete' : ' — Pass 1 only (Pass 2 pending)'}
               </p>
-              {lastRunTime && (
+              {lastRunTime ? (
                 <p className="text-[10px] text-slate-500 mt-1">Last run: {getTimeAgo(lastRunTime)}</p>
+              ) : (
+                <p className="text-[10px] text-slate-500 mt-1">Loaded from database</p>
               )}
             </div>
           </div>

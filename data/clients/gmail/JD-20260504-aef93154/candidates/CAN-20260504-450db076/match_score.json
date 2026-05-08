@@ -1,0 +1,24 @@
+{
+  "fitment_score": 85.0,
+  "completeness_score": 100.0,
+  "context_bonus": 0.0,
+  "composite_score": 74.466506,
+  "reasoning": "Vaishnavi Gupta's resume demonstrates a strong alignment with the job description, showcasing expertise in Salesforce DevOps, Copado, and environment strategy, which are critical skills for the SalesForce Platform Manager role. However, there are some gaps in the candidate's experience, such as lack of direct mention of managing full lifecycle of Salesforce releases and establishing a Center of Excellence.",
+  "strengths": [
+    "Vaishnavi has 7 years of experience in managing CI/CD pipelines, release governance, and deployment automation using Copado, Flosum, and Jenkins, which is a significant strength for this role.",
+    "She has proficiency in configuring and administering Salesforce sandboxes, ensuring optimal functionality, which is a crucial aspect of the job.",
+    "Vaishnavi has experience in automating Salesforce deployments to improve release quality, speed, and consistency, which aligns with the job requirement.",
+    "She has led Salesforce DevOps processes for clients, including implementing CI/CD pipelines and managing deployments across Dev to Production orgs, which demonstrates her ability to manage complex projects.",
+    "Vaishnavi has a strong certification portfolio, including Salesforce Administrator, Salesforce Platform Developer I, and Copado certifications, which validates her expertise in Salesforce and DevOps tools."
+  ],
+  "gaps": [
+    "The candidate's experience in managing the full lifecycle of Salesforce releases is not explicitly mentioned, which is a critical aspect of the job.",
+    "There is no direct mention of establishing a Center of Excellence to enable product teams to deploy code safely, which is a key responsibility of the role.",
+    "Vaishnavi's experience in architecting a modern, federated development strategy is not clearly highlighted, which is an important skill for the job.",
+    "The candidate's experience in supporting the streamlining of release management and testing environments is not explicitly mentioned, which is a key aspect of the role.",
+    "There is no information about Vaishnavi's experience in serving as the primary custodian of environments to ensure production stability, which is a critical responsibility of the job."
+  ],
+  "recommendation": "shortlist",
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-04T18:38:28.702635"
+}

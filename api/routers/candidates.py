@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 import uuid
 import logging
 import os
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from utils.pydantic_utils import PyObjectId
 from auth import check_role, get_current_user
 from utils.client_utils import get_db
@@ -24,7 +24,7 @@ async def _internal_or_auth(
     return await get_current_user(credentials.credentials)
 from utils.storage_utils import save_resume_file
 from utils.gemini_utils import extract_resume_metadata, generate_embedding
-from utils.qdrant_utils import upsert_resume_vector
+from utils.qdrant_utils import upsert_resume_vector, delete_resume_vector
 from utils.resume_utils import extract_text_from_file
 from tasks.resume_tasks import process_resume_task
 from tasks.matching_tasks import run_matching
@@ -59,6 +59,38 @@ class CandidateResponse(BaseModel):
     class Config:
         populate_by_name = True
         arbitrary_types_allowed = True
+
+    @model_validator(mode='before')
+    @classmethod
+    def coerce_mongo_types(cls, v):
+        # dict → [dict] for List[dict] fields
+        for field in ('education', 'projects'):
+            val = v.get(field)
+            if isinstance(val, dict):
+                v[field] = [val]
+
+        # str → [str] for List[str] fields
+        for field in ('skills', 'achievements', 'certifications', 'languages'):
+            val = v.get(field)
+            if isinstance(val, str):
+                v[field] = [val] if val else []
+
+        # non-str → str for Optional[str] scalar fields
+        for field in ('name', 'email', 'phone', 'location', 'notice_period',
+                      'gender', 'college'):
+            val = v.get(field)
+            if val is not None and not isinstance(val, str):
+                v[field] = str(val)
+
+        # non-float → float for Optional[float] fields
+        val = v.get('experience_years')
+        if val is not None and not isinstance(val, float):
+            try:
+                v['experience_years'] = float(val)
+            except (ValueError, TypeError):
+                v['experience_years'] = None
+
+        return v
 
 class CandidateUpdateRequest(BaseModel):
     skills: Optional[List[str]] = None
@@ -130,7 +162,7 @@ async def update_my_profile(
     # Generate new embedding from updated metadata
     text_to_embed = f"""
     Name: {result.get('name')}
-    Skills: {', '.join(result.get('skills', []))}
+    Skills: {', '.join(s for s in result.get('skills', []) if s)}
     Experience: {result.get('experience_years')} years
     Location: {result.get('location')}
     College: {result.get('college')}
@@ -214,7 +246,7 @@ async def email_intake(
         # Generate embedding
         text_to_embed = f"""
         Name: {metadata.get('name')}
-        Skills: {', '.join(metadata.get('skills', []))}
+        Skills: {', '.join(s for s in metadata.get('skills', []) if s)}
         Experience: {metadata.get('experience_years')} years
         Location: {metadata.get('location')}
         College: {metadata.get('college')}
@@ -228,18 +260,18 @@ async def email_intake(
             "name": metadata.get("name"),
             "email": email,
             "phone": metadata.get("phone"),
-            "skills": metadata.get("skills"),
+            "skills": [s for s in (metadata.get("skills") or []) if s],
             "experience_years": metadata.get("experience_years"),
             "location": metadata.get("location"),
             "notice_period": metadata.get("notice_period"),
             "gender": metadata.get("gender"),
             "college": metadata.get("college"),
-            "projects": metadata.get("projects", []),
-            "achievements": metadata.get("achievements", []),
-            "certifications": metadata.get("certifications", []),
-            "education": metadata.get("education", []),
-            "languages": metadata.get("languages", []),
-            "previous_companies": metadata.get("previous_companies", []),
+            "projects": [p for p in (metadata.get("projects") or []) if p],
+            "achievements": [a for a in (metadata.get("achievements") or []) if a],
+            "certifications": [c for c in (metadata.get("certifications") or []) if c],
+            "education": [e for e in (metadata.get("education") or []) if e],
+            "languages": [l for l in (metadata.get("languages") or []) if l],
+            "previous_companies": [c for c in (metadata.get("previous_companies") or []) if c],
             "companies_switched": metadata.get("companies_switched", 0),
             "resume_text": text,
             "status": "ready",
@@ -378,7 +410,7 @@ async def upload_resume(
         # 3. Generate Embedding
         text_to_embed = f"""
         Name: {metadata.get('name')}
-        Skills: {', '.join(metadata.get('skills', []))}
+        Skills: {', '.join(s for s in metadata.get('skills', []) if s)}
         Experience: {metadata.get('experience_years')} years
         Location: {metadata.get('location')}
         College: {metadata.get('college')}
@@ -393,18 +425,18 @@ async def upload_resume(
             "name": metadata.get("name"),
             "email": email,
             "phone": metadata.get("phone"),
-            "skills": metadata.get("skills"),
+            "skills": [s for s in (metadata.get("skills") or []) if s],
             "experience_years": metadata.get("experience_years"),
             "location": metadata.get("location"),
             "notice_period": metadata.get("notice_period"),
             "gender": metadata.get("gender"),
             "college": metadata.get("college"),
-            "projects": metadata.get("projects", []),
-            "achievements": metadata.get("achievements", []),
-            "certifications": metadata.get("certifications", []),
-            "education": metadata.get("education", []),
-            "languages": metadata.get("languages", []),
-            "previous_companies": metadata.get("previous_companies", []),
+            "projects": [p for p in (metadata.get("projects") or []) if p],
+            "achievements": [a for a in (metadata.get("achievements") or []) if a],
+            "certifications": [c for c in (metadata.get("certifications") or []) if c],
+            "education": [e for e in (metadata.get("education") or []) if e],
+            "languages": [l for l in (metadata.get("languages") or []) if l],
+            "previous_companies": [c for c in (metadata.get("previous_companies") or []) if c],
             "companies_switched": metadata.get("companies_switched", 0),
             "resume_text": text,
             "status": "ready",
@@ -549,3 +581,39 @@ async def erase_candidate(
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Candidate not found")
     return {"status": "candidate erased", "candidate_id": candidate_id}
+
+
+@router.delete("/{candidate_id}")
+async def delete_candidate(
+    candidate_id: str,
+    user: dict = Depends(check_role(["recruiter", "manager", "admin"])),
+):
+    """Hard delete a candidate — removes from MongoDB, Qdrant, and filesystem."""
+    db = get_db()
+    candidate = db.candidates.find_one({"candidate_id": candidate_id})
+    if not candidate:
+        raise HTTPException(status_code=404, detail="Candidate not found")
+
+    # 1. Remove from MongoDB
+    db.candidates.delete_one({"candidate_id": candidate_id})
+    db.candidate_pools.delete_many({"candidate_id": candidate_id})
+    db.pipeline_stages.delete_many({"candidate_id": candidate_id})
+
+    # 2. Remove from Qdrant
+    try:
+        delete_resume_vector(candidate_id)
+    except Exception as e:
+        logger.warning(f"Qdrant delete failed for {candidate_id}: {e}")
+
+    # 3. Remove filesystem folder
+    try:
+        resume_folder = os.path.join("data", "resumes", candidate_id)
+        if os.path.isdir(resume_folder):
+            import shutil
+            shutil.rmtree(resume_folder)
+            logger.info(f"Deleted resume folder: {resume_folder}")
+    except Exception as e:
+        logger.warning(f"Filesystem delete failed for {candidate_id}: {e}")
+
+    logger.info(f"Candidate {candidate_id} hard-deleted by {user.get('preferred_username', user.get('sub'))}")
+    return {"ok": True, "deleted": candidate_id}
