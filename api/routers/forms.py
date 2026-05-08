@@ -185,3 +185,41 @@ async def get_form_submission_stats(
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/resend-notification/{jd_id}/{candidate_id}")
+async def resend_form_notification(
+    jd_id: str,
+    candidate_id: str,
+    user: dict = Depends(check_role(["recruiter", "manager", "admin"]))
+):
+    """
+    Manually resend the form submission notification email
+    Useful if the original email wasn't received
+    """
+    try:
+        db = get_db()
+
+        # Get form response
+        form_response = db.form_responses.find_one(
+            {"jd_id": jd_id, "candidate_id": candidate_id},
+            {"_id": 0}
+        )
+        if not form_response:
+            raise HTTPException(status_code=404, detail="Form response not found")
+
+        # Trigger notification task
+        from tasks.notification_tasks import notify_form_submitted
+        notify_form_submitted.delay(jd_id, candidate_id, form_response)
+
+        return {
+            "status": "success",
+            "message": f"Form submission notification queued for {candidate_id}",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        import logging
+        logging.error(f"Error resending form notification: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

@@ -39,6 +39,7 @@ const FormResponses: React.FC = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [selectedResponse, setSelectedResponse] = useState<FormResponse | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [resendingEmail, setResendingEmail] = useState<string | null>(null);
 
   useEffect(() => {
     fetchJds();
@@ -87,6 +88,23 @@ const FormResponses: React.FC = () => {
   const handleViewDetails = (response: FormResponse) => {
     setSelectedResponse(response);
     setShowDetailModal(true);
+  };
+
+  const handleResendEmail = async (jdId: string, candidateId: string) => {
+    setResendingEmail(candidateId);
+    try {
+      const res = await fetch(`${API}/forms/resend-notification/${jdId}/${candidateId}`, {
+        method: 'POST',
+        headers: getAuthHeaders()
+      });
+      if (!res.ok) throw new Error('Failed to resend email');
+      // Show success feedback
+      alert(`Form submission notification email queued for ${candidateId}`);
+    } catch (err: any) {
+      alert(`Error: ${err.message}`);
+    } finally {
+      setResendingEmail(null);
+    }
   };
 
   const getVideoStatus = (response: FormResponse) => {
@@ -205,6 +223,17 @@ const FormResponses: React.FC = () => {
                   {/* Expanded Details */}
                   {isExpanded && (
                     <div className="border-t border-slate-700/50 px-6 py-5 bg-slate-900/30 space-y-4">
+                      {/* Resend Email Action */}
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Actions</p>
+                        <button
+                          onClick={() => handleResendEmail(response.jd_id, response.candidate_id)}
+                          disabled={resendingEmail === response.candidate_id}
+                          className="px-3 py-1.5 text-[10px] font-bold text-slate-300 hover:text-white bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600/50 transition-colors disabled:opacity-40"
+                        >
+                          {resendingEmail === response.candidate_id ? 'Queuing...' : '📧 Resend Email'}
+                        </button>
+                      </div>
                       {/* Form Data */}
                       <div className="grid grid-cols-2 gap-4">
                         <div>
