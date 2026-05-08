@@ -1,0 +1,195 @@
+{
+  "fitment_score": 82.0,
+  "completeness_score": 83.33333333333334,
+  "context_bonus": 0.0,
+  "must_have_coverage_ratio": 0.7272727272727273,
+  "must_have_breakdown": [
+    {
+      "skill": "Python (3.x)",
+      "status": "Met",
+      "evidence": "Python listed as primary language; used across FastAPI services, data science internship, ERP automation, and AI speech enhancement project."
+    },
+    {
+      "skill": "Django",
+      "status": "Partial",
+      "evidence": "Django listed under Web/Frameworks in skills section but no project or work experience explicitly demonstrates Django usage."
+    },
+    {
+      "skill": "Flask",
+      "status": "Met",
+      "evidence": "Flask used in DSU ERP Automation Module project alongside SQL and email automation."
+    },
+    {
+      "skill": "FastAPI",
+      "status": "Met",
+      "evidence": "Built a FastAPI-based document validation service at Fidelitus Corp internship and used FastAPI in AI Speech Clarity Enhancement System project."
+    },
+    {
+      "skill": "MySQL",
+      "status": "Met",
+      "evidence": "MySQL listed under Databases and used in AI-Driven Speech Clarity Enhancement System project."
+    },
+    {
+      "skill": "PostgreSQL",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "MongoDB",
+      "status": "Met",
+      "evidence": "MongoDB used at Fidelitus Corp internship within a 13-container microservices environment and in BookMyShow Clone and e-commerce project."
+    },
+    {
+      "skill": "SQLite",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Git",
+      "status": "Met",
+      "evidence": "Git listed under Tools; GitHub profile linked on resume."
+    },
+    {
+      "skill": "GitHub",
+      "status": "Met",
+      "evidence": "GitHub profile (github.com/Shrinivas-git) explicitly listed on resume."
+    },
+    {
+      "skill": "Bitbucket",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "Docker",
+      "status": "Met",
+      "evidence": "Docker used at Fidelitus Corp within a 13-container microservices environment."
+    },
+    {
+      "skill": "Jenkins",
+      "status": "Missing",
+      "evidence": ""
+    },
+    {
+      "skill": "HTML5",
+      "status": "Met",
+      "evidence": "HTML5 listed under Web/Frameworks skills section."
+    },
+    {
+      "skill": "CSS3",
+      "status": "Met",
+      "evidence": "CSS3 listed under Web/Frameworks skills section."
+    },
+    {
+      "skill": "JavaScript",
+      "status": "Met",
+      "evidence": "JavaScript used in Netshot Athletic Equipment Hub full-stack project."
+    },
+    {
+      "skill": "RESTful APIs",
+      "status": "Met",
+      "evidence": "REST APIs listed under Tools; built RESTful services using FastAPI at Fidelitus Corp and in personal projects."
+    },
+    {
+      "skill": "JSON",
+      "status": "Partial",
+      "evidence": "JSON not explicitly mentioned but implicit in FastAPI and REST API development across multiple projects."
+    },
+    {
+      "skill": "Object-Oriented Programming (OOP)",
+      "status": "Met",
+      "evidence": "OOP listed under Concepts section on resume."
+    },
+    {
+      "skill": "Data Structures",
+      "status": "Met",
+      "evidence": "DSA listed under Concepts; Global Rank ~1600 in TCS CodeVita Season 11 Round 2 demonstrates applied algorithmic ability."
+    },
+    {
+      "skill": "Algorithms",
+      "status": "Met",
+      "evidence": "Algorithmic problem-solving evidenced by TCS CodeVita Global Rank ~1600 and participation in national coding challenges."
+    },
+    {
+      "skill": "Unit Testing (PyTest/Unittest)",
+      "status": "Missing",
+      "evidence": ""
+    }
+  ],
+  "rare_asset_bonus": 0,
+  "cert_tier_bonus": 0,
+  "outcome_bonus": 0,
+  "emerging_tech_bonus": 0,
+  "quantified_outcomes_count": 0,
+  "certifications_assessed": [
+    {
+      "name": "Cisco Certified Support Technician \u2013 Networking",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Oracle Cloud Infrastructure AI Foundations Associate 2025",
+      "tier": "Foundational"
+    },
+    {
+      "name": "Oracle Cloud Infrastructure Certified Foundations Associate 2025",
+      "tier": "Foundational"
+    },
+    {
+      "name": "IT Specialist \u2013 Data Analytics (Certiport / Pearson VUE)",
+      "tier": "Foundational"
+    }
+  ],
+  "composite_score": 68.77272727272728,
+  "reasoning": "Shortlist immediately \u2014 this is one of the stronger junior Python candidates you will see at this level. The highest-signal differentiator is real production AI/ML work: Shrinivas built a custom CNN-based speech enhancement system with Whisper ASR and PyTorch, and developed a two-pass candidate-job matching engine using Qdrant and Gemini 1.5 Pro at Fidelitus Corp \u2014 directly satisfying the recruiter's hard requirement of someone who has trained AI models. FastAPI depth is verified across two distinct contexts (internship microservices and personal project), and Docker experience in a 13-container production-grade environment is unusually strong for a fresher. The gaps are PostgreSQL and unit testing (PyTest/Unittest) \u2014 both are learnable quickly and neither is a dealbreaker at junior level. The internship runs through June 2026, which means he is either currently interning or just finishing \u2014 verify start availability before extending an offer. Move to interview now.",
+  "strengths": [
+    "AI MODEL TRAINING (DIRECT MATCH TO RECRUITER NOTE): Built and trained a custom CNN-based audio enhancement model using PyTorch for an end-to-end speech clarity system, and applied Scikit-learn ML models for predictive sales analysis \u2014 directly satisfies the recruiter's requirement of someone who has trained AI models, which is rare at junior level.",
+    "FASTAPI + MICROSERVICES PRODUCTION DEPTH: Built a FastAPI document validation service inside a 13-container Docker microservices architecture at Fidelitus Corp, and used FastAPI again in a personal AI project \u2014 this is hands-on, real-environment FastAPI experience, not tutorial-level exposure.",
+    "COMPETITIVE CODING SIGNAL: Secured Global Rank ~1600 in TCS CodeVita Season 11 Round 2 (2025) \u2014 a high-difficulty global competition \u2014 demonstrating strong algorithmic fundamentals that directly underpin the Data Structures and Algorithms must-have for this role."
+  ],
+  "gaps": [
+    "NO PYTEST/UNIT TESTING EVIDENCE: The JD explicitly requires unit testing using PyTest or Unittest, and there is zero mention of testing practices in any project or internship. For a role where writing unit tests is a stated responsibility, this is a gap that must be probed in interview \u2014 if he cannot demonstrate even basic PyTest usage, it signals a blind spot in engineering discipline.",
+    "POSTGRESQL AND JENKINS ABSENT: PostgreSQL is a listed must-have and Jenkins (CI/CD tooling) appears nowhere on the resume. While MongoDB and MySQL coverage is solid, the absence of PostgreSQL in any project \u2014 combined with no Jenkins exposure \u2014 leaves a gap in the full data/DevOps stack the JD expects even at junior level."
+  ],
+  "recommendation": "shortlist",
+  "scoring_factors": [
+    {
+      "factor": "Notice Period",
+      "impact": "+0",
+      "reason": "No JD maximum notice period specified, so no penalty applied."
+    },
+    {
+      "factor": "Location",
+      "impact": "+0",
+      "reason": "Candidate is based in Bengaluru, matching the JD's in-office Bangalore requirement."
+    },
+    {
+      "factor": "Experience Gap",
+      "impact": "+0",
+      "reason": "JD requires 0 years relevant experience; no minimum threshold to miss."
+    },
+    {
+      "factor": "Gender",
+      "impact": "+0",
+      "reason": "JD gender preference is 'Any', so no penalty applied."
+    },
+    {
+      "factor": "College",
+      "impact": "+0",
+      "reason": "No college preference or exclusion specified in the JD."
+    }
+  ],
+  "hard_filters_passed": true,
+  "hard_filter_failures": [],
+  "role_level_detected": "Junior",
+  "role_level_match": "Match",
+  "tool_currency": "Current",
+  "key_tool_recency": "Current",
+  "cv_narrative_style": "Unknown",
+  "availability_signal": "Unknown",
+  "availability_reason": "",
+  "alternative_role_fit": "",
+  "rare_assets": [],
+  "self_reported_unverified": [],
+  "interview_flags": [],
+  "status": "pass_2_complete",
+  "updated_at": "2026-05-08T12:00:06.684502"
+}

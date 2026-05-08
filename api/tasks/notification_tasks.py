@@ -723,7 +723,7 @@ def notify_form_submitted(jd_id: str, candidate_id: str, form_response: dict):
 
         # Get recruiters/managers to notify
         recruiters = list(db.users.find({
-            "realm_access.roles": {"$in": ["recruiter", "manager", "admin"]}
+            "roles": {"$in": ["recruiter", "manager", "admin"]}
         }, {"email": 1, "preferred_username": 1}))
 
         # Build email HTML
