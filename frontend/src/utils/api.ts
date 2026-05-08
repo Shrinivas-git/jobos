@@ -176,6 +176,13 @@ export interface CandidateOfferResponse {
   responded_at: string;
 }
 
+export interface ResponseTracking {
+  status: string;
+  submitted_at?: string;
+  reminder_count: number;
+  last_reminder_at?: string;
+}
+
 export interface PipelineRecord {
   jd_id: string;
   candidate_id: string;
@@ -186,6 +193,13 @@ export interface PipelineRecord {
   on_hold_reason?: string;
   offer_token?: string;
   candidate_response?: CandidateOfferResponse | null;
+  response_tracking?: {
+    form_submitted?: ResponseTracking;
+    interview_availability?: ResponseTracking;
+    interest_confirmation?: ResponseTracking;
+    offer_acceptance?: ResponseTracking;
+    client_feedback?: ResponseTracking;
+  };
   created_at: string;
   updated_at: string;
 }

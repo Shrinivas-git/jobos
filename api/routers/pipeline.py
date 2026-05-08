@@ -61,12 +61,37 @@ def upsert_initial_stage(db, jd_id: str, candidate_id: str, stage_name: str = "s
     interview_rounds = int(pipeline_cfg.get("interview_rounds", 1))
     planned_stages = _generate_planned_stages(assessment_rounds, interview_rounds)
 
+    # Initialize response_tracking for all stages
+    response_tracking = {
+        "form_submitted": {
+            "status": "pending",
+            "reminder_count": 0,
+        },
+        "interview_availability": {
+            "status": "pending",
+            "reminder_count": 0,
+        },
+        "interest_confirmation": {
+            "status": "pending",
+            "reminder_count": 0,
+        },
+        "offer_acceptance": {
+            "status": "pending",
+            "reminder_count": 0,
+        },
+        "client_feedback": {
+            "status": "pending",
+            "reminder_count": 0,
+        },
+    }
+
     doc = {
         "jd_id": jd_id,
         "candidate_id": candidate_id,
         "current_stage": stage_name,
         "planned_stages": planned_stages,
         "stages": [_build_stage(stage_name, sla, now)],
+        "response_tracking": response_tracking,
         "created_at": now,
         "updated_at": now,
     }

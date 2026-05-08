@@ -103,6 +103,7 @@ async def submit_form(
                 "response_tracking.form_submitted.status": "submitted",
                 "response_tracking.form_submitted.submitted_at": datetime.utcnow(),
                 "response_tracking.form_submitted.reminder_count": 0,
+                "response_tracking.form_submitted.last_reminder_at": None,
                 "updated_at": datetime.utcnow()
             }},
             upsert=True

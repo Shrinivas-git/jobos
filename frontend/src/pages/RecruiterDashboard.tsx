@@ -221,6 +221,9 @@ const RecruiterDashboard: React.FC = () => {
   });
   const [interviewSubmitting, setInterviewSubmitting] = useState(false);
 
+  // Response history modal
+  const [responseHistoryModal, setResponseHistoryModal] = useState<{ candidateId: string; candidateName: string } | null>(null);
+
   // Prevents stale results from a superseded JD click arriving after a newer one.
   const pendingJdRef = useRef<string>('');
 
@@ -1008,8 +1011,21 @@ const RecruiterDashboard: React.FC = () => {
                   </div>
 
                   {/* Current stage label */}
-                  <div className="mb-1.5">
+                  <div className="mb-1.5 flex items-center justify-between">
                     <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{getStagLabel(record.current_stage)}</span>
+                    {record.response_tracking?.form_submitted && (
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded ${
+                        record.response_tracking.form_submitted.status === 'submitted'
+                          ? 'bg-emerald-500/15 text-emerald-400'
+                          : record.response_tracking.form_submitted.reminder_count > 0
+                          ? 'bg-yellow-500/15 text-yellow-400'
+                          : 'bg-slate-700/50 text-slate-400'
+                      }`}>
+                        {record.response_tracking.form_submitted.status === 'submitted'
+                          ? '✓ Form Submitted'
+                          : `Reminder #${record.response_tracking.form_submitted.reminder_count}`}
+                      </span>
+                    )}
                   </div>
 
                   {/* Stage progression dots */}
@@ -1050,6 +1066,42 @@ const RecruiterDashboard: React.FC = () => {
                       </p>
                     )}
                   </div>
+
+                  {/* Response Tracking Status */}
+                  {record.response_tracking && (
+                    <div className="mt-3 pt-3 border-t border-slate-700/50 space-y-2">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Response Status</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {[
+                          { key: 'form_submitted', label: 'Form', icon: '📋' },
+                          { key: 'interview_availability', label: 'Interview', icon: '🎯' },
+                          { key: 'interest_confirmation', label: 'Interest', icon: '💼' },
+                          { key: 'offer_acceptance', label: 'Offer', icon: '🎉' },
+                        ].map(({ key, label, icon }) => {
+                          const tracking = record.response_tracking?.[key as keyof typeof record.response_tracking];
+                          if (!tracking) return null;
+
+                          const isResponded = tracking.status === 'submitted' || tracking.status === 'confirmed' || tracking.status === 'accepted';
+                          const reminderCount = tracking.reminder_count || 0;
+
+                          return (
+                            <div key={key} className={`p-2 rounded-lg text-[9px] ${
+                              isResponded
+                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                : reminderCount > 0
+                                ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
+                                : 'bg-slate-700/50 text-slate-400 border border-slate-600'
+                            }`}>
+                              <div className="font-bold">{icon} {label}</div>
+                              <div className="mt-0.5">
+                                {isResponded ? '✓ Done' : reminderCount > 0 ? `Reminder #${reminderCount}/5` : 'Pending'}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Manager: approve / deny extension */}
                   {isManager && hasPendingExt && (
@@ -1344,6 +1396,16 @@ const RecruiterDashboard: React.FC = () => {
                             <span>Request Extension</span>
                           </button>
                         )}
+                        <button
+                          onClick={() => setResponseHistoryModal({
+                            candidateId: record.candidate_id,
+                            candidateName: candidateNames[record.candidate_id] || record.candidate_id,
+                          })}
+                          className="flex items-center space-x-1.5 px-3 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg border border-slate-600/50 transition-colors ml-auto"
+                        >
+                          <Clock size={12} />
+                          <span>View Response History</span>
+                        </button>
                       </>
                     )}
                   </div>
@@ -2092,6 +2154,98 @@ const RecruiterDashboard: React.FC = () => {
                 Cancel
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Response History Modal */}
+      {responseHistoryModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#1e293b] border border-slate-700/50 rounded-2xl p-8 w-full max-w-2xl shadow-2xl max-h-96 overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="bg-blue-600/20 p-2 rounded-xl border border-blue-500/30">
+                  <Clock size={18} className="text-blue-400" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">Response History</h3>
+                  <p className="text-xs text-slate-400">{responseHistoryModal.candidateName}</p>
+                </div>
+              </div>
+              <button onClick={() => setResponseHistoryModal(null)} className="text-slate-400 hover:text-white">
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* Response Tracking Summary */}
+              <div className="bg-slate-900/50 rounded-xl p-4 space-y-3">
+                <p className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-3">Pipeline Response Status</p>
+                <div className="grid grid-cols-2 gap-3">
+                  {(() => {
+                    const record = pipelineRecords.find(r => r.candidate_id === responseHistoryModal.candidateId);
+                    if (!record?.response_tracking) {
+                      return <p className="text-xs text-slate-400 col-span-2">No response tracking data available</p>;
+                    }
+
+                    const trackingData = [
+                      { key: 'form_submitted', label: '📋 Form Submission', icon: '📋' },
+                      { key: 'interview_availability', label: '🎯 Interview Availability', icon: '🎯' },
+                      { key: 'interest_confirmation', label: '💼 Interest & Joining Date', icon: '💼' },
+                      { key: 'offer_acceptance', label: '🎉 Offer Acceptance', icon: '🎉' },
+                      { key: 'client_feedback', label: '✓ Client Decision', icon: '✓' },
+                    ];
+
+                    return trackingData.map(({ key, label, icon }) => {
+                      const tracking = record.response_tracking?.[key as keyof typeof record.response_tracking];
+                      if (!tracking) return null;
+
+                      const isResponded = tracking.status === 'submitted' || tracking.status === 'confirmed' || tracking.status === 'accepted';
+
+                      return (
+                        <div key={key} className={`p-3 rounded-lg text-[10px] border ${
+                          isResponded
+                            ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+                            : tracking.reminder_count > 0
+                            ? 'bg-yellow-500/10 text-yellow-300 border-yellow-500/30'
+                            : 'bg-slate-700/50 text-slate-400 border-slate-600'
+                        }`}>
+                          <p className="font-bold mb-1">{icon} {label}</p>
+                          <p className="text-[9px]">
+                            {isResponded
+                              ? `✓ Responded: ${new Date(tracking.submitted_at || '').toLocaleDateString()}`
+                              : tracking.reminder_count > 0
+                              ? `Reminder ${tracking.reminder_count}/5`
+                              : 'Pending'}
+                          </p>
+                          {tracking.last_reminder_at && (
+                            <p className="text-[9px] text-slate-500 mt-1">
+                              Last reminder: {new Date(tracking.last_reminder_at).toLocaleDateString()}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    });
+                  })()}
+                </div>
+              </div>
+
+              {/* Reminder Log (future enhancement) */}
+              <div className="bg-slate-900/50 rounded-xl p-4">
+                <p className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-3">Reminder History</p>
+                <div className="text-xs text-slate-400">
+                  <p>Detailed reminder history would be populated from the reminder_log collection.</p>
+                  <p className="mt-2 text-[9px] text-slate-500">Enhancement: Fetch reminder logs from backend API to show all sent reminders with timestamps and channels.</p>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setResponseHistoryModal(null)}
+              className="mt-6 w-full py-2.5 text-slate-400 hover:text-white text-sm rounded-xl border border-slate-700/50 hover:border-slate-500 transition-colors"
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
