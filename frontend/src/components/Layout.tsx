@@ -80,6 +80,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { label: 'Document Vault', icon: <FileText size={18} />, path: '/documents', roles: ['candidate', 'recruiter', 'hod', 'admin'] },
     { label: 'Communications', icon: <MessageSquare size={18} />, path: '/crm', roles: ['recruiter', 'manager', 'admin'] },
     { label: 'Matching Engine', icon: <Zap size={18} />, path: '/matching', roles: ['recruiter', 'manager', 'admin'] },
+    { label: 'Form Responses', icon: <FileText size={18} />, path: '/form-responses', roles: ['recruiter', 'manager', 'admin'] },
     { label: 'Invoices', icon: <Receipt size={18} />, path: '/invoices', roles: ['manager', 'admin'] },
     { label: 'Analytics', icon: <BarChart3 size={18} />, path: '/analytics', roles: ['manager', 'admin', 'hod'] },
     { label: 'Configuration', icon: <Settings size={18} />, path: '/admin', roles: ['admin'] },

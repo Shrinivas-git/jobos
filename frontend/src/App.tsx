@@ -13,6 +13,7 @@ import Admin from './pages/Admin';
 import Invoices from './pages/Invoices';
 import Assessment from './pages/Assessment';
 import OfferResponse from './pages/OfferResponse';
+import FormResponses from './pages/FormResponses';
 
 // Public paths that must not trigger Keycloak login-required redirect
 const _isPublicPath =
@@ -85,6 +86,7 @@ const App: React.FC = () => {
                 <Route path="/crm" element={<CRM />} />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/matching" element={<Matching />} />
+                <Route path="/form-responses" element={<FormResponses />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/invoices" element={
                   keycloak.tokenParsed?.realm_access?.roles?.some((r: string) => ['manager','admin'].includes(r))
