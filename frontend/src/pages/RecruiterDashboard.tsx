@@ -227,6 +227,11 @@ const RecruiterDashboard: React.FC = () => {
   // Send form modal
   const [sendingFormId, setSendingFormId] = useState<string | null>(null);
 
+  // Send profile to client
+  const [sendingProfileId, setSendingProfileId] = useState<string | null>(null);
+  const [profileNoteModal, setProfileNoteModal] = useState<{ candidateId: string; candidateName: string } | null>(null);
+  const [profileNote, setProfileNote] = useState('');
+
   // Prevents stale results from a superseded JD click arriving after a newer one.
   const pendingJdRef = useRef<string>('');
 
@@ -344,6 +349,25 @@ const RecruiterDashboard: React.FC = () => {
       alert(`Error: ${err.message}`);
     } finally {
       setSendingFormId(null);
+    }
+  };
+
+  const handleSendProfileToClient = async (candidateId: string, note: string) => {
+    if (!selectedJdId) return;
+    setSendingProfileId(candidateId);
+    setProfileNoteModal(null);
+    setProfileNote('');
+    try {
+      const res = await fetch(
+        `${API}/pipeline/send-profile-to-client/${selectedJdId}/${candidateId}?recruiter_note=${encodeURIComponent(note)}`,
+        { method: 'POST', headers: getAuthHeaders() }
+      );
+      if (!res.ok) throw new Error('Failed to send profile');
+      alert(`Candidate profile sent to client!`);
+    } catch (err: any) {
+      alert(`Error: ${err.message}`);
+    } finally {
+      setSendingProfileId(null);
     }
   };
 
@@ -1415,14 +1439,26 @@ const RecruiterDashboard: React.FC = () => {
                             <span>Request Extension</span>
                           </button>
                         )}
-                        <button
-                          onClick={() => handleSendFormLink(selectedJdId, record.candidate_id, candidateNames[record.candidate_id] || record.candidate_id)}
-                          disabled={sendingFormId === record.candidate_id}
-                          className="flex items-center space-x-1.5 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 text-xs font-bold rounded-lg border border-blue-500/20 transition-colors disabled:opacity-40"
-                        >
-                          <Mail size={12} />
-                          <span>{sendingFormId === record.candidate_id ? 'Sending...' : 'Send Form Link'}</span>
-                        </button>
+                        {record.response_tracking?.form_submitted?.status !== 'submitted' && (
+                          <button
+                            onClick={() => handleSendFormLink(selectedJdId, record.candidate_id, candidateNames[record.candidate_id] || record.candidate_id)}
+                            disabled={sendingFormId === record.candidate_id}
+                            className="flex items-center space-x-1.5 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 text-xs font-bold rounded-lg border border-blue-500/20 transition-colors disabled:opacity-40"
+                          >
+                            <Mail size={12} />
+                            <span>{sendingFormId === record.candidate_id ? 'Sending...' : 'Send Form Link'}</span>
+                          </button>
+                        )}
+                        {record.response_tracking?.form_submitted?.status === 'submitted' && (
+                          <button
+                            onClick={() => setProfileNoteModal({ candidateId: record.candidate_id, candidateName: candidateNames[record.candidate_id] || record.candidate_id })}
+                            disabled={sendingProfileId === record.candidate_id}
+                            className="flex items-center space-x-1.5 px-3 py-2 bg-violet-600/20 hover:bg-violet-600/40 text-violet-400 text-xs font-bold rounded-lg border border-violet-500/20 transition-colors disabled:opacity-40"
+                          >
+                            <Users size={12} />
+                            <span>{sendingProfileId === record.candidate_id ? 'Sending...' : 'Send to Client'}</span>
+                          </button>
+                        )}
                         <button
                           onClick={() => setResponseHistoryModal({
                             candidateId: record.candidate_id,
@@ -2186,6 +2222,39 @@ const RecruiterDashboard: React.FC = () => {
       )}
 
       {/* Response History Modal */}
+      {profileNoteModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#1e293b] border border-slate-700/50 rounded-2xl p-8 w-full max-w-lg shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-lg font-bold text-white">Send Profile to Client</h3>
+                <p className="text-xs text-slate-400 mt-1">{profileNoteModal.candidateName}</p>
+              </div>
+              <button onClick={() => { setProfileNoteModal(null); setProfileNote(''); }} className="text-slate-400 hover:text-white text-xl">✕</button>
+            </div>
+            <p className="text-xs text-slate-400 mb-2 uppercase tracking-widest font-bold">Recruiter's Note (optional)</p>
+            <textarea
+              value={profileNote}
+              onChange={e => setProfileNote(e.target.value)}
+              placeholder="e.g. Strong backend candidate, available immediately, recommended for first round..."
+              className="w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-violet-500 resize-none h-28"
+            />
+            <p className="text-xs text-slate-500 mt-2 mb-6">This will email the client: candidate info, skills, matching score, video analysis scores + AI impression.</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => handleSendProfileToClient(profileNoteModal.candidateId, profileNote)}
+                className="flex-1 py-3 bg-violet-600 hover:bg-violet-700 text-white font-bold rounded-xl text-sm transition-colors"
+              >
+                Send to Client
+              </button>
+              <button onClick={() => { setProfileNoteModal(null); setProfileNote(''); }} className="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-slate-300 font-bold rounded-xl text-sm transition-colors">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {responseHistoryModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-[#1e293b] border border-slate-700/50 rounded-2xl p-8 w-full max-w-2xl shadow-2xl max-h-96 overflow-y-auto">

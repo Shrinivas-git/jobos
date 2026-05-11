@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 from celery_app import celery
 from utils.client_utils import get_db
-from utils.video_analysis_utils import analyze_video_resume
+from utils.video_analysis_utils import analyze_video_resume as run_gemini_analysis
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ def analyze_video_resume(candidate_id: str, jd_id: str, video_path: str):
             return {"status": "failed", "error": "Video file not found"}
 
         # Analyze video
-        analysis_result = analyze_video_resume(video_path)
+        analysis_result = run_gemini_analysis(video_path)
 
         if "error" in analysis_result:
             logger.error(f"Video analysis failed: {analysis_result['error']}")

@@ -40,6 +40,8 @@ const FormResponses: React.FC = () => {
   const [selectedResponse, setSelectedResponse] = useState<FormResponse | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [resendingEmail, setResendingEmail] = useState<string | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<string | null>(null);
 
   useEffect(() => {
     fetchJds();
@@ -90,6 +92,26 @@ const FormResponses: React.FC = () => {
     setShowDetailModal(true);
   };
 
+  const handleSyncGoogle = async () => {
+    if (!selectedJdId) return;
+    setSyncing(true);
+    setSyncResult(null);
+    try {
+      const res = await fetch(`${API}/forms/sync-google/${selectedJdId}`, {
+        method: 'POST',
+        headers: getAuthHeaders()
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Sync failed');
+      setSyncResult(data.message);
+      fetchResponses(selectedJdId);
+    } catch (err: any) {
+      setSyncResult(`Error: ${err.message}`);
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   const handleResendEmail = async (jdId: string, candidateId: string) => {
     setResendingEmail(candidateId);
     try {
@@ -127,13 +149,30 @@ const FormResponses: React.FC = () => {
           <h1 className="text-2xl font-bold text-white">Form Responses</h1>
           <p className="text-sm text-slate-400 mt-0.5">Track video resume submissions and analysis</p>
         </div>
-        <button
-          onClick={() => selectedJdId && fetchResponses(selectedJdId)}
-          className="flex items-center gap-1.5 px-3 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg border border-slate-600/50 transition-colors"
-        >
-          <RefreshCw size={12} /> Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          {selectedJdId && (
+            <button
+              onClick={handleSyncGoogle}
+              disabled={syncing}
+              className="flex items-center gap-1.5 px-3 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 text-xs font-semibold rounded-lg border border-emerald-600/30 transition-colors disabled:opacity-40"
+            >
+              {syncing ? '⏳ Syncing...' : '☁ Sync Google Form'}
+            </button>
+          )}
+          <button
+            onClick={() => selectedJdId && fetchResponses(selectedJdId)}
+            className="flex items-center gap-1.5 px-3 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg border border-slate-600/50 transition-colors"
+          >
+            <RefreshCw size={12} /> Refresh
+          </button>
+        </div>
       </div>
+
+      {syncResult && (
+        <div className={`px-4 py-3 rounded-xl text-sm font-medium border ${syncResult.startsWith('Error') ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'}`}>
+          {syncResult}
+        </div>
+      )}
 
       {/* JD Selector */}
       <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6">

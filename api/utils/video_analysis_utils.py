@@ -1,333 +1,283 @@
 import os
 import logging
-from pathlib import Path
+import subprocess
+import json
+import tempfile
 
 logger = logging.getLogger(__name__)
 
-# Try to import optional ML libraries
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+
 try:
     import cv2
-    CV2_AVAILABLE = True
-except ImportError:
-    CV2_AVAILABLE = False
-    logger.warning("OpenCV (cv2) not installed. Install with: pip install opencv-python")
-
-try:
     import numpy as np
-    NUMPY_AVAILABLE = True
-except ImportError:
-    NUMPY_AVAILABLE = False
-    numpy = None
-
-try:
     import mediapipe as mp
-    MEDIAPIPE_AVAILABLE = True
+    VISION_AVAILABLE = True
 except ImportError:
-    MEDIAPIPE_AVAILABLE = False
-    logger.warning("MediaPipe not installed. Install with: pip install mediapipe")
+    VISION_AVAILABLE = False
+    logger.warning("cv2/mediapipe not installed")
 
 try:
-    import librosa
-    import librosa.display
-    LIBROSA_AVAILABLE = True
+    from groq import Groq
+    GROQ_AVAILABLE = bool(GROQ_API_KEY)
+    _groq = Groq(api_key=GROQ_API_KEY) if GROQ_AVAILABLE else None
 except ImportError:
-    LIBROSA_AVAILABLE = False
-    logger.warning("Librosa not installed. Install with: pip install librosa")
+    GROQ_AVAILABLE = False
+    _groq = None
+    logger.warning("groq not installed")
 
-class VideoAnalyzer:
-    def __init__(self, video_path: str):
-        self.video_path = video_path
-        self.cap = None
-        self.fps = 30
-        self.frame_count = 100
-        self.duration_seconds = 3.33
-        self.face_detection = None
-        self.pose = None
 
-        try:
-            self.cap = cv2.VideoCapture(video_path)
-            self.fps = self.cap.get(cv2.CAP_PROP_FPS)
-            self.frame_count = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
-            self.duration_seconds = self.frame_count / self.fps if self.fps > 0 else 0
-        except Exception as e:
-            logger.warning(f"Could not open video: {e}")
+def _extract_audio(video_path: str) -> str | None:
+    """Extract audio from video using ffmpeg. Returns temp wav file path."""
+    tmp = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+    tmp.close()
+    try:
+        result = subprocess.run(
+            ["ffmpeg", "-y", "-i", video_path, "-vn", "-ar", "16000", "-ac", "1", "-f", "wav", tmp.name],
+            capture_output=True, timeout=120
+        )
+        if result.returncode == 0 and os.path.getsize(tmp.name) > 0:
+            return tmp.name
+        logger.error(f"ffmpeg failed: {result.stderr.decode()}")
+        return None
+    except Exception as e:
+        logger.error(f"Audio extraction failed: {e}")
+        return None
 
-        if MEDIAPIPE_AVAILABLE:
-            try:
-                self.face_detection = mp.solutions.face_detection.FaceDetection(
-                    model_selection=0, min_detection_confidence=0.5
-                )
-                self.pose = mp.solutions.pose.Pose(
-                    min_detection_confidence=0.5, min_tracking_confidence=0.5
-                )
-            except Exception as e:
-                logger.warning(f"Could not initialize MediaPipe: {e}")
 
-        logger.info(f"Initialized VideoAnalyzer for {video_path} ({self.duration_seconds:.1f}s)")
+def _transcribe_audio(audio_path: str) -> str:
+    """Transcribe audio using Groq Whisper."""
+    if not GROQ_AVAILABLE:
+        return ""
+    try:
+        with open(audio_path, "rb") as f:
+            response = _groq.audio.transcriptions.create(
+                file=("audio.wav", f, "audio/wav"),
+                model="whisper-large-v3",
+                language="en"
+            )
+        return response.text.strip()
+    except Exception as e:
+        logger.error(f"Transcription failed: {e}")
+        return ""
 
-    def analyze(self) -> dict:
-        """
-        Analyze video and extract traits
-        Returns dict with confidence, articulation, eye_contact, professionalism scores
-        """
-        results = {
-            "confidence_score": 0,
-            "articulation_score": 0,
-            "eye_contact_score": 0,
+
+def _analyze_speech(transcript: str) -> dict:
+    """Use Groq LLM to analyze speaking skills from transcript."""
+    if not GROQ_AVAILABLE or not transcript:
+        return {
+            "articulation_score": 6,
             "speaking_pace": "normal",
-            "professionalism_score": 0,
-            "engagement_level": "medium",
-            "overall_impression": "",
-            "traits": [],
-            "duration": self.duration_seconds,
-            "video_quality": "good"
+            "filler_words": 0,
+            "speech_traits": [],
+            "speech_impression": "Speech analysis unavailable."
+        }
+    try:
+        prompt = f"""Analyze this video resume transcript for speaking skills. Return ONLY valid JSON, no extra text.
+
+Transcript:
+\"\"\"{transcript}\"\"\"
+
+Return:
+{{
+  "articulation_score": <1-10, clarity and vocabulary quality>,
+  "speaking_pace": "<slow|normal|fast>",
+  "filler_words": <count of um/uh/like/you know>,
+  "speech_traits": ["<trait1>", "<trait2>"],
+  "speech_impression": "<1-2 sentences on communication style>"
+}}
+
+Score 7 = average, 9-10 = exceptional. speech_traits examples: fluent, articulate, well-structured, confident-speaker, hesitant, uses-fillers, monotone, engaging."""
+
+        response = _groq.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.2,
+            max_tokens=300
+        )
+        raw = response.choices[0].message.content.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        return json.loads(raw.strip())
+    except Exception as e:
+        logger.error(f"Speech analysis failed: {e}")
+        return {
+            "articulation_score": 6,
+            "speaking_pace": "normal",
+            "filler_words": 0,
+            "speech_traits": [],
+            "speech_impression": "Speech analysis failed."
         }
 
-        try:
-            # Analyze posture and eye contact from video frames
-            posture_score, eye_contact_score = self._analyze_posture_and_eye_contact()
-            results["confidence_score"] = posture_score
-            results["eye_contact_score"] = eye_contact_score
 
-            # Analyze audio for articulation (if available)
-            if LIBROSA_AVAILABLE:
-                articulation_score = self._analyze_articulation()
-                results["articulation_score"] = articulation_score
+def _analyze_visuals(video_path: str) -> dict:
+    """Analyze posture and eye contact using OpenCV + MediaPipe."""
+    default = {"confidence_score": 6, "eye_contact_score": 6, "video_quality": "unknown", "duration": 0}
 
-            # Infer other metrics
-            results["professionalism_score"] = (posture_score + eye_contact_score) / 2
-            results["engagement_level"] = self._infer_engagement(eye_contact_score)
-            results["traits"] = self._extract_traits(results)
-            results["overall_impression"] = self._generate_impression(results)
+    if not VISION_AVAILABLE:
+        return default
 
-            logger.info(f"Video analysis complete: {results['traits']}")
-            return results
-        except Exception as e:
-            logger.error(f"Video analysis failed: {e}")
-            return results
+    try:
+        cap = cv2.VideoCapture(video_path)
+        fps = cap.get(cv2.CAP_PROP_FPS) or 30
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        duration = total_frames / fps
 
-    def _analyze_posture_and_eye_contact(self) -> tuple:
-        """
-        Analyze posture and eye contact from video frames
-        Returns: (confidence_score, eye_contact_score) as 1-10
-        """
-        if not MEDIAPIPE_AVAILABLE:
-            logger.warning("MediaPipe not available, using default scores")
-            return 7, 7
+        mp_pose = mp.solutions.pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
+        mp_face = mp.solutions.face_detection.FaceDetection(min_detection_confidence=0.5)
 
-        confidence_scores = []
-        eye_contact_scores = []
-        frame_count = 0
+        posture_scores = []
+        eye_scores = []
+        frame_idx = 0
 
-        self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
         while True:
-            ret, frame = self.cap.read()
+            ret, frame = cap.read()
             if not ret:
                 break
-
-            # Sample every 10th frame to speed up analysis
-            frame_count += 1
-            if frame_count % 10 != 0:
+            frame_idx += 1
+            if frame_idx % 15 != 0:  # sample every 15th frame
                 continue
 
-            # Detect pose
-            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            pose_results = self.pose.process(rgb_frame)
+            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-            if pose_results.pose_landmarks:
-                # Extract landmarks (simplified)
-                landmarks = pose_results.pose_landmarks.landmark
-                shoulder_y = (landmarks[11].y + landmarks[12].y) / 2
-                head_y = landmarks[0].y  # Nose
+            pose_result = mp_pose.process(rgb)
+            if pose_result.pose_landmarks:
+                lm = pose_result.pose_landmarks.landmark
+                # Shoulder alignment
+                shoulder_diff = abs(lm[11].x - lm[12].x)
+                hip_offset = abs((lm[11].x + lm[12].x) / 2 - (lm[23].x + lm[24].x) / 2)
+                posture = max(1, min(10, 9 - hip_offset * 15))
+                posture_scores.append(posture)
 
-                # Posture score: straight = high, slouched = low
-                posture = self._calculate_posture(landmarks)
-                confidence_scores.append(posture)
+            face_result = mp_face.process(rgb)
+            if face_result.detections:
+                detection = face_result.detections[0]
+                bbox = detection.location_data.relative_bounding_box
+                # Face centered = looking at camera
+                center_x = bbox.xmin + bbox.width / 2
+                offset = abs(center_x - 0.5)
+                eye_score = max(1, min(10, 9 - offset * 12))
+                eye_scores.append(eye_score)
 
-                # Eye contact: looking at camera = high
-                eye_contact = self._calculate_eye_contact(landmarks)
-                eye_contact_scores.append(eye_contact)
+        cap.release()
+        mp_pose.close()
+        mp_face.close()
 
-        self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        confidence = round(float(np.mean(posture_scores))) if posture_scores else 6
+        eye_contact = round(float(np.mean(eye_scores))) if eye_scores else 6
 
-        # Average scores
-        avg_confidence = np.mean(confidence_scores) if confidence_scores else 7
-        avg_eye_contact = np.mean(eye_contact_scores) if eye_contact_scores else 7
+        # Video quality from frame count
+        quality = "good" if total_frames > 300 else "low"
 
-        # Scale to 1-10
-        return int(min(10, max(1, avg_confidence))), int(min(10, max(1, avg_eye_contact)))
+        return {
+            "confidence_score": max(1, min(10, confidence)),
+            "eye_contact_score": max(1, min(10, eye_contact)),
+            "video_quality": quality,
+            "duration": round(duration, 1)
+        }
+    except Exception as e:
+        logger.error(f"Visual analysis failed: {e}")
+        return default
 
-    def _calculate_posture(self, landmarks) -> float:
-        """Calculate posture quality (1-10) from pose landmarks"""
-        try:
-            # Check spine alignment (shoulder to hip alignment)
-            shoulder = (landmarks[11].x + landmarks[12].x) / 2
-            hip = (landmarks[23].x + landmarks[24].x) / 2
-            alignment = abs(shoulder - hip)
 
-            # Low alignment difference = good posture
-            posture_score = 10 - (alignment * 20)
-            return max(1, min(10, posture_score))
-        except:
-            return 7
+def _generate_overall_impression(visual: dict, speech: dict, transcript: str) -> str:
+    """Use Groq to write a cohesive overall impression combining all signals."""
+    if not GROQ_AVAILABLE:
+        return f"Candidate shows {visual.get('confidence_score', 6)}/10 confidence and {speech.get('articulation_score', 6)}/10 articulation."
+    try:
+        prompt = f"""Write a 2-3 sentence professional HR assessment of this candidate based on their video resume analysis.
 
-    def _calculate_eye_contact(self, landmarks) -> float:
-        """Calculate eye contact quality (1-10) from pose landmarks"""
-        try:
-            # Check if face is looking forward (not turned away)
-            left_eye = landmarks[2]
-            right_eye = landmarks[5]
-            nose = landmarks[0]
+Visual scores: Confidence {visual['confidence_score']}/10, Eye Contact {visual['eye_contact_score']}/10
+Speech scores: Articulation {speech['articulation_score']}/10, Pace {speech['speaking_pace']}, Filler words {speech['filler_words']}
+Speech traits: {', '.join(speech.get('speech_traits', []))}
+Transcript excerpt: \"{transcript[:300]}\"
 
-            # Eyes centered relative to face
-            eye_center_x = (left_eye.x + right_eye.x) / 2
-            eye_offset = abs(eye_center_x - nose.x)
+Be honest and specific. Write as a talent scout would."""
 
-            # Small offset = looking at camera
-            eye_contact_score = 10 - (eye_offset * 15)
-            return max(1, min(10, eye_contact_score))
-        except:
-            return 7
-
-    def _analyze_articulation(self) -> float:
-        """
-        Analyze articulation from audio track
-        Returns: articulation_score (1-10)
-        """
-        try:
-            # Extract audio from video (simplified)
-            # In production, use ffmpeg to extract audio
-            # For now, return estimated score based on video quality
-            return 7
-        except Exception as e:
-            logger.error(f"Articulation analysis failed: {e}")
-            return 7
-
-    def _infer_engagement(self, eye_contact_score: float) -> str:
-        """Infer engagement level from eye contact"""
-        if eye_contact_score >= 8:
-            return "high"
-        elif eye_contact_score >= 5:
-            return "medium"
-        else:
-            return "low"
-
-    def _extract_traits(self, results: dict) -> list:
-        """Extract candidate traits from analysis results"""
-        traits = []
-
-        # Confidence trait
-        if results["confidence_score"] >= 7:
-            traits.append("confident")
-        elif results["confidence_score"] <= 4:
-            traits.append("hesitant")
-
-        # Articulation trait
-        if results["articulation_score"] >= 7:
-            traits.append("articulate")
-        elif results["articulation_score"] <= 4:
-            traits.append("unclear")
-
-        # Eye contact trait
-        if results["eye_contact_score"] >= 8:
-            traits.append("engaged")
-
-        # Professionalism
-        if results["professionalism_score"] >= 8:
-            traits.append("professional")
-
-        # Duration trait
-        if results["duration"] < 60:
-            traits.append("concise")
-        elif results["duration"] > 300:
-            traits.append("detailed")
-
-        # Engagement trait
-        if results["engagement_level"] == "high":
-            traits.append("energetic")
-
-        return traits
-
-    def _generate_impression(self, results: dict) -> str:
-        """Generate overall impression text"""
-        confidence = results["confidence_score"]
-        articulation = results["articulation_score"]
-        eye_contact = results["eye_contact_score"]
-        professionalism = results["professionalism_score"]
-
-        score = (confidence + articulation + eye_contact + professionalism) / 4
-
-        if score >= 8:
-            return "Excellent presentation. Confident, articulate, and professional."
-        elif score >= 6:
-            return "Good presentation with clear communication and engagement."
-        elif score >= 4:
-            return "Adequate presentation. Some areas could be improved in confidence or clarity."
-        else:
-            return "Needs improvement in presentation skills and engagement."
-
-    def cleanup(self):
-        """Release video capture"""
-        if self.cap:
-            self.cap.release()
+        response = _groq.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.4,
+            max_tokens=150
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        logger.error(f"Impression generation failed: {e}")
+        return speech.get("speech_impression", "Analysis complete.")
 
 
 def analyze_video_resume(video_path: str) -> dict:
     """
-    Main entry point for video resume analysis
-    Args:
-        video_path: Path to video file (MP4, AVI, etc.)
-    Returns:
-        Analysis results dict with traits, scores, impression
+    Full video resume analysis:
+    - Visual: OpenCV + MediaPipe (posture/eye contact)
+    - Speech: Groq Whisper (transcription) + Groq LLM (speaking skills)
     """
     if not os.path.exists(video_path):
-        logger.warning(f"Video file not found: {video_path}, using default analysis")
-        # Return default analysis if file doesn't exist or ML unavailable
+        logger.error(f"Video not found: {video_path}")
         return {
-            "confidence_score": 7,
-            "articulation_score": 7,
-            "eye_contact_score": 7,
-            "speaking_pace": "normal",
-            "professionalism_score": 7,
-            "engagement_level": "medium",
-            "overall_impression": "Video analysis unavailable. ML libraries not configured.",
-            "traits": ["professional"],
-            "duration": 0,
-            "video_quality": "unknown"
+            "confidence_score": 0, "articulation_score": 0,
+            "eye_contact_score": 0, "professionalism_score": 0,
+            "speaking_pace": "unknown", "engagement_level": "unknown",
+            "overall_impression": "Video file not found.", "traits": [], "duration": 0
         }
 
-    if not CV2_AVAILABLE or not MEDIAPIPE_AVAILABLE:
-        logger.warning(f"ML libraries not available, returning default analysis for {video_path}")
-        return {
-            "confidence_score": 7,
-            "articulation_score": 7,
-            "eye_contact_score": 7,
-            "speaking_pace": "normal",
-            "professionalism_score": 7,
-            "engagement_level": "medium",
-            "overall_impression": "Video analysis unavailable. ML libraries (cv2, mediapipe) not installed.",
-            "traits": ["professional"],
-            "duration": 0,
-            "video_quality": "unknown"
-        }
+    logger.info(f"Starting full video analysis: {video_path}")
 
-    try:
-        analyzer = VideoAnalyzer(video_path)
-        results = analyzer.analyze()
-        analyzer.cleanup()
-        return results
-    except Exception as e:
-        logger.error(f"Failed to analyze video: {e}")
-        # Return default analysis on error
-        return {
-            "confidence_score": 7,
-            "articulation_score": 7,
-            "eye_contact_score": 7,
-            "speaking_pace": "normal",
-            "professionalism_score": 7,
-            "engagement_level": "medium",
-            "overall_impression": f"Video analysis failed: {str(e)}",
-            "traits": ["professional"],
-            "duration": 0,
-            "video_quality": "unknown"
-        }
+    # Step 1: Visual analysis
+    visual = _analyze_visuals(video_path)
+    logger.info(f"Visual: confidence={visual['confidence_score']}, eye={visual['eye_contact_score']}")
+
+    # Step 2: Extract audio and transcribe
+    transcript = ""
+    speech = {"articulation_score": 6, "speaking_pace": "normal", "filler_words": 0, "speech_traits": [], "speech_impression": ""}
+    audio_path = _extract_audio(video_path)
+    if audio_path:
+        try:
+            transcript = _transcribe_audio(audio_path)
+            logger.info(f"Transcript ({len(transcript)} chars): {transcript[:100]}...")
+            if transcript:
+                speech = _analyze_speech(transcript)
+                logger.info(f"Speech: articulation={speech['articulation_score']}, pace={speech['speaking_pace']}")
+        finally:
+            try:
+                os.unlink(audio_path)
+            except Exception:
+                pass
+
+    # Step 3: Overall impression
+    overall = _generate_overall_impression(visual, speech, transcript)
+
+    # Step 4: Combine traits
+    traits = []
+    if visual["confidence_score"] >= 7:
+        traits.append("confident")
+    if visual["eye_contact_score"] >= 7:
+        traits.append("engaged")
+    if speech["articulation_score"] >= 7:
+        traits.append("articulate")
+    if speech["filler_words"] <= 3:
+        traits.append("fluent")
+    elif speech["filler_words"] >= 8:
+        traits.append("uses-fillers")
+    traits += speech.get("speech_traits", [])
+    traits = list(dict.fromkeys(traits))[:5]  # dedupe, max 5
+
+    professionalism = round((visual["confidence_score"] + speech["articulation_score"]) / 2)
+    engagement = "high" if visual["eye_contact_score"] >= 7 else "medium" if visual["eye_contact_score"] >= 5 else "low"
+
+    return {
+        "confidence_score": visual["confidence_score"],
+        "articulation_score": speech["articulation_score"],
+        "eye_contact_score": visual["eye_contact_score"],
+        "professionalism_score": max(1, min(10, professionalism)),
+        "speaking_pace": speech["speaking_pace"],
+        "filler_words": speech["filler_words"],
+        "engagement_level": engagement,
+        "overall_impression": overall,
+        "traits": traits if traits else ["professional"],
+        "duration": visual["duration"],
+        "video_quality": visual["video_quality"],
+        "transcript": transcript[:500] if transcript else None
+    }

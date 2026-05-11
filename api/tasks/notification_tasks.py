@@ -817,3 +817,172 @@ def notify_form_submitted(jd_id: str, candidate_id: str, form_response: dict):
 
     except Exception as e:
         logger.error(f"Failed to notify form submission: {e}")
+
+
+@celery.task(name="tasks.notification_tasks.send_candidate_profile_to_client")
+def send_candidate_profile_to_client(jd_id: str, candidate_id: str, client_email: str, recruiter_note: str = ""):
+    logger.info(f"Sending candidate profile to client: {candidate_id} → {client_email}")
+    db = get_db()
+
+    jd = db.job_descriptions.find_one({"jd_id": jd_id})
+    candidate = db.candidates.find_one({"candidate_id": candidate_id})
+    pool = db.candidate_pools.find_one({"jd_id": jd_id, "candidate_id": candidate_id})
+    form_response = db.form_responses.find_one({"jd_id": jd_id, "candidate_id": candidate_id})
+
+    if not jd or not candidate:
+        logger.error(f"JD or candidate not found: {jd_id}, {candidate_id}")
+        return
+
+    structured = jd.get("structured_data", {})
+    jd_title = structured.get("title") or jd.get("title", "Job Role")
+    name = candidate.get("name", candidate_id)
+    email = candidate.get("email", "")
+    phone = candidate.get("phone", "")
+    linkedin = candidate.get("linkedin_url", "")
+
+    # Resume info
+    resume = candidate.get("structured_data", {})
+    skills = resume.get("skills", [])[:10]
+    experience = resume.get("experience", [])[:2]
+    education = resume.get("education", [])[:1]
+    summary = resume.get("summary", "")
+
+    # Matching scores
+    fitment_score = 0
+    recommendation = "hold"
+    reasoning = ""
+    strengths = []
+    gaps = []
+    if pool:
+        fitment_score = pool.get("fitment_score") or pool.get("composite_score") or 0
+        recommendation = (pool.get("recommendation") or "hold").lower()
+        reasoning = pool.get("reasoning", "")
+        strengths = pool.get("strengths", [])[:4]
+        gaps = pool.get("gaps", [])[:3]
+
+    # Video analysis
+    video = form_response.get("video_analysis", {}) if form_response else {}
+    has_video = bool(video and video.get("confidence_score"))
+
+    rec_colors = {"shortlist": "#4ade80", "hold": "#f59e0b", "reject": "#f87171"}
+    rec_labels = {"shortlist": "STRONG HIRE", "hold": "BORDERLINE", "reject": "NOT RECOMMENDED"}
+    rec_color = rec_colors.get(recommendation, "#f59e0b")
+    rec_label = rec_labels.get(recommendation, "BORDERLINE")
+
+    skills_html = " ".join(
+        f'<span style="display:inline-block;padding:4px 10px;background:#1e3a5f;color:#60a5fa;border-radius:6px;font-size:12px;margin:3px">{s}</span>'
+        for s in skills
+    )
+
+    exp_html = ""
+    for e in experience:
+        title = e.get("title") or e.get("role", "")
+        company = e.get("company", "")
+        duration = e.get("duration") or e.get("years", "")
+        if title or company:
+            exp_html += f'<p style="margin:4px 0;font-size:13px;color:#cbd5e1">• <strong>{title}</strong>{" at " + company if company else ""}{" · " + str(duration) if duration else ""}</p>'
+
+    edu_html = ""
+    for e in education:
+        degree = e.get("degree", "")
+        institution = e.get("institution") or e.get("college", "")
+        if degree or institution:
+            edu_html += f'<p style="margin:4px 0;font-size:13px;color:#cbd5e1">• {degree}{" · " + institution if institution else ""}</p>'
+
+    strengths_html = "".join(f'<li style="margin:5px 0;color:#cbd5e1;font-size:13px">{s}</li>' for s in strengths)
+    gaps_html = "".join(f'<li style="margin:5px 0;color:#cbd5e1;font-size:13px">{g}</li>' for g in gaps)
+
+    # Pre-build optional sections to avoid backslash-in-fstring issues (Python < 3.12)
+    def _bar(score):
+        pct = int(score * 10)
+        clr = "#4ade80" if score >= 7 else "#f59e0b" if score >= 5 else "#f87171"
+        return (
+            '<div style="background:#0f172a;border-radius:4px;height:6px;margin-top:4px">'
+            '<div style="width:' + str(pct) + '%;background:' + clr + ';height:6px;border-radius:4px"></div></div>'
+        )
+
+    video_html = ""
+    if has_video:
+        v_traits = " ".join(
+            '<span style="display:inline-block;padding:3px 8px;background:#1e3a5f;color:#93c5fd;'
+            'border-radius:5px;font-size:11px;margin:2px">' + t + '</span>'
+            for t in video.get("traits", [])
+        )
+        v_impression = video.get("overall_impression", "")
+        v_traits_row = ('<p style="margin:0 0 10px 0">' + v_traits + '</p>') if v_traits else ""
+        v_impression_row = ('<p style="margin:0;font-size:13px;color:#94a3b8;line-height:1.7;font-style:italic">' + v_impression + '</p>') if v_impression else ""
+        video_html = (
+            '<div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px">'
+            '<p style="margin:0 0 16px 0;font-size:14px;font-weight:700;color:#60a5fa">Video Resume Analysis</p>'
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">'
+            '<div><p style="margin:0;font-size:11px;color:#64748b;text-transform:uppercase">Confidence</p>'
+            '<p style="margin:2px 0;font-size:20px;font-weight:700;color:#f1f5f9">' + str(video.get("confidence_score", 0)) + '<span style="font-size:12px;color:#64748b">/10</span></p>' + _bar(video.get("confidence_score", 0)) + '</div>'
+            '<div><p style="margin:0;font-size:11px;color:#64748b;text-transform:uppercase">Articulation</p>'
+            '<p style="margin:2px 0;font-size:20px;font-weight:700;color:#f1f5f9">' + str(video.get("articulation_score", 0)) + '<span style="font-size:12px;color:#64748b">/10</span></p>' + _bar(video.get("articulation_score", 0)) + '</div>'
+            '<div><p style="margin:0;font-size:11px;color:#64748b;text-transform:uppercase">Eye Contact</p>'
+            '<p style="margin:2px 0;font-size:20px;font-weight:700;color:#f1f5f9">' + str(video.get("eye_contact_score", 0)) + '<span style="font-size:12px;color:#64748b">/10</span></p>' + _bar(video.get("eye_contact_score", 0)) + '</div>'
+            '<div><p style="margin:0;font-size:11px;color:#64748b;text-transform:uppercase">Professionalism</p>'
+            '<p style="margin:2px 0;font-size:20px;font-weight:700;color:#f1f5f9">' + str(video.get("professionalism_score", 0)) + '<span style="font-size:12px;color:#64748b">/10</span></p>' + _bar(video.get("professionalism_score", 0)) + '</div>'
+            '</div>' + v_traits_row + v_impression_row + '</div>'
+        )
+
+    recruiter_note_html = (
+        '<div style="background:#1e3a5f;padding:20px;border-radius:12px;margin-bottom:16px;border-left:4px solid #3b82f6">'
+        '<p style="margin:0 0 6px 0;font-size:11px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:1px">Recruiter\'s Note</p>'
+        '<p style="margin:0;font-size:13px;color:#cbd5e1;line-height:1.7">' + recruiter_note + '</p></div>'
+    ) if recruiter_note else ""
+
+    email_row = ('<p style="margin:4px 0;font-size:13px;color:#64748b">Email: <a href="mailto:' + email + '" style="color:#60a5fa">' + email + '</a></p>') if email else ""
+    phone_row = ('<p style="margin:4px 0;font-size:13px;color:#64748b">Phone: <span style="color:#94a3b8">' + phone + '</span></p>') if phone else ""
+    linkedin_row = ('<p style="margin:4px 0;font-size:13px;color:#64748b">LinkedIn: <a href="' + linkedin + '" style="color:#60a5fa">View Profile</a></p>') if linkedin else ""
+    summary_block = ('<div style="background:#1e293b;padding:20px;border-radius:12px;margin-bottom:16px"><p style="margin:0;font-size:13px;color:#94a3b8;line-height:1.7;font-style:italic">' + summary + '</p></div>') if summary else ""
+    exp_block = ('<div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px"><p style="margin:0 0 12px 0;font-size:14px;font-weight:700;color:#f1f5f9">Experience</p>' + exp_html + '</div>') if exp_html else ""
+    edu_block = ('<div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px"><p style="margin:0 0 12px 0;font-size:14px;font-weight:700;color:#f1f5f9">Education</p>' + edu_html + '</div>') if edu_html else ""
+    reasoning_row = ('<p style="margin:0 0 12px 0;font-size:13px;color:#94a3b8;line-height:1.7;font-style:italic">' + reasoning + '</p>') if reasoning else ""
+    strengths_block = ('<p style="margin:0 0 6px 0;font-size:11px;font-weight:700;color:#4ade80;text-transform:uppercase">Strengths</p><ul style="margin:0 0 14px 0;padding-left:18px">' + strengths_html + '</ul>') if strengths_html else ""
+    gaps_block = ('<p style="margin:0 0 6px 0;font-size:11px;font-weight:700;color:#f87171;text-transform:uppercase">Gaps</p><ul style="margin:0;padding-left:18px">' + gaps_html + '</ul>') if gaps_html else ""
+
+    html = f"""<!DOCTYPE html>
+<html>
+<body style="background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#f1f5f9;margin:0;padding:24px">
+  <div style="max-width:680px;margin:0 auto">
+    <div style="background:#1e293b;padding:28px;border-radius:12px;margin-bottom:16px">
+      <p style="margin:0 0 4px 0;font-size:22px;font-weight:700;color:#60a5fa">Candidate Profile</p>
+      <p style="margin:0;font-size:12px;color:#475569;text-transform:uppercase;letter-spacing:2px">Prepared by your recruitment partner · JobOS</p>
+    </div>
+    <div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px;border-left:4px solid {rec_color}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+        <div>
+          <p style="margin:0;font-size:22px;font-weight:700;color:#f1f5f9">{name}</p>
+          <p style="margin:4px 0;font-size:13px;color:#64748b">Role: <span style="color:#94a3b8">{jd_title}</span></p>
+          {email_row}{phone_row}{linkedin_row}
+        </div>
+        <div style="text-align:right">
+          <p style="margin:0;font-size:32px;font-weight:900;color:{rec_color}">{int(fitment_score)}%</p>
+          <p style="margin:2px 0 0 0;font-size:10px;font-weight:700;color:{rec_color};text-transform:uppercase;letter-spacing:1px">{rec_label}</p>
+        </div>
+      </div>
+    </div>
+    {summary_block}
+    {recruiter_note_html}
+    <div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px">
+      <p style="margin:0 0 12px 0;font-size:14px;font-weight:700;color:#f1f5f9">Skills</p>
+      <p style="margin:0">{skills_html}</p>
+    </div>
+    {exp_block}
+    {edu_block}
+    <div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px">
+      <p style="margin:0 0 12px 0;font-size:14px;font-weight:700;color:#f1f5f9">Fitment Assessment</p>
+      {reasoning_row}{strengths_block}{gaps_block}
+    </div>
+    {video_html}
+    <p style="color:#334155;font-size:11px;text-align:center;margin-top:24px">
+      This profile is confidential and prepared by JobOS · Recruitment Operating System
+    </p>
+  </div>
+</body>
+</html>"""
+
+    subject = f"Candidate Profile — {name} · {jd_title}"
+    send_email(client_email, subject, html)
+    logger.info(f"Candidate profile sent to {client_email}: {candidate_id}")

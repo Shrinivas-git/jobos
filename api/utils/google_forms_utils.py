@@ -1,135 +1,172 @@
 import os
 import json
 import logging
+import io
 
 logger = logging.getLogger(__name__)
 
-# Try to import Google libraries (optional for now)
 try:
     from google.oauth2 import service_account
     from googleapiclient.discovery import build
+    from googleapiclient.http import MediaIoBaseDownload
     GOOGLE_AVAILABLE = True
 except ImportError:
     GOOGLE_AVAILABLE = False
-    logger.warning("Google libraries not installed. Install with: pip install google-auth google-auth-httplib2 google-auth-oauthlib google-api-python-client")
+    logger.warning("Google libraries not installed. Run: pip install google-auth google-auth-httplib2 google-api-python-client")
 
-# Load Google credentials from environment
 GOOGLE_CREDENTIALS_JSON = os.getenv("GOOGLE_CREDENTIALS_JSON", "{}")
+GOOGLE_SHEET_ID = os.getenv("GOOGLE_SHEET_ID", "")
+GOOGLE_DRIVE_FOLDER_ID = os.getenv("GOOGLE_DRIVE_FOLDER_ID", "")
+VIDEO_STORAGE_PATH = os.getenv("VIDEO_STORAGE_PATH", "/tmp/video_resumes")
+os.makedirs(VIDEO_STORAGE_PATH, exist_ok=True)
+
 try:
     CREDENTIALS_DICT = json.loads(GOOGLE_CREDENTIALS_JSON)
 except json.JSONDecodeError:
     CREDENTIALS_DICT = {}
 
-# Video storage path (local filesystem)
-VIDEO_STORAGE_PATH = os.getenv("VIDEO_STORAGE_PATH", "/tmp/video_resumes")
-os.makedirs(VIDEO_STORAGE_PATH, exist_ok=True)
+SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets.readonly",
+    "https://www.googleapis.com/auth/drive.readonly",
+]
 
-# Initialize Google API clients
-def _get_forms_service():
-    if not GOOGLE_AVAILABLE:
-        logger.error("Google libraries not available")
-        return None
-    if not CREDENTIALS_DICT:
-        logger.error("Google credentials not configured")
+def _get_credentials():
+    if not GOOGLE_AVAILABLE or not CREDENTIALS_DICT:
         return None
     try:
-        credentials = service_account.Credentials.from_service_account_info(
-            CREDENTIALS_DICT,
-            scopes=["https://www.googleapis.com/auth/forms.responses.readonly"]
-        )
-        return build("forms", "v1", credentials=credentials)
+        return service_account.Credentials.from_service_account_info(CREDENTIALS_DICT, scopes=SCOPES)
     except Exception as e:
-        logger.error(f"Failed to create Forms service: {e}")
+        logger.error(f"Failed to load credentials: {e}")
         return None
 
-def get_form_responses(form_id: str, limit: int = 100):
+def _get_sheets_service():
+    creds = _get_credentials()
+    if not creds:
+        return None
+    return build("sheets", "v4", credentials=creds)
+
+def _get_drive_service():
+    creds = _get_credentials()
+    if not creds:
+        return None
+    return build("drive", "v3", credentials=creds)
+
+def get_sheet_responses(sheet_id: str = None) -> list[dict]:
     """
-    Fetch all responses from a Google Form
-    Returns: List of response dicts with question answers
+    Fetch all rows from the Google Sheet linked to the Form.
+    Returns list of dicts keyed by column header.
+    Expected columns: Timestamp, Full Name, Email Address, Phone Number,
+                      Aadhar Number, LinkedIn Profile URL, Alternate Phone Number,
+                      Telegram Handle, Video Resume
     """
-    if not GOOGLE_AVAILABLE:
-        logger.warning("Google Forms API not available")
+    sheet_id = sheet_id or GOOGLE_SHEET_ID
+    if not sheet_id:
+        logger.error("GOOGLE_SHEET_ID not configured")
+        return []
+
+    service = _get_sheets_service()
+    if not service:
         return []
 
     try:
-        service = _get_forms_service()
-        if not service:
+        result = service.spreadsheets().values().get(
+            spreadsheetId=sheet_id,
+            range="A1:Z1000"
+        ).execute()
+        rows = result.get("values", [])
+        if len(rows) < 2:
             return []
 
-        form = service.forms().get(formId=form_id).execute()
-        responses = service.forms().responses().list(formId=form_id).execute()
-
-        parsed_responses = []
-        for response in responses.get("responses", [])[:limit]:
-            parsed = _parse_form_response(form, response)
-            parsed_responses.append(parsed)
-
-        logger.info(f"Fetched {len(parsed_responses)} responses from form {form_id}")
-        return parsed_responses
+        headers = rows[0]
+        responses = []
+        for row in rows[1:]:
+            padded = row + [""] * (len(headers) - len(row))
+            responses.append(dict(zip(headers, padded)))
+        logger.info(f"Fetched {len(responses)} rows from sheet {sheet_id}")
+        return responses
     except Exception as e:
-        logger.error(f"Failed to fetch form responses: {e}")
+        logger.error(f"Failed to fetch sheet responses: {e}")
         return []
 
-def _parse_form_response(form: dict, response: dict) -> dict:
-    """Parse a single form response into structured data"""
-    parsed = {
-        "response_id": response.get("responseId"),
-        "timestamp": response.get("createTime"),
-        "answers": {}
-    }
+def find_video_in_drive(candidate_email: str, folder_id: str = None) -> str | None:
+    """
+    Find the video file uploaded by a candidate in Google Drive.
+    Google Forms stores files in a subfolder named after the respondent's email.
+    Returns the Drive file ID or None.
+    """
+    folder_id = folder_id or GOOGLE_DRIVE_FOLDER_ID
+    if not folder_id:
+        return None
 
-    # Build question ID to title map
-    question_map = {}
-    for item in form.get("items", []):
-        question_map[item.get("questionItem", {}).get("question", {}).get("questionId")] = {
-            "title": item.get("title"),
-            "type": item.get("questionItem", {}).get("question", {}).get("questionType")
-        }
+    service = _get_drive_service()
+    if not service:
+        return None
 
-    # Extract answers
-    answers = response.get("answers", {})
-    for question_id, answer in answers.items():
-        question_info = question_map.get(question_id, {})
-        question_title = question_info.get("title", question_id)
+    try:
+        # Files are stored in subfolders inside the form uploads folder
+        result = service.files().list(
+            q=f"'{folder_id}' in parents and trashed=false",
+            fields="files(id, name, mimeType, parents)",
+            pageSize=100
+        ).execute()
+        files = result.get("files", [])
 
-        # Extract text responses
-        if "textAnswers" in answer:
-            text_answers = answer["textAnswers"].get("answers", [])
-            parsed["answers"][question_title] = text_answers[0]["value"] if text_answers else None
-        elif "fileUploadAnswers" in answer:
-            file_answers = answer["fileUploadAnswers"].get("answers", [])
-            parsed["answers"][question_title] = file_answers[0] if file_answers else None
+        # Look for video files (mp4, mov, avi, webm)
+        video_mimes = {"video/mp4", "video/quicktime", "video/x-msvideo", "video/webm"}
+        for f in files:
+            if f.get("mimeType") in video_mimes:
+                return f["id"]
+            # Check subfolders
+            if f.get("mimeType") == "application/vnd.google-apps.folder":
+                sub = service.files().list(
+                    q=f"'{f['id']}' in parents and trashed=false",
+                    fields="files(id, name, mimeType)"
+                ).execute()
+                for sf in sub.get("files", []):
+                    if sf.get("mimeType") in video_mimes:
+                        return sf["id"]
+        return None
+    except Exception as e:
+        logger.error(f"Failed to search Drive: {e}")
+        return None
 
-    return parsed
+def download_video_from_drive(file_id: str, candidate_id: str, jd_id: str) -> str | None:
+    """
+    Download a video from Google Drive and save to local storage.
+    Returns local path or None on failure.
+    """
+    service = _get_drive_service()
+    if not service:
+        return None
+
+    try:
+        subdir = os.path.join(VIDEO_STORAGE_PATH, jd_id, candidate_id)
+        os.makedirs(subdir, exist_ok=True)
+        local_path = os.path.join(subdir, "video_resume.mp4")
+
+        request = service.files().get_media(fileId=file_id)
+        fh = io.FileIO(local_path, "wb")
+        downloader = MediaIoBaseDownload(fh, request)
+        done = False
+        while not done:
+            _, done = downloader.next_chunk()
+        fh.close()
+        logger.info(f"Downloaded video from Drive {file_id} -> {local_path}")
+        return local_path
+    except Exception as e:
+        logger.error(f"Failed to download video from Drive: {e}")
+        return None
 
 def get_video_storage_path(candidate_id: str, jd_id: str) -> str:
-    """
-    Get local path where video resume should be stored
-    Args:
-        candidate_id: Candidate ID
-        jd_id: JD ID
-    Returns:
-        Full path for video file
-    """
     subdir = os.path.join(VIDEO_STORAGE_PATH, jd_id, candidate_id)
     os.makedirs(subdir, exist_ok=True)
     return os.path.join(subdir, "video_resume.mp4")
 
-def save_video_file(video_data: bytes, candidate_id: str, jd_id: str) -> str:
-    """
-    Save video file to local storage
-    Args:
-        video_data: Binary video data
-        candidate_id: Candidate ID
-        jd_id: JD ID
-    Returns:
-        Path to saved file, or None on failure
-    """
+def save_video_file(video_data: bytes, candidate_id: str, jd_id: str) -> str | None:
     try:
         video_path = get_video_storage_path(candidate_id, jd_id)
         with open(video_path, "wb") as f:
             f.write(video_data)
-        logger.info(f"Video saved: {video_path}")
         return video_path
     except Exception as e:
         logger.error(f"Failed to save video: {e}")

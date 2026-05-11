@@ -4,14 +4,35 @@ from datetime import datetime
 from pydantic import BaseModel
 from auth import check_role
 from utils.client_utils import get_db
-from utils.google_forms_utils import save_video_file, get_video_storage_path
+from utils.google_forms_utils import save_video_file, get_video_storage_path, get_sheet_responses, find_video_in_drive, download_video_from_drive
 from utils.email_utils import send_email
 from tasks.video_analysis_tasks import analyze_video_resume as analyze_video_task
+import os
+import re
 import logging
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/forms", tags=["forms"])
+
+def _extract_drive_file_id(url: str) -> str | None:
+    """Extract Google Drive file ID from various URL formats."""
+    if not url:
+        return None
+    # Match ?id=FILE_ID or /d/FILE_ID or /file/d/FILE_ID
+    patterns = [
+        r"[?&]id=([a-zA-Z0-9_-]{25,})",
+        r"/d/([a-zA-Z0-9_-]{25,})",
+        r"/file/d/([a-zA-Z0-9_-]{25,})",
+    ]
+    for pat in patterns:
+        m = re.search(pat, url)
+        if m:
+            return m.group(1)
+    # If it looks like a raw file ID (no slashes/dots)
+    if re.match(r"^[a-zA-Z0-9_-]{25,}$", url.strip()):
+        return url.strip()
+    return None
 
 class FormResponseData(BaseModel):
     jd_id: str
@@ -217,8 +238,8 @@ async def send_form_link(
         if not candidate_email:
             raise HTTPException(status_code=400, detail="Candidate email not found")
 
-        # Build form link (frontend URL)
-        form_link = f"http://localhost:3000/form/{jd_id}/{candidate_id}"
+        # Use the real Google Form URL
+        form_link = os.getenv("GOOGLE_FORM_URL", f"http://localhost:3000/form/{jd_id}/{candidate_id}")
 
         # Send email to candidate
         subject = f"Video Resume Form - {jd_title}"
@@ -319,4 +340,153 @@ async def resend_form_notification(
     except Exception as e:
         import logging
         logging.error(f"Error resending form notification: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/sync-google/{jd_id}")
+async def sync_google_form_responses(
+    jd_id: str,
+    user: dict = Depends(check_role(["recruiter", "manager", "admin"]))
+):
+    """
+    Pull latest responses from Google Sheet into MongoDB.
+    Matches rows by email to candidates in the JD pipeline.
+    Also triggers video download + analysis for new submissions.
+    """
+    try:
+        db = get_db()
+
+        rows = get_sheet_responses()
+        if not rows:
+            return {"status": "ok", "synced": 0, "message": "No rows in sheet or sheet not accessible"}
+
+        # Build email -> candidate_id map for this JD's pipeline
+        pipeline_entries = list(db.pipeline_stages.find({"jd_id": jd_id}, {"candidate_id": 1}))
+        candidate_ids = [p["candidate_id"] for p in pipeline_entries]
+        candidates = list(db.candidates.find({"candidate_id": {"$in": candidate_ids}}, {"candidate_id": 1, "email": 1}))
+        email_to_candidate = {c["email"].lower(): c["candidate_id"] for c in candidates if c.get("email")}
+
+        sheet_emails = [(row.get("Email Address") or row.get("Email") or "").strip().lower() for row in rows]
+        logger.info(f"Sheet emails: {sheet_emails}")
+        logger.info(f"Pipeline emails: {list(email_to_candidate.keys())}")
+        for row in rows:
+            logger.info(f"Sheet columns: {list(row.keys())}")
+            break
+
+        synced = 0
+        skipped = 0
+
+        for row in rows:
+            email = (row.get("Email Address") or row.get("Email") or "").strip().lower()
+            if not email or email not in email_to_candidate:
+                skipped += 1
+                continue
+
+            candidate_id = email_to_candidate[email]
+
+            # Skip if already synced — but re-check video if missing
+            existing = db.form_responses.find_one({"jd_id": jd_id, "candidate_id": candidate_id})
+            if existing:
+                if not existing.get("video_resume_path"):
+                    video_cell = row.get("Video Resume (MP4 format, max 100MB, 3-minute duration recommended)") or row.get("Video Resume") or ""
+                    video_file_id = _extract_drive_file_id(video_cell)
+                    if video_file_id:
+                        video_path = download_video_from_drive(video_file_id, candidate_id, jd_id)
+                        if video_path:
+                            db.form_responses.update_one(
+                                {"jd_id": jd_id, "candidate_id": candidate_id},
+                                {"$set": {"video_resume_path": video_path}}
+                            )
+                            analyze_video_task.delay(candidate_id, jd_id, video_path)
+                skipped += 1
+                continue
+
+            # Parse timestamp
+            submitted_at = datetime.utcnow()
+            try:
+                from dateutil import parser as dateparser
+                submitted_at = dateparser.parse(row.get("Timestamp", "")) or datetime.utcnow()
+            except Exception:
+                pass
+
+            response_id = f"GFORM-{jd_id}-{candidate_id}"
+            form_response = {
+                "response_id": response_id,
+                "jd_id": jd_id,
+                "candidate_id": candidate_id,
+                "aadhar": row.get("Aadhar Number", "").strip() or None,
+                "linkedin_url": row.get("LinkedIn Profile URL", "").strip() or None,
+                "alternate_phone": row.get("Alternate Phone Number", "").strip() or None,
+                "telegram_handle": row.get("Telegram Handle", "").strip() or None,
+                "video_resume_path": None,
+                "video_analysis": None,
+                "status": "submitted",
+                "source": "google_form",
+                "submitted_at": submitted_at,
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
+            }
+
+            db.form_responses.insert_one(form_response)
+            form_response.pop("_id", None)  # remove ObjectId added by MongoDB
+
+            # Update candidate profile
+            db.candidates.update_one(
+                {"candidate_id": candidate_id},
+                {"$set": {
+                    "form_response_id": response_id,
+                    "telegram_handle": form_response["telegram_handle"],
+                    "alternate_phone": form_response["alternate_phone"],
+                    "updated_at": datetime.utcnow()
+                }}
+            )
+
+            # Update pipeline tracking
+            db.pipeline_stages.update_one(
+                {"jd_id": jd_id, "candidate_id": candidate_id},
+                {"$set": {
+                    "response_tracking.form_submitted.status": "submitted",
+                    "response_tracking.form_submitted.submitted_at": submitted_at,
+                    "updated_at": datetime.utcnow()
+                }}
+            )
+
+            # Get video file ID from sheet (Google Forms stores Drive URL in the cell)
+            video_cell = row.get("Video Resume (MP4 format, max 100MB, 3-minute duration recommended)") or row.get("Video Resume") or ""
+            video_file_id = _extract_drive_file_id(video_cell)
+            if video_file_id:
+                video_path = download_video_from_drive(video_file_id, candidate_id, jd_id)
+                if video_path:
+                    db.form_responses.update_one(
+                        {"response_id": response_id},
+                        {"$set": {"video_resume_path": video_path}}
+                    )
+                    analyze_video_task.delay(candidate_id, jd_id, video_path)
+
+            # Notify recruiter (pass only serializable fields)
+            from tasks.notification_tasks import notify_form_submitted
+            notify_form_submitted.delay(jd_id, candidate_id, {
+                "response_id": response_id,
+                "jd_id": jd_id,
+                "candidate_id": candidate_id,
+                "status": "submitted"
+            })
+
+            synced += 1
+
+        return {
+            "status": "ok",
+            "synced": synced,
+            "skipped": skipped,
+            "message": f"Synced {synced} new responses from Google Form",
+            "debug": {
+                "sheet_emails": sheet_emails,
+                "pipeline_emails": list(email_to_candidate.keys())
+            }
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error syncing Google Form responses: {e}")
         raise HTTPException(status_code=500, detail=str(e))

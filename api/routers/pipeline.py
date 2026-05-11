@@ -10,7 +10,7 @@ from utils.config_utils import get_pipeline_config
 from routers.recruiter_tasks import create_auto_task
 from tasks.invoice_tasks import generate_and_send_invoice
 from tasks.retention_tasks import start_retention_clock
-from tasks.notification_tasks import send_client_package
+from tasks.notification_tasks import send_client_package, send_candidate_profile_to_client
 
 # stage → (task_type, description_template, priority, due_hours)
 _STAGE_TASK_MAP = {
@@ -139,6 +139,37 @@ async def send_to_client(
         "client_email": client_email,
         "candidates_sent": len(evaluated),
         "sent_at": now.isoformat(),
+    }
+
+
+@router.post("/send-profile-to-client/{jd_id}/{candidate_id}")
+async def send_profile_to_client(
+    jd_id: str,
+    candidate_id: str,
+    recruiter_note: Optional[str] = None,
+    user: dict = Depends(check_role(["recruiter", "manager", "admin"])),
+):
+    """Send a single candidate's full profile (resume + video analysis) to the client."""
+    db = get_db()
+    jd = db.job_descriptions.find_one({"jd_id": jd_id})
+    if not jd:
+        raise HTTPException(status_code=404, detail="JD not found")
+
+    client_email = jd.get("client_email")
+    if not client_email:
+        raise HTTPException(status_code=400, detail="No client_email set on this JD")
+
+    candidate = db.candidates.find_one({"candidate_id": candidate_id})
+    if not candidate:
+        raise HTTPException(status_code=404, detail="Candidate not found")
+
+    send_candidate_profile_to_client.delay(jd_id, candidate_id, client_email, recruiter_note or "")
+
+    return {
+        "ok": True,
+        "client_email": client_email,
+        "candidate_id": candidate_id,
+        "sent_at": datetime.utcnow().isoformat()
     }
 
 

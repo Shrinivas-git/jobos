@@ -71,7 +71,13 @@
       "Bash(npm run *)",
       "WebSearch",
       "Bash(xargs grep -l \"telegram\\\\|TG\\\\|bot\")",
-      "Bash(grep -E \"\\\\.py$\")"
+      "Bash(grep -E \"\\\\.py$\")",
+      "Bash(docker restart *)",
+      "Bash(Select-Object -Property FullName, PSIsContainer)",
+      "Bash(ConvertTo-Json)",
+      "PowerShell(New-Item *)",
+      "PowerShell(pip install *)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\staging\\\\jobos\\\\sourcing\" -Recurse -Depth 2 | Select-Object FullName, @{Name=\"Type\"; Expression={if\\($_.PSIsContainer\\) {\"Folder\"} else {\"File\"}}})"
     ]
   }
 }
