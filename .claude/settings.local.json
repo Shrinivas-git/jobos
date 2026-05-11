@@ -77,7 +77,9 @@
       "Bash(ConvertTo-Json)",
       "PowerShell(New-Item *)",
       "PowerShell(pip install *)",
-      "PowerShell(Get-ChildItem -Path \"C:\\\\staging\\\\jobos\\\\sourcing\" -Recurse -Depth 2 | Select-Object FullName, @{Name=\"Type\"; Expression={if\\($_.PSIsContainer\\) {\"Folder\"} else {\"File\"}}})"
+      "PowerShell(Get-ChildItem -Path \"C:\\\\staging\\\\jobos\\\\sourcing\" -Recurse -Depth 2 | Select-Object FullName, @{Name=\"Type\"; Expression={if\\($_.PSIsContainer\\) {\"Folder\"} else {\"File\"}}})",
+      "Bash(Write-Output \"Directory does not exist\")",
+      "Bash(python fetch_all.py --jd sample_jd.json --sources pdl)"
     ]
   }
 }

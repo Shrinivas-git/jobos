@@ -99,6 +99,7 @@ def main():
 
     # Write run summary
     summary_path = OUTPUT_DIR / jd_id / "fetch_summary.json"
+    summary_path.parent.mkdir(parents=True, exist_ok=True)
     with open(summary_path, "w") as f:
         json.dump({
             "jd_id":      jd_id,
