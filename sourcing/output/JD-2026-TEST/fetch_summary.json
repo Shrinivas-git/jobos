@@ -1,8 +1,13 @@
 {
   "jd_id": "JD-2026-TEST",
   "jd_title": "Python Developer",
-  "fetched_at": "2026-05-11T08:18:20.330775",
+  "fetched_at": "2026-05-11T08:24:54.682330",
   "sources": {
+    "naukri": 0,
+    "unipile": 0,
+    "pdl": 0,
+    "indeed": 0,
+    "github": 0,
     "coresignal": 0
   },
   "total": 0
