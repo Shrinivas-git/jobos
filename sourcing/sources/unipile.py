@@ -7,7 +7,8 @@ import os
 import requests
 
 
-UNIPILE_BASE = "https://api2.unipile.com:13090/api/v1"
+UNIPILE_DSN  = os.getenv("UNIPILE_DSN", "api43.unipile.com:17352")
+UNIPILE_BASE = f"https://{UNIPILE_DSN}/api/v1"
 
 
 def fetch(jd: dict, max_results: int = 50) -> list:
