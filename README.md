@@ -72,7 +72,7 @@ JobOS manages the full hiring lifecycle:
 | Vector DB | Qdrant 1.7 |
 | Auth | Keycloak 23 + JWT |
 | Frontend | React + TypeScript + Vite |
-| AI | Groq (llama-3.1, llama-3.3) |
+| AI | Groq (llama-3.1, llama-3.3) + Claude API (Anthropic) |
 | Embeddings | sentence-transformers (CPU) |
 | PDF/DOCX | pdfplumber + python-docx |
 | Browser automation | Playwright |
