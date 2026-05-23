@@ -1,12 +1,15 @@
 import os
+import time
+import uuid
 import logging
 from datetime import datetime
 from celery_app import celery
 from utils.client_utils import get_db
-from utils.qdrant_utils import get_jd_vector, search_resumes_by_vector
+from utils.qdrant_utils import get_jd_vector, search_resumes_by_vector, upsert_resume_vector
 from utils.config_utils import get_matching_thresholds
-from utils.gemini_utils import evaluate_candidate_fitment
+from utils.gemini_utils import evaluate_candidate_fitment, generate_embedding
 from utils.storage_utils import save_candidate_match_results
+from utils.unipile_utils import fetch_linkedin_profiles
 
 logger = logging.getLogger(__name__)
 
@@ -73,12 +76,15 @@ def run_matching(jd_id: str, candidate_ids: list = None):
         }
         matches.append(match_record)
         
-        # Save/Upsert to candidate_pools — never downgrade a pass_2_complete record
-        db.candidate_pools.update_one(
-            {"jd_id": jd_id, "candidate_id": candidate_id, "status": {"$ne": "pass_2_complete"}},
-            {"$set": match_record},
-            upsert=True
-        )
+        # Update if exists (never downgrade pass_2_complete), insert only if brand new
+        existing = db.candidate_pools.find_one({"jd_id": jd_id, "candidate_id": candidate_id})
+        if not existing:
+            db.candidate_pools.insert_one(match_record)
+        elif existing.get("status") != "pass_2_complete":
+            db.candidate_pools.update_one(
+                {"jd_id": jd_id, "candidate_id": candidate_id},
+                {"$set": match_record}
+            )
         
         rank += 1
         if rank > 20: # Cap Pass 1 results at top 20 for Pass 2 processing
@@ -88,10 +94,10 @@ def run_matching(jd_id: str, candidate_ids: list = None):
     
     # 4. Check K-threshold for external sourcing fallback
     if len(matches) < k_threshold:
-        logger.warning(f"K-threshold not met for {jd_id} ({len(matches)}/{k_threshold}). Flagging for external sourcing.")
+        logger.warning(f"K-threshold not met for {jd_id} ({len(matches)}/{k_threshold}). Flagging for manual external sourcing.")
         db.job_descriptions.update_one(
             {"jd_id": jd_id},
-            {"$set": {"needs_external_sourcing": True, "sourcing_status": "pending"}}
+            {"$set": {"needs_external_sourcing": True, "sourcing_status": "awaiting_approval"}}
         )
     else:
         db.job_descriptions.update_one(
@@ -200,22 +206,14 @@ def run_pass_2(jd_id: str):
             else:
                 outcome_bonus = 0  # 0-3
 
-            # Emerging tech bonus: +3 if candidate has Agentforce or Data Cloud exposure
-            # These are explicitly called out in the JD and rare among candidates
-            emerging_keywords = {"agentforce", "data cloud"}
-            candidate_skills_lower = {s.lower() for s in (candidate.get("structured_data") or {}).get("skills", [])}
-            rare_assets_lower = {r.lower() for r in rare_assets}
-            emerging_tech_bonus = 3 if emerging_keywords & (candidate_skills_lower | rare_assets_lower) else 0
-
-            # Composite (cosine dropped from formula; now Pass-1 gate only):
-            # 75% fitment + 10% must-have + 5% rare-asset + 5% cert tier + 5% outcomes + emerging tech bonus
+            # Composite formula (role-agnostic):
+            # 70% fitment + 15% must-have coverage + 5% rare-asset + 5% cert tier + 5% outcomes
             composite_score = (
-                (fitment_score * 0.75)
-                + (must_have_pct * 0.10)
+                (fitment_score * 0.70)
+                + (must_have_pct * 0.15)
                 + ((rare_asset_bonus / 9.0 * 100) * 0.05 if rare_asset_bonus else 0)
                 + ((cert_tier_bonus / 8.0 * 100) * 0.05 if cert_tier_bonus else 0)
                 + ((outcome_bonus / 3.0 * 100) * 0.05 if outcome_bonus else 0)
-                + emerging_tech_bonus
             )
 
             # Adjustments
@@ -245,7 +243,6 @@ def run_pass_2(jd_id: str):
                 "rare_asset_bonus": rare_asset_bonus,
                 "cert_tier_bonus": cert_tier_bonus,
                 "outcome_bonus": outcome_bonus,
-                "emerging_tech_bonus": emerging_tech_bonus,
                 "quantified_outcomes_count": outcomes_count,
                 "certifications_assessed": certs_assessed,
                 "composite_score": composite_score,
@@ -293,6 +290,7 @@ def run_pass_2(jd_id: str):
             )
 
             evaluated_count += 1
+            time.sleep(10)  # pace requests — give Groq breathing room between candidates
         except Exception as eval_err:
             logger.exception(f"Pass 2 failed for candidate {candidate_id}: {eval_err}")
             db.candidate_pools.update_one(
@@ -322,3 +320,115 @@ def run_pass_2(jd_id: str):
     notify_pool_ready.delay(jd_id)
 
     return {"jd_id": jd_id, "evaluated_count": evaluated_count, "status": "complete"}
+
+
+@celery.task(name="tasks.matching_tasks.trigger_external_sourcing")
+def trigger_external_sourcing(jd_id: str, limit: int = 10):
+    """
+    External sourcing fallback — triggered when Pass 1 finds fewer than K candidates.
+    Fetches LinkedIn profiles via Unipile, ingests them into MongoDB + Qdrant,
+    then re-triggers run_matching so Pass 1+2 can score the new candidates.
+    """
+    logger.info(f"[ExternalSourcing] Starting Unipile sourcing for JD: {jd_id}")
+    db = get_db()
+
+    jd = db.job_descriptions.find_one({"jd_id": jd_id})
+    if not jd:
+        logger.error(f"[ExternalSourcing] JD {jd_id} not found")
+        return {"error": "JD not found"}
+
+    profiles = fetch_linkedin_profiles(jd, max_results=limit)
+    if not profiles:
+        logger.warning(f"[ExternalSourcing] No profiles returned from Unipile for {jd_id}")
+        db.job_descriptions.update_one(
+            {"jd_id": jd_id},
+            {"$set": {"sourcing_status": "no_results"}}
+        )
+        return {"sourced": 0}
+
+    ingested = 0
+    for profile in profiles:
+        try:
+            linkedin_url = profile.get("public_profile_url") or profile.get("profile_url", "")
+            public_id = profile.get("public_identifier", "")
+            provider_id = profile.get("provider_id", "")
+            name = profile.get("name") or (
+                (profile.get("first_name", "") + " " + profile.get("last_name", "")).strip()
+            )
+            headline = profile.get("headline", "")
+            location = profile.get("location", "")
+
+            if not name:
+                continue
+
+            # De-duplicate by linkedin_url per JD
+            if linkedin_url and db.candidates.find_one({"linkedin_url": linkedin_url, "jd_id": jd_id}):
+                logger.info(f"[ExternalSourcing] Skipping duplicate: {linkedin_url}")
+                continue
+
+            candidate_id = f"CAN-LI-{uuid.uuid4().hex[:8]}"
+
+            # Build synthetic resume text from headline — compact skills signal for embedding
+            skills_hint = " ".join(
+                (jd.get("structured_data") or {}).get("must_have_skills", [])[:5]
+            )
+            resume_text = f"{name} | {headline} | {location}"
+            if skills_hint:
+                resume_text += f" | Skills: {skills_hint}"
+
+            vector = generate_embedding(resume_text)
+
+            candidate_doc = {
+                "candidate_id": candidate_id,
+                "name": name,
+                "email": "",
+                "phone": "",
+                "skills": [],
+                "experience_years": 0,
+                "location": location,
+                "headline": headline,
+                "linkedin_url": linkedin_url,
+                "linkedin_provider_id": provider_id,
+                "linkedin_public_id": public_id,
+                "resume_text": resume_text,
+                "source": "unipile_linkedin",
+                "jd_id": jd_id,
+                "status": "sourced",
+                "file_paths": [],
+                "vector_id": str(uuid.uuid5(uuid.NAMESPACE_DNS, candidate_id)),
+                "created_at": datetime.now(),
+                "updated_at": datetime.now(),
+            }
+            db.candidates.insert_one(candidate_doc)
+
+            qdrant_payload = {
+                "candidate_id": candidate_id,
+                "name": name,
+                "email": "",
+                "phone": "",
+                "skills": [],
+                "experience_years": 0,
+                "location": location,
+                "source": "unipile_linkedin",
+                "ingested_at": datetime.now().isoformat(),
+                "file_path": "",
+            }
+            upsert_resume_vector(candidate_id, vector, qdrant_payload)
+
+            ingested += 1
+
+        except Exception as e:
+            logger.exception(f"[ExternalSourcing] Failed to ingest profile '{profile.get('name')}': {e}")
+            continue
+
+    logger.info(f"[ExternalSourcing] Ingested {ingested} LinkedIn candidates for {jd_id}. Re-running matching.")
+
+    db.job_descriptions.update_one(
+        {"jd_id": jd_id},
+        {"$set": {"sourcing_status": "completed", "sourced_count": ingested}}
+    )
+
+    # Re-run matching so new candidates go through Pass 1 + Pass 2
+    run_matching.delay(jd_id)
+
+    return {"jd_id": jd_id, "sourced": ingested}

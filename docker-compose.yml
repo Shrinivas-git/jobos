@@ -82,6 +82,7 @@ services:
       - ./api:/app
       - ./data:/data
       - ./config:/app/config
+      - ./api/sessions:/app/sessions
     env_file: .env
     environment:
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}

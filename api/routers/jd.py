@@ -10,6 +10,11 @@ from utils.client_utils import find_or_create_client, get_db
 from utils.jd_utils import generate_jd_id
 from utils.storage_utils import create_jd_folder_structure, save_raw_jd_content
 from tasks.jd_tasks import process_jd_task
+from tasks.matching_tasks import trigger_external_sourcing
+from tasks.browser_tasks import post_job_to_portals
+from tasks.linkedin_tasks import source_linkedin_outbound
+from utils.linkedin_utils import generate_linkedin_post_draft, linkedin_draft_email_html
+from utils.email_utils import send_email
 
 router = APIRouter(prefix="/jd", tags=["jd"])
 
@@ -36,6 +41,7 @@ class StructuredJD(BaseModel):
     role_type: Optional[str] = "Any"
     obfuscate: bool = False
     recruiter_notes: Optional[str] = None
+    linkedin_job_id: Optional[str] = None
 
 class JDResponse(BaseModel):
     jd_id: str
@@ -52,6 +58,8 @@ class JDResponse(BaseModel):
     quality_flag_at: Optional[datetime] = None
     pipeline_config: Optional[dict] = None
     joined_count: Optional[int] = 0
+    needs_external_sourcing: Optional[bool] = False
+    sourcing_status: Optional[str] = None
 
     class Config:
         populate_by_name = True
@@ -106,6 +114,7 @@ async def upload_jd(
             "folder_path": paths['jd_path'],
             "source": "web_form_upload",
             "uploaded_by": user.get("preferred_username"),
+            "recruiter_email": user.get("email"),
             "status": "received",
             "created_at": datetime.now(),
             "num_positions": num_positions,
@@ -119,7 +128,9 @@ async def upload_jd(
         
         # Trigger async processing
         process_jd_task.delay(jd_id)
-        
+        post_job_to_portals.delay(jd_id)
+        source_linkedin_outbound.delay(jd_id)
+
         return {
             "message": "JD uploaded successfully",
             "jd_id": jd_id,
@@ -161,16 +172,30 @@ async def create_structured_jd(
             "folder_path": paths['jd_path'],
             "source": "web_form_structured",
             "uploaded_by": user.get("preferred_username"),
+            "recruiter_email": user.get("email"),
             "status": "received",
             "created_at": datetime.now(),
             "structured_data": data.dict(),
             "recruiter_notes": data.recruiter_notes.strip() if data.recruiter_notes and data.recruiter_notes.strip() else None,
+            "linkedin_job_id": data.linkedin_job_id or None,
         }
         db.job_descriptions.insert_one(jd_data)
-        
+
+        # Send LinkedIn post draft to recruiter
+        recruiter_email = user.get("email")
+        if recruiter_email:
+            try:
+                draft = generate_linkedin_post_draft(jd_data)
+                html = linkedin_draft_email_html(jd_data, draft)
+                send_email(recruiter_email, f"[JobOS] LinkedIn Post Ready — {data.title}", html)
+            except Exception as e:
+                print(f"LinkedIn draft email failed for {jd_id}: {e}")
+
         # Trigger async processing
         process_jd_task.delay(jd_id)
-        
+        post_job_to_portals.delay(jd_id)
+        source_linkedin_outbound.delay(jd_id)
+
         return {
             "message": "Structured JD created successfully",
             "jd_id": jd_id,
@@ -189,9 +214,55 @@ async def trigger_process_jd(jd_id: str):
     return {"message": f"Processing triggered for {jd_id}"}
 
 
+@router.post("/{jd_id}/source-linkedin")
+async def trigger_linkedin_sourcing(jd_id: str, limit: int = 10):
+    """Manually trigger Unipile LinkedIn sourcing for a JD. Recruiter/manager initiated only."""
+    db = get_db()
+    jd = db.job_descriptions.find_one({"jd_id": jd_id})
+    if not jd:
+        raise HTTPException(status_code=404, detail="JD not found")
+    limit = max(1, min(50, limit))
+    db.job_descriptions.update_one(
+        {"jd_id": jd_id},
+        {"$set": {"sourcing_status": "pending"}}
+    )
+    trigger_external_sourcing.delay(jd_id, limit)
+    return {"message": f"LinkedIn sourcing triggered for {jd_id} ({limit} profiles)"}
+
+
 class PipelineConfigBody(BaseModel):
     assessment_rounds: int = Field(default=0, ge=0, le=5)
     interview_rounds: int = Field(default=1, ge=1, le=10)
+
+
+@router.get("/{jd_id}/public")
+async def get_jd_public(jd_id: str):
+    """Public endpoint — returns only title for use on candidate-facing form page."""
+    db = get_db()
+    jd = db.job_descriptions.find_one({"jd_id": jd_id}, {"_id": 0, "jd_id": 1, "title": 1})
+    if not jd:
+        raise HTTPException(status_code=404, detail="JD not found")
+    return jd
+
+
+class LinkedinJobIdBody(BaseModel):
+    linkedin_job_id: Optional[str] = None
+
+
+@router.patch("/{jd_id}/linkedin-job-id")
+async def set_linkedin_job_id(
+    jd_id: str,
+    body: LinkedinJobIdBody,
+    user: dict = Depends(check_role(["recruiter", "manager", "hod", "admin"])),
+):
+    db = get_db()
+    result = db.job_descriptions.update_one(
+        {"jd_id": jd_id},
+        {"$set": {"linkedin_job_id": body.linkedin_job_id or None}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="JD not found")
+    return {"ok": True, "jd_id": jd_id, "linkedin_job_id": body.linkedin_job_id}
 
 
 @router.patch("/{jd_id}/pipeline-config")
@@ -209,3 +280,16 @@ async def set_pipeline_config(
         from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="JD not found")
     return {"ok": True, "jd_id": jd_id, "pipeline_config": body.dict()}
+
+
+
+@router.delete("/{jd_id}")
+async def delete_jd(
+    jd_id: str,
+    user: dict = Depends(check_role(["recruiter", "manager", "hod", "admin"])),
+):
+    db = get_db()
+    result = db.job_descriptions.delete_one({"jd_id": jd_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="JD not found")
+    return {"ok": True, "jd_id": jd_id}

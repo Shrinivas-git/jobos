@@ -4,6 +4,7 @@ from datetime import datetime
 from celery_app import celery
 from utils.client_utils import get_db
 from utils.email_utils import send_email
+from utils.telegram_utils import notify_recruiter
 
 logger = logging.getLogger(__name__)
 
@@ -94,6 +95,7 @@ def _build_client_package_html(jd_title: str, jd_id: str, candidates: list) -> s
         strengths = c.get("strengths") or []
         gaps = c.get("gaps") or []
         availability = c.get("availability_reason") or c.get("availability_signal") or ""
+        video = c.get("_video_analysis")
 
         strengths_html = "".join(
             f'<li style="margin:6px 0;color:#cbd5e1;font-size:13px;line-height:1.6">{s}</li>'
@@ -103,6 +105,22 @@ def _build_client_package_html(jd_title: str, jd_id: str, candidates: list) -> s
             f'<li style="margin:6px 0;color:#cbd5e1;font-size:13px;line-height:1.6">{g}</li>'
             for g in gaps[:2]
         )
+
+        video_html = ""
+        if video:
+            impression = video.get('overall_impression', '')
+            impression_html = f'<p style="margin:0;font-size:12px;color:#94a3b8;font-style:italic">"{impression}"</p>' if impression else ""
+            video_html = f"""
+      <div style="background:#0f172a;border-radius:8px;padding:16px;margin-top:16px">
+        <p style="margin:0 0 10px 0;font-size:11px;font-weight:700;color:#818cf8;text-transform:uppercase;letter-spacing:1px">Video Resume Analysis</p>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px">
+          <div style="text-align:center"><p style="margin:0;font-size:18px;font-weight:700;color:#60a5fa">{video.get('confidence_score', 0)}/10</p><p style="margin:2px 0 0 0;font-size:10px;color:#64748b">Confidence</p></div>
+          <div style="text-align:center"><p style="margin:0;font-size:18px;font-weight:700;color:#60a5fa">{video.get('articulation_score', 0)}/10</p><p style="margin:2px 0 0 0;font-size:10px;color:#64748b">Articulation</p></div>
+          <div style="text-align:center"><p style="margin:0;font-size:18px;font-weight:700;color:#60a5fa">{video.get('eye_contact_score', 0)}/10</p><p style="margin:2px 0 0 0;font-size:10px;color:#64748b">Eye Contact</p></div>
+          <div style="text-align:center"><p style="margin:0;font-size:18px;font-weight:700;color:#60a5fa">{video.get('professionalism_score', 0)}/10</p><p style="margin:2px 0 0 0;font-size:10px;color:#64748b">Professionalism</p></div>
+        </div>
+        {impression_html}
+      </div>"""
 
         candidate_blocks += f"""
     <div style="background:#1e293b;border-radius:12px;padding:28px;margin-bottom:20px;border-left:4px solid {color}">
@@ -124,6 +142,8 @@ def _build_client_package_html(jd_title: str, jd_id: str, candidates: list) -> s
       {"<p style='margin:0 0 6px 0;font-size:11px;font-weight:700;color:#f87171;text-transform:uppercase;letter-spacing:1px'>Key Gaps</p><ul style='margin:0 0 16px 0;padding-left:18px'>" + gaps_html + "</ul>" if gaps_html else ""}
 
       {"<p style='margin:0;font-size:12px;color:#64748b;font-style:italic'>⏱ " + availability + "</p>" if availability else ""}
+
+      {video_html}
     </div>"""
 
     return f"""<!DOCTYPE html>
@@ -168,10 +188,15 @@ def send_client_package(jd_id: str, client_email: str):
     structured = jd.get("structured_data", {})
     jd_title = structured.get("title") or jd.get("title", "Job Role")
 
-    candidates = list(db.candidate_pools.find({"jd_id": jd_id, "status": "pass_2_complete"}).sort("rank", 1))
+    candidates = list(db.candidate_pools.find({"jd_id": jd_id, "status": {"$nin": ["rejected"]}}).sort("rank", 1))
     for entry in candidates:
         cand = db.candidates.find_one({"candidate_id": entry["candidate_id"]}, {"name": 1})
         entry["_name"] = cand.get("name", entry["candidate_id"]) if cand else entry["candidate_id"]
+        form_resp = db.form_responses.find_one(
+            {"jd_id": jd_id, "candidate_id": entry["candidate_id"]},
+            {"video_analysis": 1}
+        )
+        entry["_video_analysis"] = form_resp.get("video_analysis") if form_resp else None
 
     html = _build_client_package_html(jd_title, jd_id, candidates)
     subject = f"Candidate Assessment — {jd_title}"
@@ -698,7 +723,17 @@ def send_stage_notification(candidate_id: str, jd_id: str, stage: str):
 </body>
 </html>"""
 
-    send_email(email, subject, html)
+    # For joined stage, attach offer letter PDF if recruiter uploaded one
+    offer_letter_path = None
+    if stage == "joined":
+        pipeline_doc = db.pipeline_stages.find_one({"jd_id": jd_id, "candidate_id": candidate_id})
+        if pipeline_doc:
+            for s in pipeline_doc.get("stages", []):
+                if s.get("name") == "offer" and s.get("offer_letter_path"):
+                    offer_letter_path = s["offer_letter_path"]
+                    break
+
+    send_email(email, subject, html, attachment_path=offer_letter_path)
     logger.info(f"Stage notification '{stage}' sent to {email} for candidate {candidate_id}")
 
 
@@ -794,6 +829,15 @@ def notify_form_submitted(jd_id: str, candidate_id: str, form_response: dict):
                 subject = f"📋 Form Submitted: {candidate_name} - {jd_title}"
                 send_email(email, subject, html)
                 logger.info(f"Form submission notification sent to {email}")
+
+        # Telegram alert to recruiter
+        tg_msg = (
+            f"📋 <b>Form Submitted</b>\n"
+            f"<b>Candidate:</b> {candidate_name}\n"
+            f"<b>Role:</b> {jd_title}\n"
+            f"<b>Video:</b> {'✅ Uploaded' if form_response.get('video_resume_path') else '❌ Missing'}"
+        )
+        notify_recruiter(tg_msg)
 
         # Store in-app notification
         notification = {

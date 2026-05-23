@@ -81,7 +81,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { label: 'Communications', icon: <MessageSquare size={18} />, path: '/crm', roles: ['recruiter', 'manager', 'admin'] },
     { label: 'Matching Engine', icon: <Zap size={18} />, path: '/matching', roles: ['recruiter', 'manager', 'admin'] },
     { label: 'Form Responses', icon: <FileText size={18} />, path: '/form-responses', roles: ['recruiter', 'manager', 'admin'] },
-    { label: 'Invoices', icon: <Receipt size={18} />, path: '/invoices', roles: ['recruiter', 'manager', 'admin'] },
+    { label: 'Invoices', icon: <Receipt size={18} />, path: '/invoices', roles: ['manager', 'admin'] },
     { label: 'Analytics', icon: <BarChart3 size={18} />, path: '/analytics', roles: ['manager', 'admin', 'hod'] },
     { label: 'Configuration', icon: <Settings size={18} />, path: '/admin', roles: ['admin'] },
   ];
@@ -102,7 +102,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Sidebar - Darker Background */}
       <aside className="w-72 bg-[#020617] border-r border-slate-800/80 flex flex-col shrink-0 z-20">
         <div className="p-8">
-          <div className="flex items-center space-x-3">
+          <NavLink to="/" className="flex items-center space-x-3">
             <div className="bg-blue-600 p-2 rounded-xl">
               <ShieldCheck className="text-white" size={24} />
             </div>
@@ -110,7 +110,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <h1 className="text-2xl font-bold text-white leading-none tracking-tight">JobOS</h1>
               <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Enterprise</p>
             </div>
-          </div>
+          </NavLink>
         </div>
         
         <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto mt-4">

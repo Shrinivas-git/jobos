@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API, getAuthHeaders } from '../utils/api';
-import { Upload, FileText, CheckCircle2, AlertCircle, Loader2, List, Plus, Type, Shield, ShieldOff, Globe, Clock } from 'lucide-react';
+import { Upload, FileText, CheckCircle2, AlertCircle, Loader2, List, Plus, Type, Shield, ShieldOff, Globe, Clock, Users, Trash2, Link2 } from 'lucide-react';
 
 const Jobs: React.FC = () => {
   const [mode, setMode] = useState<'upload' | 'form'>('upload');
@@ -36,6 +36,55 @@ const Jobs: React.FC = () => {
   const [preferredTeamSize, setPreferredTeamSize] = useState('Any');
   const [roleType, setRoleType] = useState('Any');
   const [recruiterNotes, setRecruiterNotes] = useState('');
+  const [linkedinJobId, setLinkedinJobId] = useState('');
+
+  const [sourcingJd, setSourcingJd] = useState<string | null>(null);
+  const [sourcingCount, setSourcingCount] = useState<Record<string, number>>({});
+  const [deletingJd, setDeletingJd] = useState<string | null>(null);
+  const [liEditingId, setLiEditingId] = useState<string | null>(null);
+  const [liEditValue, setLiEditValue] = useState('');
+  const [liSaving, setLiSaving] = useState(false);
+
+  const deleteJd = async (jd_id: string) => {
+    if (!window.confirm('Delete this JD? This cannot be undone.')) return;
+    setDeletingJd(jd_id);
+    try {
+      await axios.delete(`${API}/jd/${jd_id}`, { headers: getAuthHeaders() });
+      setJds(prev => prev.filter(j => j.jd_id !== jd_id));
+    } catch (err) {
+      console.error('Delete failed', err);
+    } finally {
+      setDeletingJd(null);
+    }
+  };
+
+  const saveLinkedinJobId = async (jd_id: string) => {
+    setLiSaving(true);
+    try {
+      await axios.patch(`${API}/jd/${jd_id}/linkedin-job-id`,
+        { linkedin_job_id: liEditValue.trim() || null },
+        { headers: getAuthHeaders() }
+      );
+      setJds(prev => prev.map(j => j.jd_id === jd_id ? { ...j, linkedin_job_id: liEditValue.trim() || null } : j));
+      setLiEditingId(null);
+    } catch (err) {
+      console.error('Failed to save LinkedIn Job ID', err);
+    } finally {
+      setLiSaving(false);
+    }
+  };
+
+  const triggerLinkedInSourcing = async (jd_id: string, count: number) => {
+    setSourcingJd(jd_id);
+    try {
+      await axios.post(`${API}/jd/${jd_id}/source-linkedin?limit=${count}`, {}, { headers: getAuthHeaders() });
+      await fetchJDs();
+    } catch (err) {
+      console.error('LinkedIn sourcing failed', err);
+    } finally {
+      setSourcingJd(null);
+    }
+  };
 
   const fetchJDs = async () => {
     try {
@@ -78,6 +127,7 @@ const Jobs: React.FC = () => {
     setPreferredTeamSize('Any');
     setRoleType('Any');
     setRecruiterNotes('');
+    setLinkedinJobId('');
   };
 
   const handleUploadSubmit = async (e: React.FormEvent) => {
@@ -97,6 +147,7 @@ const Jobs: React.FC = () => {
     formData.append('college_preference', collegePreference);
     formData.append('college_exclusion', collegeExclusion);
     if (recruiterNotes.trim()) formData.append('recruiter_notes', recruiterNotes.trim());
+    if (linkedinJobId.trim()) formData.append('linkedin_job_id', linkedinJobId.trim());
 
     try {
       await axios.post(`${API}/jd/upload`, formData, {
@@ -143,6 +194,7 @@ const Jobs: React.FC = () => {
       preferred_team_size: preferredTeamSize,
       role_type: roleType,
       ...(recruiterNotes.trim() ? { recruiter_notes: recruiterNotes.trim() } : {}),
+      ...(linkedinJobId.trim() ? { linkedin_job_id: linkedinJobId.trim() } : {}),
     };
 
     try {
@@ -542,6 +594,20 @@ const Jobs: React.FC = () => {
               </div>
             )}
 
+            {/* LinkedIn Job ID — shared between Upload and Direct tabs */}
+            <div>
+              <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">
+                LinkedIn Job ID <span className="text-slate-500 normal-case font-normal">(Optional)</span>
+              </label>
+              <input
+                type="text"
+                value={linkedinJobId}
+                onChange={(e) => setLinkedinJobId(e.target.value)}
+                placeholder="e.g. 4227631788 — paste from LinkedIn job URL"
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+              />
+            </div>
+
             {/* Recruiter Notes — shared between Upload and Direct tabs */}
             <div>
               <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">
@@ -623,6 +689,14 @@ const Jobs: React.FC = () => {
                       }`}>
                         {jd.status}
                       </div>
+                      <button
+                        onClick={() => deleteJd(jd.jd_id)}
+                        disabled={deletingJd === jd.jd_id}
+                        className="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                        title="Delete JD"
+                      >
+                        {deletingJd === jd.jd_id ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
+                      </button>
                     </div>
                   </div>
 
@@ -646,6 +720,36 @@ const Jobs: React.FC = () => {
                       <span className="text-yellow-400 text-xs font-bold">⚠ Review JD — {jd.quality_flag}</span>
                     </div>
                   )}
+
+
+                  {/* LinkedIn Job ID inline edit */}
+                  <div className="mt-2 mb-2">
+                    {liEditingId === jd.jd_id ? (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={liEditValue}
+                          onChange={e => setLiEditValue(e.target.value)}
+                          onKeyDown={e => { if (e.key === 'Enter') saveLinkedinJobId(jd.jd_id); if (e.key === 'Escape') setLiEditingId(null); }}
+                          placeholder="e.g. 4227631788"
+                          autoFocus
+                          className="flex-1 bg-slate-900 border border-blue-500/50 rounded-lg px-2 py-1 text-xs text-white focus:outline-none"
+                        />
+                        <button onClick={() => saveLinkedinJobId(jd.jd_id)} disabled={liSaving} className="text-xs bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white px-2 py-1 rounded-lg font-bold">
+                          {liSaving ? '...' : 'Save'}
+                        </button>
+                        <button onClick={() => setLiEditingId(null)} className="text-xs text-slate-500 hover:text-slate-300 px-1">✕</button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => { setLiEditingId(jd.jd_id); setLiEditValue(jd.linkedin_job_id || ''); }}
+                        className={`flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg border transition-colors ${jd.linkedin_job_id ? 'text-blue-400 border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10' : 'text-slate-400 border-slate-600 hover:text-white hover:border-slate-500'}`}
+                      >
+                        <Link2 size={10} />
+                        {jd.linkedin_job_id ? jd.linkedin_job_id : 'Set LinkedIn Job ID'}
+                      </button>
+                    )}
+                  </div>
 
                   <div className="flex flex-wrap gap-2 mt-auto">
                     <div className="flex items-center space-x-1.5 bg-slate-900 px-2 py-1 rounded-lg border border-slate-800">

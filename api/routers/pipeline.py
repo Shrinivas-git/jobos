@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from datetime import datetime, timedelta
 from typing import Optional
 from pydantic import BaseModel
 import secrets
+import os
+import shutil
 
 from auth import check_role
 from utils.client_utils import get_db
@@ -113,7 +115,7 @@ async def send_to_client(
     if not client_email:
         raise HTTPException(status_code=400, detail="No client_email set on this JD")
 
-    evaluated = list(db.candidate_pools.find({"jd_id": jd_id, "status": "pass_2_complete"}).sort("rank", 1))
+    evaluated = list(db.candidate_pools.find({"jd_id": jd_id, "status": "shortlisted"}).sort("rank", 1))
     if not evaluated:
         raise HTTPException(status_code=400, detail="No evaluated candidates for this JD — run matching first")
 
@@ -511,11 +513,16 @@ class GiveOfferBody(BaseModel):
     work_location: str
 
 
+OFFER_LETTERS_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "offer_letters")
+
+
 @router.post("/give-offer/{jd_id}/{candidate_id}")
 async def give_offer(
     jd_id: str,
     candidate_id: str,
-    body: GiveOfferBody,
+    joining_date: str = Form(...),
+    work_location: str = Form(...),
+    offer_letter: Optional[UploadFile] = File(None),
     user: dict = Depends(check_role(["recruiter", "manager", "admin"])),
 ):
     """Save joining date + location to offer stage, then advance to joined."""
@@ -536,10 +543,21 @@ async def give_offer(
     if offer_idx < 0:
         raise HTTPException(status_code=500, detail="Offer stage entry missing")
 
+    # Save offer letter PDF if uploaded
+    offer_letter_path = None
+    if offer_letter and offer_letter.filename:
+        save_dir = os.path.join(OFFER_LETTERS_DIR, jd_id)
+        os.makedirs(save_dir, exist_ok=True)
+        offer_letter_path = os.path.join(save_dir, f"{candidate_id}_offer.pdf")
+        with open(offer_letter_path, "wb") as f:
+            shutil.copyfileobj(offer_letter.file, f)
+
     # Save offer details — stay on offer stage, wait for candidate response
-    stages[offer_idx]["joining_date"] = body.joining_date
-    stages[offer_idx]["work_location"] = body.work_location
+    stages[offer_idx]["joining_date"] = joining_date
+    stages[offer_idx]["work_location"] = work_location
     stages[offer_idx]["offer_sent_at"] = now
+    if offer_letter_path:
+        stages[offer_idx]["offer_letter_path"] = offer_letter_path
 
     db.pipeline_stages.update_one(
         {"_id": doc["_id"]},
@@ -554,11 +572,11 @@ async def give_offer(
     # Send offer email to candidate with joining date
     try:
         from tasks.notification_tasks import send_offer_response_email
-        send_offer_response_email.delay(jd_id, candidate_id, doc["offer_token"], body.joining_date, body.work_location)
+        send_offer_response_email.delay(jd_id, candidate_id, doc["offer_token"], joining_date, work_location)
     except Exception:
         pass
 
-    return {"ok": True, "current_stage": "offer", "joining_date": body.joining_date, "work_location": body.work_location}
+    return {"ok": True, "current_stage": "offer", "joining_date": joining_date, "work_location": work_location}
 
 
 @router.post("/confirm-joining/{jd_id}/{candidate_id}")

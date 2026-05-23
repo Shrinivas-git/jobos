@@ -24,24 +24,32 @@ def fetch(jd: dict, max_results: int = 50) -> list:
         "Content-Type": "application/json"
     }
 
-    # Build search keywords
+    # Build targeted search query from JD fields
     title    = jd.get("title", "")
-    skills   = " ".join(jd.get("skills_required", [])[:4])
+    level    = jd.get("level", "")
+    skills   = jd.get("skills", jd.get("skills_required", []))[:3]
+    skills_str = " ".join(skills)
     location = jd.get("location", "")
-    keywords = f"{title} {skills}".strip()
+
+    # avoid duplication if level already in title (e.g. "Senior" + "Senior Nurse")
+    title_clean = title if level.lower() not in title.lower() else title
+    parts = [p for p in [level, title_clean, skills_str] if p]
+    keywords = " ".join(parts).strip()
 
     payload = {
-        "account_id": account_id,
-        "keywords":   keywords,
-        "location":   location,
-        "limit":      min(max_results, 50),   # Unipile max per call
+        "api":      "classic",
+        "category": "people",
+        "keywords": keywords,
+        "limit":    min(max_results, 50),
+        # location requires a Unipile numeric ID, not a plain string — skip for now
     }
 
     print(f"  [Unipile] Searching LinkedIn: '{keywords}' in '{location}'")
 
     try:
         resp = requests.post(
-            f"{UNIPILE_BASE}/linkedin/search/people",
+            f"{UNIPILE_BASE}/linkedin/search",
+            params={"account_id": account_id},
             json=payload,
             headers=headers,
             timeout=30

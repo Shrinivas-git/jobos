@@ -150,6 +150,80 @@ const evaluateContextualMatch = (result: MatchResult, jd: JD | undefined): Conte
   return { matches, gaps };
 };
 
+const SourcedCandidateCard: React.FC<{
+  candidate: any;
+  jdId: string;
+  onSent: (id: string) => void;
+}> = ({ candidate: c, jdId, onSent }) => {
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSendForm = async () => {
+    setSending(true);
+    setError(null);
+    try {
+      const res = await fetch(`${API}/candidates/${c.candidate_id}/send-linkedin-message`, {
+        method: 'POST',
+        headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(jdId),
+      });
+      if (!res.ok) {
+        const d = await res.json();
+        setError(d.detail || 'Failed to send');
+      } else {
+        onSent(c.candidate_id);
+      }
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4 flex flex-col gap-2">
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <p className="font-semibold text-white text-sm">{c.name || 'Unknown'}</p>
+          {c.headline && <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">{c.headline}</p>}
+          {c.location && <p className="text-xs text-slate-500 mt-0.5">{c.location}</p>}
+        </div>
+        <span className="shrink-0 text-[10px] font-bold bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded uppercase tracking-widest">
+          LinkedIn
+        </span>
+      </div>
+      {error && <p className="text-xs text-red-400">{error}</p>}
+      <div className="flex gap-2 mt-1">
+        {c.linkedin_url && (
+          <a
+            href={c.linkedin_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 text-center text-xs font-bold py-1.5 px-3 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30 hover:bg-blue-600/30 transition-colors"
+          >
+            View Profile
+          </a>
+        )}
+        {c.form_sent ? (
+          <span className="flex-1 text-center text-xs font-bold py-1.5 px-3 rounded-lg bg-emerald-900/20 text-emerald-400 border border-emerald-500/20">
+            Form Sent ✓
+          </span>
+        ) : (
+          <button
+            disabled={sending || !c.linkedin_provider_id}
+            onClick={handleSendForm}
+            title={!c.linkedin_provider_id ? 'No provider ID — re-fetch this JD to get messageable profiles' : ''}
+            className="flex-1 text-xs font-bold py-1.5 px-3 rounded-lg bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-600/30 transition-colors flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <Mail size={12} />
+            {sending ? 'Sending…' : 'Send Form via LinkedIn'}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const RecruiterDashboard: React.FC = () => {
   // Review tab state
   const [jds, setJds] = useState<JD[]>([]);
@@ -166,7 +240,9 @@ const RecruiterDashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Pipeline tab state
-  const [activeTab, setActiveTab] = useState<'review' | 'pipeline'>('review');
+  const [activeTab, setActiveTab] = useState<'review' | 'pipeline' | 'sourced'>('review');
+  const [sourcedCandidates, setSourcedCandidates] = useState<any[]>([]);
+  const [sourcedLoading, setSourcedLoading] = useState(false);
   const [pipelineRecords, setPipelineRecords] = useState<PipelineRecord[]>([]);
   const [breaches, setBreaches] = useState<PipelineBreach[]>([]);
   const [extensionForms, setExtensionForms] = useState<Record<string, { open: boolean; hours: number; reason: string }>>({});
@@ -182,6 +258,7 @@ const RecruiterDashboard: React.FC = () => {
   const [clientSubmission, setClientSubmission] = useState<{ sent: boolean; sent_at?: string; client_email?: string; candidates_sent?: number } | null>(null);
   const [sendingToClient, setSendingToClient] = useState(false);
   const [clientSendError, setClientSendError] = useState<string | null>(null);
+  const [formStats, setFormStats] = useState<{ total: number; submitted: number; video_analyzed: number } | null>(null);
 
   // Interview outcome state
   const [interviewOutcomeLoading, setInterviewOutcomeLoading] = useState<string | null>(null);
@@ -203,6 +280,7 @@ const RecruiterDashboard: React.FC = () => {
   // Give Offer modal
   const [offerModal, setOfferModal] = useState<{ candidateId: string } | null>(null);
   const [offerForm, setOfferForm] = useState({ joining_date: '', work_location: '' });
+  const [offerFile, setOfferFile] = useState<File | null>(null);
   const [offerSubmitting, setOfferSubmitting] = useState(false);
 
   // Stage type picker modal (Assessment vs Interview)
@@ -226,6 +304,11 @@ const RecruiterDashboard: React.FC = () => {
 
   // Send form modal
   const [sendingFormId, setSendingFormId] = useState<string | null>(null);
+  const [formSentIds, setFormSentIds] = useState<Set<string>>(new Set());
+
+  // Client selection (after send to client)
+  const [clientApprovedIds, setClientApprovedIds] = useState<Set<string>>(new Set());
+  const [savingClientSelection, setSavingClientSelection] = useState(false);
 
   // Send profile to client
   const [sendingProfileId, setSendingProfileId] = useState<string | null>(null);
@@ -266,6 +349,9 @@ const RecruiterDashboard: React.FC = () => {
     if (activeTab === 'pipeline' && selectedJdId) {
       loadPipeline(selectedJdId);
     }
+    if (activeTab === 'sourced' && selectedJdId) {
+      loadSourcedCandidates(selectedJdId);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, selectedJdId]);
 
@@ -281,11 +367,15 @@ const RecruiterDashboard: React.FC = () => {
     setPipelineError(null);
     setClientSubmission(null);
     setClientSendError(null);
+    setFormSentIds(new Set());
+    setClientApprovedIds(new Set());
+    setFormStats(null);
 
     try {
-      const [matchRes, subRes] = await Promise.all([
+      const [matchRes, subRes, statsRes] = await Promise.all([
         fetch(`${API}/matching/results/${jdId}`, { headers: getAuthHeaders() }),
         fetch(`${API}/pipeline/submission-status/${jdId}`, { headers: getAuthHeaders() }),
+        fetch(`${API}/forms/status/${jdId}`, { headers: getAuthHeaders() }),
       ]);
       if (pendingJdRef.current !== jdId) return;
       if (matchRes.ok) {
@@ -293,6 +383,7 @@ const RecruiterDashboard: React.FC = () => {
         setResults(Array.isArray(data) ? data : []);
       }
       if (subRes.ok) setClientSubmission(await subRes.json());
+      if (statsRes.ok) setFormStats(await statsRes.json());
     } catch {
       // silently ignore — empty results state already set above
     }
@@ -320,6 +411,15 @@ const RecruiterDashboard: React.FC = () => {
     } finally {
       setPipelineLoading(false);
     }
+  };
+
+  const loadSourcedCandidates = async (jdId: string) => {
+    setSourcedLoading(true);
+    try {
+      const res = await fetch(`${API}/candidates/sourced?jd_id=${jdId}`, { headers: getAuthHeaders() });
+      if (res.ok) setSourcedCandidates(await res.json());
+    } catch (_) {}
+    setSourcedLoading(false);
   };
 
   const advanceStage = async (jdId: string, candidateId: string, body: object = {}) => {
@@ -412,14 +512,19 @@ const RecruiterDashboard: React.FC = () => {
     if (!offerModal || !offerForm.joining_date || !offerForm.work_location) return;
     setOfferSubmitting(true);
     try {
+      const formData = new FormData();
+      formData.append('joining_date', offerForm.joining_date);
+      formData.append('work_location', offerForm.work_location);
+      if (offerFile) formData.append('offer_letter', offerFile);
       const r = await fetch(`${API}/pipeline/give-offer/${selectedJdId}/${offerModal.candidateId}`, {
         method: 'POST',
-        headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
-        body: JSON.stringify(offerForm),
+        headers: getAuthHeaders(),
+        body: formData,
       });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       setOfferModal(null);
       setOfferForm({ joining_date: '', work_location: '' });
+      setOfferFile(null);
       await loadPipeline(selectedJdId);
     } catch (e: any) {
       setPipelineError('Give offer failed: ' + e.message);
@@ -616,6 +721,23 @@ const RecruiterDashboard: React.FC = () => {
       setClientSendError(e.message);
     } finally {
       setSendingToClient(false);
+    }
+  };
+
+  const handleSaveClientSelection = async () => {
+    if (!selectedJdId) return;
+    setSavingClientSelection(true);
+    try {
+      const res = await fetch(`${API}/matching/client-selection/${selectedJdId}`, {
+        method: 'PATCH',
+        headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ approved_ids: Array.from(clientApprovedIds) }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    } catch (e: any) {
+      setError('Failed to save client selection: ' + e.message);
+    } finally {
+      setSavingClientSelection(false);
     }
   };
 
@@ -888,18 +1010,49 @@ const RecruiterDashboard: React.FC = () => {
           )}
         </div>
 
-        <div className="border-t border-slate-700/30 px-5 py-3">
-          {actioned ? (
-            <div className={`flex items-center space-x-2 text-xs font-bold ${
-              actionState?.action === 'shortlist' ? 'text-emerald-400' : 'text-red-400'
-            }`}>
-              {actionState?.action === 'shortlist' ? (
-                <><CheckCircle size={14} /><span>Shortlisted</span></>
+        <div className="border-t border-slate-700/30 px-5 py-3 space-y-2">
+          {/* Send Form — visible on all non-rejected candidates */}
+          {actionState?.action !== 'reject' && (
+            <div className="flex items-center justify-between">
+              {formSentIds.has(result.candidate_id) ? (
+                <span className="text-[10px] font-bold text-blue-400 bg-blue-500/10 px-2 py-1 rounded border border-blue-500/20">
+                  ✓ Form Sent
+                </span>
               ) : (
-                <><XCircle size={14} /><span>Rejected — {actionState?.reason}</span></>
+                <button
+                  onClick={async () => {
+                    setSendingFormId(result.candidate_id);
+                    try {
+                      const r = await fetch(`${API}/forms/send-form-link/${selectedJdId}/${result.candidate_id}`, {
+                        method: 'POST', headers: getAuthHeaders(),
+                      });
+                      if (r.ok) setFormSentIds(prev => new Set([...prev, result.candidate_id]));
+                      else alert('Failed to send form link');
+                    } finally {
+                      setSendingFormId(null);
+                    }
+                  }}
+                  disabled={sendingFormId === result.candidate_id}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 text-[10px] font-bold rounded-lg border border-blue-500/20 transition-colors disabled:opacity-40"
+                >
+                  <Mail size={11} />
+                  <span>{sendingFormId === result.candidate_id ? 'Sending...' : 'Send Form'}</span>
+                </button>
+              )}
+              {actioned && actionState?.action === 'shortlist' && (
+                <div className="flex items-center space-x-1.5 text-xs font-bold text-emerald-400">
+                  <CheckCircle size={14} /><span>Shortlisted</span>
+                </div>
               )}
             </div>
-          ) : isRejecting ? (
+          )}
+
+          {/* Shortlist / Reject actions */}
+          {actioned && actionState?.action === 'reject' ? (
+            <div className="flex items-center space-x-1.5 text-xs font-bold text-red-400">
+              <XCircle size={14} /><span>Rejected — {actionState?.reason}</span>
+            </div>
+          ) : actioned ? null : isRejecting ? (
             <div className="flex items-center space-x-2">
               <select
                 value={rejectReason}
@@ -1071,18 +1224,22 @@ const RecruiterDashboard: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Stage progression dots */}
-                  <div className="flex items-center">
+                  {/* Stage progression dots with labels */}
+                  <div className="flex items-end">
                     {cardStageOrder.map((s, i) => (
                       <React.Fragment key={s}>
-                        <div
-                          className={`h-2 w-2 rounded-full shrink-0 ${
+                        <div className="flex flex-col items-center shrink-0">
+                          <span className={`text-[8px] mb-1 text-center leading-tight ${
+                            i === stageIdx ? 'text-blue-400 font-bold' : i < stageIdx ? 'text-emerald-500' : 'text-slate-600'
+                          }`} style={{maxWidth: 36}}>
+                            {getStagLabel(s)}
+                          </span>
+                          <div className={`h-2 w-2 rounded-full ${
                             i < stageIdx ? 'bg-emerald-500' : i === stageIdx ? 'bg-blue-400' : 'bg-slate-700'
-                          }`}
-                          title={getStagLabel(s)}
-                        />
+                          }`} />
+                        </div>
                         {i < cardStageOrder.length - 1 && (
-                          <div className={`h-px flex-1 ${i < stageIdx ? 'bg-emerald-500/50' : 'bg-slate-700'}`} />
+                          <div className={`h-px flex-1 mb-1 ${i < stageIdx ? 'bg-emerald-500/50' : 'bg-slate-700'}`} />
                         )}
                       </React.Fragment>
                     ))}
@@ -1116,15 +1273,16 @@ const RecruiterDashboard: React.FC = () => {
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Response Status</p>
                       <div className="grid grid-cols-2 gap-2">
                         {[
-                          { key: 'form_submitted', label: 'Form', icon: '📋' },
-                          { key: 'interview_availability', label: 'Interview', icon: '🎯' },
-                          { key: 'interest_confirmation', label: 'Interest', icon: '💼' },
-                          { key: 'offer_acceptance', label: 'Offer', icon: '🎉' },
-                        ].map(({ key, label, icon }) => {
+                          { key: 'form_submitted', label: 'Form', icon: '📋', doneFromStage: [] },
+                          { key: 'interview_availability', label: 'Interview', icon: '🎯', doneFromStage: ['offer', 'joined'] },
+                          { key: 'interest_confirmation', label: 'Interest', icon: '💼', doneFromStage: ['joined'] },
+                          { key: 'offer_acceptance', label: 'Offer', icon: '🎉', doneFromStage: ['offer', 'joined'] },
+                        ].map(({ key, label, icon, doneFromStage }) => {
                           const tracking = record.response_tracking?.[key as keyof typeof record.response_tracking];
                           if (!tracking) return null;
 
-                          const isResponded = tracking.status === 'submitted' || tracking.status === 'confirmed' || tracking.status === 'accepted';
+                          const stageImpliesDone = doneFromStage.includes(record.current_stage);
+                          const isResponded = stageImpliesDone || tracking.status === 'submitted' || tracking.status === 'confirmed' || tracking.status === 'accepted';
                           const reminderCount = tracking.reminder_count || 0;
 
                           return (
@@ -1439,16 +1597,6 @@ const RecruiterDashboard: React.FC = () => {
                             <span>Request Extension</span>
                           </button>
                         )}
-                        {record.response_tracking?.form_submitted?.status !== 'submitted' && (
-                          <button
-                            onClick={() => handleSendFormLink(selectedJdId, record.candidate_id, candidateNames[record.candidate_id] || record.candidate_id)}
-                            disabled={sendingFormId === record.candidate_id}
-                            className="flex items-center space-x-1.5 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 text-xs font-bold rounded-lg border border-blue-500/20 transition-colors disabled:opacity-40"
-                          >
-                            <Mail size={12} />
-                            <span>{sendingFormId === record.candidate_id ? 'Sending...' : 'Send Form Link'}</span>
-                          </button>
-                        )}
                         {record.response_tracking?.form_submitted?.status === 'submitted' && (
                           <button
                             onClick={() => setProfileNoteModal({ candidateId: record.candidate_id, candidateName: candidateNames[record.candidate_id] || record.candidate_id })}
@@ -1560,6 +1708,16 @@ const RecruiterDashboard: React.FC = () => {
             >
               Pipeline
             </button>
+            <button
+              onClick={() => setActiveTab('sourced')}
+              className={`px-4 py-2.5 text-xs font-bold uppercase tracking-widest transition-colors border-b-2 -mb-px ${
+                activeTab === 'sourced'
+                  ? 'border-blue-500 text-blue-400'
+                  : 'border-transparent text-slate-500 hover:text-slate-300'
+              }`}
+            >
+              Sourced
+            </button>
           </div>
 
           {activeTab === 'review' && (
@@ -1615,9 +1773,9 @@ const RecruiterDashboard: React.FC = () => {
               </section>
 
               {/* Send to Client */}
-              {results.some(r => r.status === 'pass_2_complete') && (
-                <section>
-                  <div className="flex items-center justify-between mb-3">
+              {results.length > 0 && (
+                <section className="space-y-4">
+                  <div className="flex items-center justify-between">
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Client Submission</p>
                   </div>
                   {clientSubmission?.sent ? (
@@ -1640,18 +1798,103 @@ const RecruiterDashboard: React.FC = () => {
                       </button>
                     </div>
                   ) : (
-                    <div className="flex items-center space-x-3">
+                    <div className="space-y-3">
+                      {/* Video analysis status */}
+                      <div className="flex items-center space-x-3 px-4 py-2.5 bg-slate-900/50 border border-slate-700/30 rounded-xl">
+                        <div className="flex-1">
+                          <p className="text-xs font-bold text-slate-300">
+                            Video Analysis: {formStats?.video_analyzed ?? 0} / {formStats?.submitted ?? 0} complete
+                          </p>
+                          <p className="text-[10px] text-slate-500 mt-0.5">
+                            {formStats?.video_analyzed
+                              ? 'Send to client to include video scores in the report'
+                              : 'Waiting for candidates to submit video resumes'}
+                          </p>
+                        </div>
+                        <button
+                          onClick={async () => {
+                            const s = await fetch(`${API}/forms/status/${selectedJdId}`, { headers: getAuthHeaders() });
+                            if (s.ok) setFormStats(await s.json());
+                          }}
+                          className="text-[10px] text-slate-500 hover:text-slate-300 transition-colors"
+                        >
+                          ↻ Refresh
+                        </button>
+                      </div>
+
+                      <div className="flex items-center space-x-3">
+                        <button
+                          onClick={handleSendToClient}
+                          disabled={sendingToClient || !formStats?.video_analyzed}
+                          title={!formStats?.video_analyzed ? 'No video analyses complete yet — wait for candidates to submit' : ''}
+                          className="flex items-center space-x-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold rounded-xl transition-colors"
+                        >
+                          <ArrowRight size={14} />
+                          <span>{sendingToClient ? 'Sending…' : `Send ${results.length} Candidate Assessments to Client`}</span>
+                        </button>
+                        {clientSendError && (
+                          <p className="text-xs text-red-400">{clientSendError}</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Client Selection — shown after email sent */}
+                  {clientSubmission?.sent && (
+                    <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-bold text-white">Client Selection</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">Mark the candidates the client approved to proceed</p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => setClientApprovedIds(new Set(results.map(r => r.candidate_id)))}
+                            className="px-3 py-1.5 text-[10px] font-bold bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
+                          >
+                            All
+                          </button>
+                          <button
+                            onClick={() => setClientApprovedIds(new Set())}
+                            className="px-3 py-1.5 text-[10px] font-bold bg-slate-700/50 hover:bg-slate-700 text-slate-400 rounded-lg transition-colors"
+                          >
+                            None
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        {results.map(r => {
+                          const approved = clientApprovedIds.has(r.candidate_id);
+                          return (
+                            <label key={r.candidate_id} className="flex items-center space-x-3 p-3 rounded-xl bg-slate-900/50 border border-slate-700/30 cursor-pointer hover:border-slate-500 transition-colors">
+                              <input
+                                type="checkbox"
+                                checked={approved}
+                                onChange={() => {
+                                  const next = new Set(clientApprovedIds);
+                                  approved ? next.delete(r.candidate_id) : next.add(r.candidate_id);
+                                  setClientApprovedIds(next);
+                                }}
+                                className="w-4 h-4 rounded bg-slate-700 border-slate-600 text-emerald-500 focus:ring-0"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-semibold text-white truncate">{candidateNames[r.candidate_id] || r.candidate_id}</p>
+                                <p className="text-[10px] text-slate-500">{r.fitment_score != null ? `${r.fitment_score.toFixed(0)}% fitment` : `${(r.composite_score ?? 0).toFixed(1)} score`}</p>
+                              </div>
+                              {approved && <CheckCircle size={14} className="text-emerald-400 shrink-0" />}
+                            </label>
+                          );
+                        })}
+                      </div>
+
                       <button
-                        onClick={handleSendToClient}
-                        disabled={sendingToClient}
-                        className="flex items-center space-x-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-xs font-bold rounded-xl transition-colors"
+                        onClick={handleSaveClientSelection}
+                        disabled={savingClientSelection}
+                        className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white text-xs font-bold rounded-xl transition-colors"
                       >
-                        <ArrowRight size={14} />
-                        <span>{sendingToClient ? 'Sending…' : `Send ${results.filter(r => r.status === 'pass_2_complete').length} Candidate Assessments to Client`}</span>
+                        {savingClientSelection ? 'Saving…' : `Confirm — ${clientApprovedIds.size} Candidate${clientApprovedIds.size !== 1 ? 's' : ''} Approved`}
                       </button>
-                      {clientSendError && (
-                        <p className="text-xs text-red-400">{clientSendError}</p>
-                      )}
                     </div>
                   )}
                 </section>
@@ -1680,6 +1923,34 @@ const RecruiterDashboard: React.FC = () => {
           )}
 
           {activeTab === 'pipeline' && renderPipelineTab()}
+
+          {activeTab === 'sourced' && (
+            <section className="mt-6">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
+                LinkedIn Sourced Profiles
+              </p>
+              {sourcedLoading ? (
+                <div className="text-center py-12 text-slate-400 text-sm">Loading…</div>
+              ) : sourcedCandidates.length === 0 ? (
+                <div className="text-center py-12 text-slate-500 text-sm">
+                  No LinkedIn applicants found for this JD yet.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {sourcedCandidates.map((c) => (
+                    <SourcedCandidateCard
+                      key={c.candidate_id}
+                      candidate={c}
+                      jdId={selectedJdId}
+                      onSent={(id) => setSourcedCandidates(prev =>
+                        prev.map(x => x.candidate_id === id ? { ...x, form_sent: true } : x)
+                      )}
+                    />
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
         </>
       )}
 
@@ -1894,7 +2165,7 @@ const RecruiterDashboard: React.FC = () => {
                   <p className="text-xs text-slate-400">{candidateNames[offerModal.candidateId] || offerModal.candidateId}</p>
                 </div>
               </div>
-              <button onClick={() => setOfferModal(null)} className="text-slate-400 hover:text-white">
+              <button onClick={() => { setOfferModal(null); setOfferFile(null); }} className="text-slate-400 hover:text-white">
                 <X size={18} />
               </button>
             </div>
@@ -1919,6 +2190,24 @@ const RecruiterDashboard: React.FC = () => {
                   className="mt-1 w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-violet-500 placeholder-slate-600"
                 />
               </div>
+              <div>
+                <label className="text-[10px] text-slate-400 uppercase tracking-widest">Offer Letter PDF <span className="text-slate-600">(optional)</span></label>
+                <div className="mt-1 w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 flex items-center gap-2">
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    id="offer-letter-upload"
+                    className="hidden"
+                    onChange={e => setOfferFile(e.target.files?.[0] || null)}
+                  />
+                  <label htmlFor="offer-letter-upload" className="cursor-pointer text-violet-400 hover:text-violet-300 text-sm font-medium">
+                    {offerFile ? offerFile.name : 'Choose PDF…'}
+                  </label>
+                  {offerFile && (
+                    <button onClick={() => setOfferFile(null)} className="ml-auto text-slate-500 hover:text-red-400 text-xs">Remove</button>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className="flex gap-3">
@@ -1929,7 +2218,7 @@ const RecruiterDashboard: React.FC = () => {
               >
                 {offerSubmitting ? 'Confirming…' : 'Confirm Offer & Mark Joined'}
               </button>
-              <button onClick={() => setOfferModal(null)} className="px-5 py-3 text-slate-400 hover:text-white text-sm rounded-xl border border-slate-700/50 hover:border-slate-500 transition-colors">
+              <button onClick={() => { setOfferModal(null); setOfferFile(null); }} className="px-5 py-3 text-slate-400 hover:text-white text-sm rounded-xl border border-slate-700/50 hover:border-slate-500 transition-colors">
                 Cancel
               </button>
             </div>

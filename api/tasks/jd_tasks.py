@@ -128,10 +128,28 @@ def process_jd_task(jd_id: str):
     db.job_descriptions.update_one(
         {"jd_id": jd_id},
         {"$set": {
-            "status": "structured", 
+            "status": "structured",
             "updated_at": datetime.now()
         }}
     )
+
+    # 5. Send LinkedIn post draft to recruiter (upload path only — create path sends inline)
+    if jd_record.get("source") == "web_form_upload":
+        try:
+            recruiter_email = jd_record.get("recruiter_email")
+            if recruiter_email:
+                from utils.linkedin_utils import generate_linkedin_post_draft, linkedin_draft_email_html
+                from utils.email_utils import send_email
+                updated_jd = db.job_descriptions.find_one({"jd_id": jd_id})
+                draft = generate_linkedin_post_draft(updated_jd)
+                html = linkedin_draft_email_html(updated_jd, draft)
+                send_email(
+                    recruiter_email,
+                    f"[JobOS] LinkedIn Post Ready — {updated_jd.get('title', jd_id)}",
+                    html,
+                )
+        except Exception as e:
+            logger.error(f"LinkedIn draft email failed for {jd_id}: {e}")
 
     logger.info(f"Processing complete for JD: {jd_id}")
     return f"Successfully structured {jd_id}"

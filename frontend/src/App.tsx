@@ -14,11 +14,13 @@ import Invoices from './pages/Invoices';
 import Assessment from './pages/Assessment';
 import OfferResponse from './pages/OfferResponse';
 import FormResponses from './pages/FormResponses';
+import CandidateForm from './pages/CandidateForm';
 
 // Public paths that must not trigger Keycloak login-required redirect
 const _isPublicPath =
   window.location.pathname.startsWith('/assessment/') ||
-  window.location.pathname.startsWith('/offer-response/');
+  window.location.pathname.startsWith('/offer-response/') ||
+  window.location.pathname.startsWith('/form/');
 
 const App: React.FC = () => {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
@@ -68,6 +70,9 @@ const App: React.FC = () => {
         {/* Public routes — no auth, no layout */}
         <Route path="/assessment/:id" element={<Assessment />} />
         <Route path="/offer-response/:token" element={<OfferResponse />} />
+        <Route path="/form/:jdId/:candidateId" element={<CandidateForm />} />
+        <Route path="/apply/:jdId/:candidateId" element={<CandidateForm />} />
+        <Route path="/apply/:jdId" element={<CandidateForm />} />
 
         {/* Auth-gated routes */}
         <Route path="/*" element={
@@ -89,7 +94,7 @@ const App: React.FC = () => {
                 <Route path="/form-responses" element={<FormResponses />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/invoices" element={
-                  keycloak.tokenParsed?.realm_access?.roles?.some((r: string) => ['recruiter','manager','admin'].includes(r))
+                  keycloak.tokenParsed?.realm_access?.roles?.some((r: string) => ['manager','admin'].includes(r))
                     ? <Invoices />
                     : <Navigate to="/dashboard" replace />
                 } />

@@ -1,12 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, timezone
 from pydantic import BaseModel
 from auth import check_role
 from utils.client_utils import get_db
 from utils.google_forms_utils import save_video_file, get_video_storage_path, get_sheet_responses, find_video_in_drive, download_video_from_drive
+from utils.storage_utils import save_resume_file
+from utils.resume_utils import extract_text_from_file
 from utils.email_utils import send_email
 from tasks.video_analysis_tasks import analyze_video_resume as analyze_video_task
+from tasks.jd_tasks import process_jd_task
+import uuid
 import os
 import re
 import logging
@@ -55,14 +59,86 @@ class FormResponseModel(BaseModel):
     submitted_at: datetime
     created_at: datetime
 
+@router.post("/open-submit")
+async def open_submit_form(
+    jd_id: str = Form(...),
+    name: str = Form(...),
+    email: str = Form(...),
+    phone: str = Form(...),
+    source: str = Form(default="direct"),
+    resume_file: UploadFile = File(...),
+    linkedin_url: Optional[str] = Form(None),
+    current_ctc: Optional[str] = Form(None),
+    expected_ctc: Optional[str] = Form(None),
+    notice_period: Optional[str] = Form(None),
+):
+    """
+    Open application form — for external candidates from Indeed, Internshala etc.
+    Creates candidate record + triggers matching pipeline.
+    No auth required — public endpoint.
+    """
+    db = get_db()
+
+    jd = db.job_descriptions.find_one({"jd_id": jd_id})
+    if not jd:
+        raise HTTPException(status_code=404, detail="Job not found")
+
+    email = email.strip().lower()
+
+    # De-duplicate by email + jd_id
+    existing = db.candidates.find_one({"email": email, "jd_id": jd_id})
+    if existing:
+        return {"status": "duplicate", "message": "Application already received for this role"}
+
+    candidate_id = f"CAN-{jd_id.split('-')[1][:8] if '-' in jd_id else 'EXT'}-{uuid.uuid4().hex[:8]}"
+
+    # Save resume
+    resume_bytes = await resume_file.read()
+    resume_path = save_resume_file(candidate_id, resume_file.filename or "resume.pdf", resume_bytes)
+    resume_text = extract_text_from_file(resume_path) if resume_path else ""
+
+    candidate_doc = {
+        "candidate_id": candidate_id,
+        "name": name.strip(),
+        "email": email,
+        "phone": phone.strip(),
+        "jd_id": jd_id,
+        "source": source,
+        "status": "received",
+        "resume_text": resume_text,
+        "resume_path": resume_path,
+        "linkedin_url": linkedin_url.strip() if linkedin_url else None,
+        "current_ctc": current_ctc.strip() if current_ctc else None,
+        "expected_ctc": expected_ctc.strip() if expected_ctc else None,
+        "notice_period": notice_period or None,
+        "skills": [],
+        "experience_years": 0,
+        "location": "",
+        "headline": "",
+        "file_paths": [resume_path] if resume_path else [],
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc),
+    }
+
+    db.candidates.insert_one(candidate_doc)
+    logger.info(f"[OpenSubmit] Created candidate {candidate_id} — {name} from {source} for {jd_id}")
+
+    # Trigger matching pipeline
+    process_jd_task.delay(jd_id)
+
+    return {"status": "received", "candidate_id": candidate_id}
+
+
 @router.post("/submit")
 async def submit_form(
     jd_id: str = Form(...),
     candidate_id: str = Form(...),
     aadhar: Optional[str] = Form(None),
+    email: Optional[str] = Form(None),
     linkedin_url: Optional[str] = Form(None),
     alternate_phone: Optional[str] = Form(None),
     telegram_handle: Optional[str] = Form(None),
+    resume_file: Optional[UploadFile] = File(None),
     video_file: Optional[UploadFile] = File(None),
 ):
     """
@@ -82,6 +158,14 @@ async def submit_form(
         if not jd:
             raise HTTPException(status_code=404, detail="JD not found")
 
+        # Save resume file if provided
+        resume_path = None
+        resume_text = ""
+        if resume_file:
+            resume_bytes = await resume_file.read()
+            resume_path = save_resume_file(candidate_id, resume_file.filename or "resume.pdf", resume_bytes)
+            resume_text = extract_text_from_file(resume_path) if resume_path else ""
+
         # Save video file if provided
         video_path = None
         if video_file:
@@ -97,9 +181,11 @@ async def submit_form(
             "jd_id": jd_id,
             "candidate_id": candidate_id,
             "aadhar": aadhar.strip() if aadhar else None,
+            "email": email.strip().lower() if email else None,
             "linkedin_url": linkedin_url.strip() if linkedin_url else None,
             "alternate_phone": alternate_phone.strip() if alternate_phone else None,
             "telegram_handle": telegram_handle.strip() if telegram_handle else None,
+            "resume_path": resume_path,
             "video_resume_path": video_path,
             "video_analysis": None,
             "status": "submitted",
@@ -109,16 +195,25 @@ async def submit_form(
         }
 
         db.form_responses.insert_one(form_response)
+        form_response.pop("_id", None)  # remove ObjectId added by MongoDB
 
         # Update candidate profile with form response ID
+        candidate_update = {
+            "form_response_id": response_id,
+            "resume_path": resume_path,
+            "resume_text": resume_text if resume_text else None,
+            "file_paths": [resume_path] if resume_path else [],
+            "telegram_handle": telegram_handle.strip() if telegram_handle else None,
+            "alternate_phone": alternate_phone.strip() if alternate_phone else None,
+            "updated_at": datetime.utcnow()
+        }
+        # Only set email if candidate doesn't already have one
+        if email and not candidate.get("email"):
+            candidate_update["email"] = email.strip().lower()
+
         db.candidates.update_one(
             {"candidate_id": candidate_id},
-            {"$set": {
-                "form_response_id": response_id,
-                "telegram_handle": telegram_handle.strip() if telegram_handle else None,
-                "alternate_phone": alternate_phone.strip() if alternate_phone else None,
-                "updated_at": datetime.utcnow()
-            }}
+            {"$set": candidate_update}
         )
 
         # Update pipeline response tracking
@@ -133,6 +228,11 @@ async def submit_form(
             }},
             upsert=True
         )
+
+        # Trigger resume extraction/metadata pipeline if resume provided
+        if resume_path:
+            from tasks.resume_tasks import process_resume_task
+            process_resume_task.delay(candidate_id, resume_path, source="linkedin_form")
 
         # Trigger async video analysis if video provided
         if video_path:
@@ -167,6 +267,16 @@ async def get_form_responses(
         return responses
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/response/{jd_id}/{candidate_id}/public")
+async def check_form_response_public(jd_id: str, candidate_id: str):
+    """Public endpoint — returns 200 if already submitted, 404 if not."""
+    db = get_db()
+    exists = db.form_responses.find_one({"jd_id": jd_id, "candidate_id": candidate_id}, {"_id": 1})
+    if not exists:
+        raise HTTPException(status_code=404, detail="Not submitted")
+    return {"submitted": True}
+
 
 @router.get("/response/{jd_id}/{candidate_id}", response_model=FormResponseModel)
 async def get_form_response(
@@ -469,7 +579,8 @@ async def sync_google_form_responses(
                 "response_id": response_id,
                 "jd_id": jd_id,
                 "candidate_id": candidate_id,
-                "status": "submitted"
+                "status": "submitted",
+                "video_resume_path": video_path if video_file_id else None,
             })
 
             synced += 1

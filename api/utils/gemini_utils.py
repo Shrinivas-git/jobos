@@ -1,68 +1,67 @@
 import os
-os.environ["TRANSFORMERS_OFFLINE"] = "1"
-os.environ["HF_DATASETS_OFFLINE"] = "1"
 import re
 import json
 import logging
 import time
-import anthropic
 from groq import Groq
 from typing import List
 from sentence_transformers import SentenceTransformer
 
 logger = logging.getLogger(__name__)
 
-# Initialize local embedding model
+# Initialize local embedding model — all-mpnet-base-v2 is significantly more
+# accurate than all-MiniLM-L6-v2 for semantic job/resume matching
 try:
-    embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
-    logger.info("Local embedding model (all-MiniLM-L6-v2) loaded successfully.")
+    embedding_model = SentenceTransformer('all-mpnet-base-v2')
+    logger.info("Local embedding model (all-mpnet-base-v2) loaded successfully.")
 except Exception as e:
-    logger.error(f"Failed to load local embedding model: {e}")
-    embedding_model = None
+    logger.warning(f"all-mpnet-base-v2 not available, falling back to all-MiniLM-L6-v2: {e}")
+    try:
+        embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+        logger.info("Fallback embedding model (all-MiniLM-L6-v2) loaded.")
+    except Exception as e2:
+        logger.error(f"Failed to load any embedding model: {e2}")
+        embedding_model = None
 
-# Anthropic — used ONLY for Pass 2 matching (REASON_MODEL)
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
-if ANTHROPIC_API_KEY:
-    ai_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
-else:
-    logger.warning("ANTHROPIC_API_KEY not found — Pass 2 matching will fail.")
-    ai_client = None
-
-# Groq — used for all other AI calls (JD extraction, resume extraction, assessments, CRM, feedback)
+# Groq — all AI calls
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 if GROQ_API_KEY:
     groq_client = Groq(api_key=GROQ_API_KEY)
 else:
-    logger.warning("GROQ_API_KEY not found — non-matching AI calls will fail.")
+    logger.warning("GROQ_API_KEY not found — all AI calls will fail.")
     groq_client = None
 
-FAST_MODEL = "llama-3.1-8b-instant"       # Groq — JD extraction, resume extraction, embeddings
-REASON_MODEL = "claude-sonnet-4-6"         # Anthropic — Pass 2 matching only
-GROQ_REASON_MODEL = "llama-3.3-70b-versatile"  # Groq — assessments scoring, CRM, feedback
+FAST_MODEL = "llama-3.1-8b-instant"          # Groq — JD extraction, resume extraction
+GROQ_REASON_MODEL = "llama-3.3-70b-versatile" # Groq — Pass 2 matching, assessments, CRM
 
 
-def _call_groq(model: str, prompt: str, max_tokens: int = 2048) -> str:
-    """Groq call — used for all non-matching AI tasks."""
+def _call_groq(model: str, prompt: str, max_tokens: int = 4096, system: str = None) -> str:
+    """Groq call with automatic retry on rate limit. Never gives up — waits and retries."""
     if not groq_client:
         raise RuntimeError("Groq client not initialized — GROQ_API_KEY missing.")
-    response = groq_client.chat.completions.create(
-        model=model,
-        max_tokens=max_tokens,
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return response.choices[0].message.content.strip()
+    messages = []
+    if system:
+        messages.append({"role": "system", "content": system})
+    messages.append({"role": "user", "content": prompt})
+    max_retries = 10
+    for attempt in range(max_retries):
+        try:
+            response = groq_client.chat.completions.create(
+                model=model,
+                max_tokens=max_tokens,
+                messages=messages
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            err_str = str(e).lower()
+            if any(x in err_str for x in ("rate limit", "429", "too many requests", "quota")):
+                wait = min(30 * (attempt + 1), 300)  # 30s, 60s, ... capped at 5 min
+                logger.warning(f"Groq rate limit (attempt {attempt+1}/{max_retries}). Waiting {wait}s...")
+                time.sleep(wait)
+                continue
+            raise
+    raise RuntimeError(f"Groq call failed after {max_retries} retries — rate limit not resolved.")
 
-
-def _call_claude(model: str, prompt: str, max_tokens: int = 2048) -> str:
-    """Anthropic call — used ONLY for Pass 2 matching (REASON_MODEL)."""
-    if not ai_client:
-        raise RuntimeError("Anthropic client not initialized — ANTHROPIC_API_KEY missing.")
-    response = ai_client.messages.create(
-        model=model,
-        max_tokens=max_tokens,
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return response.content[0].text.strip()
 
 
 def _parse_json_response(text: str) -> dict:
@@ -133,7 +132,7 @@ Raw JD Text:
 JSON Output:"""
 
     try:
-        text = _call_groq(FAST_MODEL, prompt)
+        text = _call_groq(FAST_MODEL, prompt, max_tokens=2048)
         logger.info(f"Groq JD extraction response (first 200 chars): {text[:200]}")
         result = _parse_json_response(text)
         # Defaults for new fields (backward compatibility)
@@ -184,7 +183,7 @@ Structured Data:
 JSON Output:"""
 
     try:
-        text = _call_groq(FAST_MODEL, prompt)
+        text = _call_groq(FAST_MODEL, prompt, max_tokens=2048)
         return _parse_json_response(text)
     except Exception as e:
         logger.error(f"Error generating JD formats with Groq: {e}")
@@ -208,184 +207,148 @@ def generate_embedding(text: str) -> List[float]:
 
 def evaluate_candidate_fitment(jd_structured_data: dict, resume_text: str, recruiter_notes: str = None) -> dict:
     """
-    Pass 2: Uses Claude (reason model) to perform deep reasoning on a candidate's fitment for a JD.
-    Includes contextual bonus scoring based on company type, team size, and role type alignment.
+    Pass 2: Deep reasoning on candidate fitment using Groq llama-3.3-70b-versatile.
+    Retries indefinitely on rate limits — will take time but will never fail.
+    JSON parse failures also trigger a retry rather than returning a zero score.
     """
-    if not ai_client:
-        raise RuntimeError("Anthropic client not initialized — ANTHROPIC_API_KEY missing.")
+    if not groq_client:
+        raise RuntimeError("Groq client not initialized — GROQ_API_KEY missing.")
 
     jd_text = json.dumps(jd_structured_data, indent=2)
 
-    try:
-        response = ai_client.messages.create(
-            model=REASON_MODEL,
-            max_tokens=2048,
-            system=f"You are an expert senior technical recruiter.\n\nJOB DESCRIPTION FOR THIS EVALUATION:\n{jd_text}",
-            messages=[
-                {
-                    "role": "user",
-                    "content": (
-                        f"Evaluate the following candidate resume against the job description above.\n\n"
-                        f"CANDIDATE RESUME:\n---\n{resume_text[:12000]}\n---\n\n"
-                        "Return ONLY a valid JSON object. No markdown.\n"
-                        "TONE: Write like a senior recruiter making a hiring call — decisive, specific, action-oriented. "
-                        "Lead with what matters most. Use phrases like 'interview immediately', 'strong hire', 'borderline — verify X before proceeding', 'reject — wrong level'. "
-                        "Do NOT write like a technical analyst listing observations. Every sentence must drive a hiring decision.\n"
-                        "CRITICAL JSON RULES: Inside any string value, do NOT use unescaped double quotes. "
-                        "If you need to quote something, use single quotes ('like this') or escape with backslash. "
-                        "Example: write \"managing 'Business Critical' production environments\" — NOT \"managing \"Business Critical\" production environments\".\n"
-                        "- fitment_score: integer 0-100. Apply the additional scoring factors below before returning this value.\n"
-                        "SCORING CALIBRATION:\n"
-                        "  90-100 = Strong hire, meets all must-haves with verified evidence — interview immediately\n"
-                        "  70-89  = Good candidate, meets most must-haves, 1-2 gaps — shortlist and verify gaps\n"
-                        "  50-69  = Borderline, role level mismatch or key tool gap — hold pending clarification\n"
-                        "  30-49  = Wrong role level or missing critical experience — reject unless pool is thin\n"
-                        "  0-29   = Wrong domain or fails hard filters — reject\n"
-                        "  Do NOT cluster scores around 62-72. Spread scores based on actual evidence.\n"
-                        "SIGNAL PRIORITISATION: When writing strengths, always surface the highest-signal differentiators first — "
-                        "e.g. Salesforce Premier Support escalation experience, CoE establishment, multi-tenant architecture depth, "
-                        "quantified production outcomes (zero outages, deployment count). These outweigh generic skill mentions.\n"
-                        "MUST-HAVE COVERAGE:\n"
-                        "  Use the JD's must_have_skills list (fall back to skills list if must_have_skills is empty).\n"
-                        "  For each must-have, classify as Met / Partial / Missing with one short evidence sentence quoting the resume.\n"
-                        "- must_have_breakdown: list of objects, one per must-have. Each object: {\"skill\": \"<must-have>\", \"status\": \"Met|Partial|Missing\", \"evidence\": \"<one short sentence; empty string if Missing>\"}.\n"
-                        "- must_have_coverage_ratio: float 0-1. Compute as (Met_count + 0.5 × Partial_count) / Total_must_haves. Return 0.0 if no must-haves.\n"
-                        "- reasoning: one decisive paragraph written like a senior recruiter's verbal summary to a hiring manager. "
-                        "Start with the hiring verdict (e.g. 'Strong hire — interview immediately.' or 'Borderline — hold until X is verified.'). "
-                        "Name the 2-3 highest-signal strengths with specific evidence. Name the 1-2 most disqualifying gaps. End with a clear action.\n"
-                        "- strengths: list of exactly 3 strings. Each string: start with a bold label in CAPS (e.g. 'COPADO MASTERY:'), then 1-2 sentences of specific evidence from the resume with metrics or named outcomes where possible. Prioritise differentiating signals over generic skills.\n"
-                        "- gaps: list of exactly 2 strings. Each string: name the missing requirement clearly and explain why it is disqualifying or risky for THIS specific role.\n"
-                        "- recommendation: one of \"shortlist\", \"hold\", \"reject\"\n"
-                        "- context_bonus: integer 0-15 calculated as follows:\n"
-                        "  +5 if candidate's company_types includes any type from JD preferred_company_type\n"
-                        "  +5 if candidate's avg_team_size matches JD preferred_team_size\n"
-                        "  +5 if candidate's role_type matches JD role_type\n"
-                        "  (If JD has 'Any' or no preference for a field, do not apply that bonus)\n"
-                        "- Additional scoring factors (subtract from fitment_score before returning it):\n"
-                        "  - Notice period: if candidate notice_period exceeds JD max_notice_period, subtract 5 points\n"
-                        "  - Location: if JD work_structure is In-office and candidate location does not match JD location, subtract 5 points\n"
-                        "  - Experience gap: if candidate experience_years is less than half of JD relevant_experience, subtract 10 points\n"
-                        "  - Gender: if JD gender_preference is not Any and does not match candidate gender, subtract 5 points\n"
-                        "  - College: if JD college_exclusion contains candidate college, subtract 10 points; else if JD college_preference is set and candidate college matches any preferred college, add 5 points\n"
-                        "- scoring_factors: list of exactly 5 objects, one per factor above, in this order: Notice Period, Location, Experience Gap, Gender, College.\n"
-                        "  Each object: {\"factor\": \"<name>\", \"impact\": \"<+0 or -5 or -10>\", \"reason\": \"<one sentence>\"}\n"
-                        "  Use \"+0\" when no penalty applies. Always include all 5 regardless of impact.\n"
-                        "- hard_filters_passed: boolean. True only if candidate passes ALL three hard filters: (1) notice_period within JD limit if specified, (2) location matches JD if work_structure is In-office, (3) experience_years >= half of JD relevant_experience.\n"
-                        "- hard_filter_failures: list of strings naming each hard filter that failed (e.g. \"Notice period too long\", \"Location mismatch\", \"Experience below minimum\"). Empty list if all pass.\n"
-                        "- role_level_detected: string. The actual operating level of the candidate based on their responsibilities and seniority. One of: \"Junior\", \"Mid-level\", \"Senior\", \"Lead\", \"Manager\", \"Director\".\n"
-                        "- role_level_match: string. Compare role_level_detected against the JD level field. One of: \"Match\", \"Over-qualified\", \"Under-qualified\".\n"
-                        "- tool_currency: string. Are the candidate's primary tools and frameworks still actively used in the industry today? One of: \"Current\" (tools are modern and in active use), \"Previous\" (tools are older or being phased out in the industry), \"None\" (cannot assess from resume).\n"
-                        "- key_tool_recency: string. Identify the SINGLE most important tool/framework from the JD (e.g. Copado for a Salesforce DevOps JD). Check if it appears in the candidate's MOST RECENT role specifically (not just somewhere in their history). One of: \"Current\" (used in current/most-recent role), \"Recent\" (used in role within the last 2 years but not the most recent), \"Stale\" (only used >2 years ago or in earlier roles), \"Never\" (no evidence of using it).\n"
-                        "- certifications_assessed: list of objects, one per certification found in the resume. Each object: {\"name\": \"<cert name>\", \"tier\": \"Foundational|Practitioner|Expert|Mentor\"}. Foundational = entry-level/associate/fundamentals; Practitioner = mid-level/professional/admin; Expert = senior/architect/consultant/specialist with proven depth; Mentor = peer-recognised programs (e.g. Copado Mentor, Salesforce MVP). Empty list if none.\n"
-                        "- quantified_outcomes_count: integer. Count of distinct achievements in the resume that include a metric (percentage, dollar amount, count, time saved, scale figure). Example: \"reduced deployment time by 35%\" counts as 1.\n"
-                        "- alternative_role_fit: string. If the candidate is strong but mismatched for THIS role's level/scope, suggest the role they would actually fit (e.g. \"Senior Salesforce Developer\", \"Salesforce Architect\", \"Junior Release Engineer\"). Empty string if they are a fit for this role or not strong enough for any alternative.\n"
-                        "- cv_narrative_style: string. How is the CV written? One of: \"Achievement-focused\" (uses metrics, outcomes, quantified impact), \"Task-focused\" (describes duties and responsibilities without outcomes), \"Mixed\".\n"
-                        "- availability_signal: string. When can the candidate realistically start? Derive from latest role end-date FIRST (if end-date is in the past, mark \"Available now\"), else from stated notice period. Examples: \"Available now\", \"Immediate\", \"2 weeks\", \"30 days\", \"60 days\", \"90 days\", \"Unknown\".\n"
-                        "- availability_reason: string. One short sentence explaining how you inferred availability (e.g. \"Latest role ended March 2026 — currently between roles\", \"Resume states 30-day notice period\").\n"
-                        "- rare_assets: list of up to 3 strings. Unique or rare qualifications that most candidates at this level would not have — niche certifications, rare domain expertise, unusual or highly specialised tech stacks, or high-signal industry achievements. Empty list if none found.\n"
-                        "- self_reported_unverified: list of up to 3 strings. Claims in the resume that appear impressive but cannot be independently verified from the document content alone — e.g. large revenue impact claims without metrics, leadership claims without team size evidence, unverified awards. Empty list if none identified.\n"
-                        "- interview_flags: list of up to 5 strings. Specific questions or topics a recruiter should probe during the interview based on observed inconsistencies, unexplained gaps, or vague claims. Each string is a short actionable probe (e.g. \"Ask about the 2-year gap between Company A and B\", \"Probe actual hands-on depth with Kubernetes\").\n\n"
-                        + (
-                            f"RECRUITER'S ADDITIONAL NOTES ABOUT THE IDEAL CANDIDATE:\n{recruiter_notes}\n"
-                            "Consider this while evaluating fitment. If the candidate clearly contradicts these notes, penalize fitment. "
-                            "If they strongly match, reward fitment.\n\n"
-                            if recruiter_notes and recruiter_notes.strip() else ""
-                        )
-                        + "JSON OUTPUT:"
-                    )
-                }
-            ]
-        )
-        text = response.content[0].text.strip()
-        time.sleep(2)
-        logger.info(f"Claude Pass 2 raw response:\n{text}")
+    # Use full resume — truncate only if extremely long (>20k chars) to avoid token overflow
+    resume_snippet = resume_text[:20000]
+
+    system_prompt = (
+        "You are an expert senior recruiter with 15 years of experience. "
+        "Your job is to evaluate candidates against job descriptions and give honest, decisive assessments. "
+        "You always return valid JSON. You never truncate your response mid-object.\n\n"
+        f"JOB DESCRIPTION:\n{jd_text}"
+    )
+
+    user_prompt = (
+        f"Evaluate this candidate resume against the job description.\n\n"
+        f"CANDIDATE RESUME:\n---\n{resume_snippet}\n---\n\n"
+        + (f"RECRUITER NOTES: {recruiter_notes}\n\n" if recruiter_notes and recruiter_notes.strip() else "")
+        + "Return ONLY a valid JSON object. No markdown, no explanation outside JSON.\n"
+        "CRITICAL: Inside string values use single quotes, not double quotes. Never use unescaped double quotes inside a string.\n\n"
+        "SCORING RULES:\n"
+        "  90-100 = Meets ALL must-haves with evidence — interview immediately\n"
+        "  70-89  = Meets most must-haves, 1-2 small gaps — shortlist\n"
+        "  50-69  = Borderline — key gap or level mismatch — hold\n"
+        "  30-49  = Missing critical requirements — reject unless pool is thin\n"
+        "  0-29   = Wrong domain or hard filter fail — reject\n"
+        "  IMPORTANT: Spread scores realistically. Do NOT cluster everyone between 60-75.\n\n"
+        "REQUIRED JSON FIELDS:\n"
+        "- fitment_score: integer 0-100 (apply scoring rules above; subtract penalties below before returning)\n"
+        "- must_have_breakdown: list of objects {\"skill\": \"<name>\", \"status\": \"Met|Partial|Missing\", \"evidence\": \"<one sentence or empty>\"} — one per must-have skill from JD\n"
+        "- must_have_coverage_ratio: float 0.0-1.0 computed as (Met + 0.5*Partial) / Total\n"
+        "- reasoning: one decisive paragraph starting with the verdict (e.g. 'Strong hire.', 'Borderline — verify X.', 'Reject.'). Name top 2 strengths with evidence. Name top gap. End with clear action.\n"
+        "- strengths: list of exactly 3 strings. Each: CAPS LABEL then 1-2 sentences of specific evidence from resume.\n"
+        "- gaps: list of exactly 2 strings. Each: name the missing requirement and why it matters for this role.\n"
+        "- recommendation: one of \"shortlist\", \"hold\", \"reject\"\n"
+        "- context_bonus: integer 0-15. +5 if company_types match JD preferred_company_type; +5 if avg_team_size matches JD preferred_team_size; +5 if role_type matches JD role_type. Skip any bonus where JD has 'Any'.\n"
+        "- scoring_factors: list of exactly 5 objects {\"factor\": \"<name>\", \"impact\": \"<+0|-5|-10>\", \"reason\": \"<one sentence>\"} in this order: [Notice Period, Location, Experience Gap, Gender, College]. Use +0 when no penalty.\n"
+        "  Penalties: notice_period > JD max = -5; location mismatch for in-office role = -5; experience < half JD requirement = -10; gender mismatch if JD specifies = -5; college exclusion match = -10 / college preference match = +5.\n"
+        "- hard_filters_passed: boolean — true only if notice period, location, and minimum experience all pass\n"
+        "- hard_filter_failures: list of strings for each failed filter. Empty list if all pass.\n"
+        "- role_level_detected: one of \"Junior\"|\"Mid-level\"|\"Senior\"|\"Lead\"|\"Manager\"|\"Director\"\n"
+        "- role_level_match: one of \"Match\"|\"Over-qualified\"|\"Under-qualified\"\n"
+        "- tool_currency: one of \"Current\"|\"Previous\"|\"None\"\n"
+        "- key_tool_recency: one of \"Current\"|\"Recent\"|\"Stale\"|\"Never\" — check the SINGLE most important JD tool in the candidate's most recent role specifically\n"
+        "- certifications_assessed: list of objects {\"name\": \"<cert>\", \"tier\": \"Foundational|Practitioner|Expert|Mentor\"} for every cert in resume. Empty list if none.\n"
+        "- quantified_outcomes_count: integer — count of achievements with a number/metric/percentage\n"
+        "- alternative_role_fit: string — better-matching role title if candidate is mismatched for this one, else empty string\n"
+        "- cv_narrative_style: one of \"Achievement-focused\"|\"Task-focused\"|\"Mixed\"\n"
+        "- availability_signal: one of \"Available now\"|\"Immediate\"|\"2 weeks\"|\"30 days\"|\"60 days\"|\"90 days\"|\"Unknown\"\n"
+        "- availability_reason: one short sentence explaining how you inferred availability\n"
+        "- rare_assets: list of up to 3 strings — rare or niche qualifications most candidates at this level would not have\n"
+        "- self_reported_unverified: list of up to 3 strings — impressive claims that cannot be verified from resume alone\n"
+        "- interview_flags: list of up to 5 strings — specific questions recruiter should probe (gaps, inconsistencies, vague claims)\n\n"
+        "JSON OUTPUT:"
+    )
+
+    _EMPTY_RESULT = {
+        "fitment_score": 0, "reasoning": "AI evaluation failed.", "strengths": [], "gaps": [],
+        "recommendation": "hold", "context_bonus": 0, "scoring_factors": [],
+        "hard_filters_passed": True, "hard_filter_failures": [], "role_level_detected": "Unknown",
+        "role_level_match": "Unknown", "tool_currency": "None", "cv_narrative_style": "Unknown",
+        "availability_signal": "Unknown", "availability_reason": "", "rare_assets": [],
+        "self_reported_unverified": [], "interview_flags": [], "must_have_coverage_ratio": 0.0,
+        "must_have_breakdown": [], "key_tool_recency": "Never", "certifications_assessed": [],
+        "quantified_outcomes_count": 0, "alternative_role_fit": "",
+    }
+
+    max_retries = 20  # never give up — wait it out
+    for attempt in range(max_retries):
         try:
-            result = _parse_json_response(text)
-        except Exception as parse_err:
-            logger.error(f"JSON parse failed for Pass 2 response. Error: {parse_err}\nRaw text was:\n{text}")
-            raise
-        if "context_bonus" not in result:
-            result["context_bonus"] = 0
-        if "scoring_factors" not in result:
-            result["scoring_factors"] = []
-        if "hard_filters_passed" not in result:
-            result["hard_filters_passed"] = True
-        if "hard_filter_failures" not in result:
-            result["hard_filter_failures"] = []
-        if "role_level_detected" not in result:
-            result["role_level_detected"] = "Unknown"
-        if "role_level_match" not in result:
-            result["role_level_match"] = "Unknown"
-        if "tool_currency" not in result:
-            result["tool_currency"] = "None"
-        if "cv_narrative_style" not in result:
-            result["cv_narrative_style"] = "Unknown"
-        if "availability_signal" not in result:
-            result["availability_signal"] = "Unknown"
-        if "rare_assets" not in result:
-            result["rare_assets"] = []
-        if "self_reported_unverified" not in result:
-            result["self_reported_unverified"] = []
-        if "interview_flags" not in result:
-            result["interview_flags"] = []
-        if "must_have_coverage_ratio" not in result:
-            result["must_have_coverage_ratio"] = 0.0
-        try:
-            result["must_have_coverage_ratio"] = float(result["must_have_coverage_ratio"])
-        except (TypeError, ValueError):
-            result["must_have_coverage_ratio"] = 0.0
-        if "must_have_breakdown" not in result or not isinstance(result["must_have_breakdown"], list):
-            result["must_have_breakdown"] = []
-        # Server-side recompute of must_have_coverage_ratio from breakdown when available (defensive)
-        if result["must_have_breakdown"]:
-            total = len(result["must_have_breakdown"])
-            met = sum(1 for x in result["must_have_breakdown"] if (x.get("status") or "").lower() == "met")
-            partial = sum(1 for x in result["must_have_breakdown"] if (x.get("status") or "").lower() == "partial")
-            if total > 0:
-                result["must_have_coverage_ratio"] = (met + 0.5 * partial) / total
-        if "key_tool_recency" not in result:
-            result["key_tool_recency"] = "Never"
-        if "certifications_assessed" not in result or not isinstance(result["certifications_assessed"], list):
-            result["certifications_assessed"] = []
-        if "quantified_outcomes_count" not in result:
-            result["quantified_outcomes_count"] = 0
-        try:
-            result["quantified_outcomes_count"] = int(result["quantified_outcomes_count"])
-        except (TypeError, ValueError):
-            result["quantified_outcomes_count"] = 0
-        if "alternative_role_fit" not in result:
-            result["alternative_role_fit"] = ""
-        if "availability_reason" not in result:
-            result["availability_reason"] = ""
-        return result
-    except Exception as e:
-        logger.error(f"Claude Pass 2 reasoning failed: {e}")
-        return {
-            "fitment_score": 0,
-            "reasoning": "AI evaluation failed.",
-            "strengths": [],
-            "gaps": [],
-            "recommendation": "hold",
-            "context_bonus": 0,
-            "scoring_factors": [],
-            "hard_filters_passed": True,
-            "hard_filter_failures": [],
-            "role_level_detected": "Unknown",
-            "role_level_match": "Unknown",
-            "tool_currency": "None",
-            "cv_narrative_style": "Unknown",
-            "availability_signal": "Unknown",
-            "rare_assets": [],
-            "self_reported_unverified": [],
-            "interview_flags": [],
-            "must_have_coverage_ratio": 0.0,
-            "must_have_breakdown": [],
-            "key_tool_recency": "Never",
-            "certifications_assessed": [],
-            "quantified_outcomes_count": 0,
-            "alternative_role_fit": "",
-            "availability_reason": ""
-        }
+            text = _call_groq(GROQ_REASON_MODEL, user_prompt, max_tokens=4096, system=system_prompt)
+            logger.info(f"Groq Pass 2 raw response (first 300 chars):\n{text[:300]}")
+            try:
+                result = _parse_json_response(text)
+            except Exception as parse_err:
+                # JSON parse failed — log and retry rather than returning zeros
+                logger.warning(f"JSON parse failed on attempt {attempt+1}. Retrying. Error: {parse_err}")
+                time.sleep(10)
+                continue
+
+            # Normalise all fields — fill missing ones with safe defaults
+            result.setdefault("context_bonus", 0)
+            result.setdefault("scoring_factors", [])
+            result.setdefault("hard_filters_passed", True)
+            result.setdefault("hard_filter_failures", [])
+            result.setdefault("role_level_detected", "Unknown")
+            result.setdefault("role_level_match", "Unknown")
+            result.setdefault("tool_currency", "None")
+            result.setdefault("cv_narrative_style", "Unknown")
+            result.setdefault("availability_signal", "Unknown")
+            result.setdefault("availability_reason", "")
+            result.setdefault("rare_assets", [])
+            result.setdefault("self_reported_unverified", [])
+            result.setdefault("interview_flags", [])
+            result.setdefault("must_have_breakdown", [])
+            result.setdefault("key_tool_recency", "Never")
+            result.setdefault("certifications_assessed", [])
+            result.setdefault("alternative_role_fit", "")
+
+            # Safe type coercion
+            try:
+                result["must_have_coverage_ratio"] = float(result.get("must_have_coverage_ratio", 0.0))
+            except (TypeError, ValueError):
+                result["must_have_coverage_ratio"] = 0.0
+            try:
+                result["quantified_outcomes_count"] = int(result.get("quantified_outcomes_count", 0))
+            except (TypeError, ValueError):
+                result["quantified_outcomes_count"] = 0
+
+            # Recompute must_have_coverage_ratio server-side from breakdown (defensive)
+            if isinstance(result.get("must_have_breakdown"), list) and result["must_have_breakdown"]:
+                total = len(result["must_have_breakdown"])
+                met = sum(1 for x in result["must_have_breakdown"] if (x.get("status") or "").lower() == "met")
+                partial = sum(1 for x in result["must_have_breakdown"] if (x.get("status") or "").lower() == "partial")
+                if total > 0:
+                    result["must_have_coverage_ratio"] = round((met + 0.5 * partial) / total, 3)
+
+            if not isinstance(result.get("must_have_breakdown"), list):
+                result["must_have_breakdown"] = []
+            if not isinstance(result.get("certifications_assessed"), list):
+                result["certifications_assessed"] = []
+
+            return result
+
+        except Exception as e:
+            err_str = str(e).lower()
+            if any(x in err_str for x in ("rate limit", "429", "too many requests", "quota")):
+                wait = min(30 * (attempt + 1), 300)
+                logger.warning(f"Groq rate limit on Pass 2 attempt {attempt+1}/{max_retries}. Waiting {wait}s...")
+                time.sleep(wait)
+                continue
+            logger.error(f"Groq Pass 2 unexpected error: {e}")
+            time.sleep(15)
+            continue
+
+    logger.error("Groq Pass 2 failed after all retries.")
+    return _EMPTY_RESULT
 
 
 def extract_resume_metadata(raw_text: str) -> dict:
@@ -430,13 +393,26 @@ def extract_resume_metadata(raw_text: str) -> dict:
             and '&' not in s
             and len(s.strip().split()) <= 2
         ]
+    # Broad fallback — covers tech, marketing, design, finance, ops roles
     if len(skills_found) < 3:
         common_skills = [
+            # Tech
             'Python', 'Java', 'React', 'Angular', 'Node', 'AWS', 'Docker', 'Kubernetes',
-            'SQL', 'NoSQL', 'MongoDB', 'JavaScript', 'TypeScript', 'C++', 'C#', 'PHP', 'Go', 'Rust'
+            'SQL', 'MongoDB', 'JavaScript', 'TypeScript', 'C++', 'C#', 'PHP', 'Go',
+            # Digital Marketing
+            'SEO', 'SEM', 'Google Ads', 'Meta Ads', 'Facebook Ads', 'LinkedIn Ads',
+            'Google Analytics', 'HubSpot', 'Mailchimp', 'Email Marketing', 'Content Marketing',
+            'Social Media', 'Lead Generation', 'CRM', 'WhatsApp', 'Canva',
+            # Design / Architecture
+            'AutoCAD', 'Revit', 'SketchUp', 'Photoshop', 'Illustrator', 'Figma',
+            'V-Ray', 'Enscape', 'Lumion', '3D Modeling',
+            # Finance / Ops
+            'Excel', 'Power BI', 'Tableau', 'Tally', 'SAP', 'QuickBooks',
+            # General
+            'Project Management', 'Agile', 'Scrum', 'Leadership', 'Communication',
         ]
         for s in common_skills:
-            if re.search(rf'\b{s}\b', raw_text, re.IGNORECASE) and s not in skills_found:
+            if re.search(rf'\b{re.escape(s)}\b', raw_text, re.IGNORECASE) and s not in skills_found:
                 skills_found.append(s)
 
     extracted_data = {
@@ -500,7 +476,7 @@ JSON SCHEMA:
 
 RESUME TEXT TO PARSE:
 ---
-{raw_text[:10000]}
+{raw_text[:20000]}
 ---
 
 JSON OUTPUT:"""

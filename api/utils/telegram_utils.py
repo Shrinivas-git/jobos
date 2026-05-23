@@ -7,6 +7,15 @@ logger = logging.getLogger(__name__)
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
 TELEGRAM_ENABLED = bool(TELEGRAM_BOT_TOKEN)
+RECRUITER_CHAT_ID = os.getenv("RECRUITER_TELEGRAM_CHAT_ID", "")
+
+
+def notify_recruiter(message: str) -> bool:
+    """Send a Telegram message to the recruiter's chat."""
+    if not RECRUITER_CHAT_ID:
+        logger.warning("RECRUITER_TELEGRAM_CHAT_ID not set — skipping recruiter Telegram")
+        return False
+    return send_telegram_message(RECRUITER_CHAT_ID, message)
 
 def send_telegram_message(chat_id: str, message: str) -> bool:
     """

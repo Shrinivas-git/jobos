@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", r"D:\staging\jobos\sourcing\output"))
+OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", Path(__file__).parent / "output"))
 
 # Import all source modules
 from sources import naukri, unipile, pdl, indeed, github, coresignal

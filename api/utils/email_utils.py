@@ -3,6 +3,8 @@ import smtplib
 import logging
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
 
 logger = logging.getLogger(__name__)
 
@@ -13,16 +15,27 @@ SMTP_PASSWORD = os.getenv("SMTP_PASSWORD") or os.getenv("EMAIL_PASSWORD", "")
 SMTP_FROM = os.getenv("SMTP_FROM") or SMTP_USER
 
 
-def send_email(to_address: str, subject: str, html_body: str) -> bool:
+def send_email(to_address: str, subject: str, html_body: str, attachment_path: str = None) -> bool:
     if not SMTP_USER or not SMTP_PASSWORD:
         logger.warning("SMTP credentials not configured — skipping email send")
         return False
     try:
-        msg = MIMEMultipart("alternative")
+        msg = MIMEMultipart("mixed")
         msg["Subject"] = subject
         msg["From"] = SMTP_FROM
         msg["To"] = to_address
         msg.attach(MIMEText(html_body, "html"))
+
+        if attachment_path and os.path.exists(attachment_path):
+            with open(attachment_path, "rb") as f:
+                part = MIMEBase("application", "octet-stream")
+                part.set_payload(f.read())
+            encoders.encode_base64(part)
+            filename = os.path.basename(attachment_path)
+            part.add_header("Content-Disposition", f'attachment; filename="{filename}"')
+            msg.attach(part)
+            logger.info(f"Attached {filename} to email for {to_address}")
+
         with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
             server.ehlo()
             server.starttls()

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Header
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Header, Body
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import List, Optional
 from datetime import datetime, timezone
@@ -9,6 +9,13 @@ from pydantic import BaseModel, Field, model_validator
 from utils.pydantic_utils import PyObjectId
 from auth import check_role, get_current_user
 from utils.client_utils import get_db
+from utils.storage_utils import save_resume_file
+from utils.gemini_utils import extract_resume_metadata, generate_embedding
+from utils.qdrant_utils import upsert_resume_vector, delete_resume_vector
+from utils.resume_utils import extract_text_from_file
+from tasks.resume_tasks import process_resume_task
+from tasks.matching_tasks import run_matching
+from tasks.notification_tasks import notify_pool_ready
 
 _bearer = HTTPBearer(auto_error=False)
 INTERNAL_API_KEY = os.getenv("INTERNAL_API_KEY", "")
@@ -22,13 +29,6 @@ async def _internal_or_auth(
     if not credentials:
         raise HTTPException(status_code=401, detail="Not authenticated")
     return await get_current_user(credentials.credentials)
-from utils.storage_utils import save_resume_file
-from utils.gemini_utils import extract_resume_metadata, generate_embedding
-from utils.qdrant_utils import upsert_resume_vector, delete_resume_vector
-from utils.resume_utils import extract_text_from_file
-from tasks.resume_tasks import process_resume_task
-from tasks.matching_tasks import run_matching
-from tasks.notification_tasks import notify_pool_ready
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +52,7 @@ class CandidateResponse(BaseModel):
     languages: Optional[List[str]] = None
     status: str
     source: str
-    file_paths: List[str]
+    file_paths: List[str] = []
     created_at: datetime
     updated_at: datetime
 
@@ -109,6 +109,61 @@ async def get_candidates(user: dict = Depends(check_role(["recruiter", "manager"
     db = get_db()
     candidates = list(db.candidates.find({}, {"_id": 0}))
     return candidates
+
+@router.get("/sourced")
+async def get_sourced_candidates(
+    jd_id: str,
+    user: dict = Depends(check_role(["recruiter", "manager", "hod", "admin"]))
+):
+    """Return LinkedIn-sourced candidates for a given JD."""
+    db = get_db()
+    candidates = list(db.candidates.find(
+        {"source": "unipile_linkedin", "jd_id": jd_id},
+        {"_id": 0, "candidate_id": 1, "name": 1, "headline": 1, "location": 1,
+         "linkedin_url": 1, "linkedin_provider_id": 1, "form_sent": 1, "created_at": 1}
+    ).sort("created_at", -1))
+    return candidates
+
+
+@router.post("/{candidate_id}/send-linkedin-message")
+async def send_linkedin_message_to_candidate(
+    candidate_id: str,
+    jd_id: str = Body(...),
+    user: dict = Depends(check_role(["recruiter", "manager", "hod", "admin"]))
+):
+    """Send a LinkedIn DM to a sourced candidate with the application form link."""
+    from utils.unipile_utils import send_linkedin_message
+    db = get_db()
+    candidate = db.candidates.find_one({"candidate_id": candidate_id})
+    if not candidate:
+        raise HTTPException(status_code=404, detail="Candidate not found")
+
+    provider_id = candidate.get("linkedin_provider_id", "")
+    if not provider_id:
+        raise HTTPException(status_code=400, detail="No LinkedIn provider ID stored for this candidate — cannot send message via Unipile")
+
+    jd = db.job_descriptions.find_one({"jd_id": jd_id}, {"title": 1})
+    job_title = jd.get("title", "a role") if jd else "a role"
+
+    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+    form_url = f"{frontend_url}/apply/{jd_id}/{candidate_id}"
+
+    message = (
+        f"Hi {candidate.get('name', 'there')},\n\n"
+        f"I came across your LinkedIn profile and believe you could be a great fit for our {job_title} opening.\n\n"
+        f"If you're interested, please take 2 minutes to fill out this short application form:\n{form_url}\n\n"
+        f"Looking forward to hearing from you!"
+    )
+
+    result = send_linkedin_message(provider_id, message)
+    if not result.get("ok"):
+        raise HTTPException(status_code=502, detail=f"Unipile error: {result.get('error')}")
+
+    db.candidates.update_one(
+        {"candidate_id": candidate_id},
+        {"$set": {"form_sent": True, "form_sent_at": datetime.now(timezone.utc)}}
+    )
+    return {"ok": True, "message": "LinkedIn message sent successfully"}
 
 @router.get("/me", response_model=CandidateResponse)
 async def get_my_profile(user: dict = Depends(check_role(["candidate"]))):
@@ -529,6 +584,16 @@ async def upload_resume(
 
 # ── DPDP: Consent & Right-to-Erasure ─────────────────────────────────────────
 
+@router.get("/{candidate_id}/public")
+async def get_candidate_public(candidate_id: str):
+    """Public endpoint — returns only name for use on candidate-facing form page."""
+    db = get_db()
+    c = db.candidates.find_one({"candidate_id": candidate_id}, {"_id": 0, "candidate_id": 1, "name": 1})
+    if not c:
+        raise HTTPException(status_code=404, detail="Candidate not found")
+    return c
+
+
 @router.post("/{candidate_id}/consent")
 async def record_consent(
     candidate_id: str,
@@ -598,6 +663,8 @@ async def delete_candidate(
     db.candidates.delete_one({"candidate_id": candidate_id})
     db.candidate_pools.delete_many({"candidate_id": candidate_id})
     db.pipeline_stages.delete_many({"candidate_id": candidate_id})
+    db.form_responses.delete_many({"candidate_id": candidate_id})
+    db.reminder_log.delete_many({"candidate_id": candidate_id})
 
     # 2. Remove from Qdrant
     try:
@@ -605,13 +672,18 @@ async def delete_candidate(
     except Exception as e:
         logger.warning(f"Qdrant delete failed for {candidate_id}: {e}")
 
-    # 3. Remove filesystem folder
+    # 3. Remove filesystem folders (resume + video)
     try:
+        import shutil
         resume_folder = os.path.join("data", "resumes", candidate_id)
         if os.path.isdir(resume_folder):
-            import shutil
             shutil.rmtree(resume_folder)
             logger.info(f"Deleted resume folder: {resume_folder}")
+        for jd_folder in ["/data/video_resumes"]:
+            video_folder = os.path.join(jd_folder, "*", candidate_id)
+            import glob
+            for vf in glob.glob(video_folder):
+                shutil.rmtree(vf, ignore_errors=True)
     except Exception as e:
         logger.warning(f"Filesystem delete failed for {candidate_id}: {e}")
 

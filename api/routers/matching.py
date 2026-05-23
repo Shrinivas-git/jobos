@@ -155,6 +155,27 @@ async def record_candidate_action(
     return {"ok": True}
 
 
+class ClientSelectionBody(BaseModel):
+    approved_ids: List[str]
+
+@router.patch("/client-selection/{jd_id}")
+async def save_client_selection(
+    jd_id: str,
+    body: ClientSelectionBody,
+    user: dict = Depends(check_role(["recruiter", "manager", "admin"])),
+):
+    """Mark which shortlisted candidates the client approved."""
+    db = get_db()
+    shortlisted = list(db.candidate_pools.find({"jd_id": jd_id, "status": "shortlisted"}, {"candidate_id": 1}))
+    for c in shortlisted:
+        approved = c["candidate_id"] in body.approved_ids
+        db.candidate_pools.update_one(
+            {"jd_id": jd_id, "candidate_id": c["candidate_id"]},
+            {"$set": {"client_approved": approved, "updated_at": datetime.utcnow()}},
+        )
+    return {"ok": True, "approved": len(body.approved_ids)}
+
+
 @router.get("/pipeline-stats/{jd_id}")
 async def get_pipeline_stats(
     jd_id: str,

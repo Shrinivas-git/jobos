@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { API, getAuthHeaders } from '../utils/api';
-import { RefreshCw, Download, Eye, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { RefreshCw, Eye } from 'lucide-react';
 
 interface FormResponse {
   response_id: string;
@@ -34,6 +34,7 @@ const FormResponses: React.FC = () => {
   const [jds, setJds] = useState<JD[]>([]);
   const [selectedJdId, setSelectedJdId] = useState<string>('');
   const [responses, setResponses] = useState<FormResponse[]>([]);
+  const [candidateNames, setCandidateNames] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState({ total: 0, submitted: 0, video_analyzed: 0 });
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -44,19 +45,25 @@ const FormResponses: React.FC = () => {
   const [syncResult, setSyncResult] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchJds();
+    const init = async () => {
+      try {
+        const [jdRes, candRes] = await Promise.all([
+          fetch(`${API}/jd/`, { headers: getAuthHeaders() }),
+          fetch(`${API}/candidates/`, { headers: getAuthHeaders() }),
+        ]);
+        if (jdRes.ok) setJds(await jdRes.json());
+        if (candRes.ok) {
+          const cands: { candidate_id: string; name?: string }[] = await candRes.json();
+          const lookup: Record<string, string> = {};
+          cands.forEach(c => { lookup[c.candidate_id] = c.name || c.candidate_id; });
+          setCandidateNames(lookup);
+        }
+      } catch (e: any) {
+        console.error('Init error:', e.message);
+      }
+    };
+    init();
   }, []);
-
-  const fetchJds = async () => {
-    try {
-      const res = await fetch(`${API}/jd/`, { headers: getAuthHeaders() });
-      if (!res.ok) throw new Error('Failed to fetch JDs');
-      const data = await res.json();
-      setJds(data);
-    } catch (e: any) {
-      console.error('Error fetching JDs:', e.message);
-    }
-  };
 
   const fetchResponses = async (jd_id: string) => {
     if (!jd_id) return;
@@ -231,7 +238,7 @@ const FormResponses: React.FC = () => {
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <p className="font-semibold text-white text-sm">{response.candidate_id}</p>
+                        <p className="font-semibold text-white text-sm">{candidateNames[response.candidate_id] || response.candidate_id}</p>
                         <span className={`text-xs px-2 py-1 rounded-lg font-bold ${
                           response.status === 'submitted' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-slate-700/50 text-slate-400'
                         }`}>
@@ -342,7 +349,7 @@ const FormResponses: React.FC = () => {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full max-h-96 overflow-y-auto p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white">{selectedResponse.candidate_id}</h2>
+              <h2 className="text-xl font-bold text-white">{candidateNames[selectedResponse.candidate_id] || selectedResponse.candidate_id}</h2>
               <button
                 onClick={() => setShowDetailModal(false)}
                 className="text-slate-400 hover:text-white"

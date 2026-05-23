@@ -81,7 +81,28 @@
       "Bash(Write-Output \"Directory does not exist\")",
       "Bash(python fetch_all.py --jd sample_jd.json --sources pdl)",
       "PowerShell(ls \\(Get-Location\\) | Select-Object Name, Mode)",
-      "PowerShell(Get-Location; \"---\"; Get-ChildItem -Path \"C:\\\\staging\\\\jobos\" | Select-Object Name)"
+      "PowerShell(Get-Location; \"---\"; Get-ChildItem -Path \"C:\\\\staging\\\\jobos\" | Select-Object Name)",
+      "Bash(Select-Object FullName)",
+      "Bash(Select-String *)",
+      "Bash(python -c ' *)",
+      "PowerShell(docker cp C:\\\\staging\\\\jobos\\\\scripts\\\\force_sourcing_flag.py api:/tmp/flag.py; docker exec api python /tmp/flag.py)",
+      "PowerShell(docker cp C:\\\\staging\\\\jobos\\\\scripts\\\\check_flag.py api:/tmp/check_flag.py; docker exec -e PYTHONPATH=/app api python /tmp/check_flag.py)",
+      "PowerShell(docker cp C:\\\\staging\\\\jobos\\\\scripts\\\\fix_sourcing_flags.py api:/tmp/fix_sourcing_flags.py; docker exec -e PYTHONPATH=/app api python /tmp/fix_sourcing_flags.py)",
+      "PowerShell(docker cp C:\\\\staging\\\\jobos\\\\scripts\\\\check_linkedin_candidates.py api:/tmp/check_li.py; docker exec -e PYTHONPATH=/app api python /tmp/check_li.py)",
+      "Bash(findstr /i \"BASE URL FRONTEND\")",
+      "Bash(powershell -Command \"Select-String -Path 'C:\\\\staging\\\\jobos\\\\.env' -Pattern 'BASE|URL|FRONTEND'\")",
+      "Bash(powershell -Command \"Invoke-WebRequest -Uri 'http://localhost:8000/feed/indeed.xml' -UseBasicParsing | Select-Object -ExpandProperty Content\")",
+      "PowerShell($headers = @{\"X-API-KEY\"=\"CcAGVat9.hFAvDCzBFd/QToEc4dhA7C34GycNFn/r5byV389zglU=\"; \"account_id\"=\"rE-gi0QPTNCdZ5dFr1bp6A\"}; \\(Invoke-WebRequest -Uri \"https://api43.unipile.com:17352/api/v1/users/me\" -Headers $headers\\).Content)",
+      "PowerShell($headers = @{\"X-API-KEY\"=\"CcAGVat9.hFAvDCzBFd/QToEc4dhA7C34GycNFn/r5byV389zglU=\"}; \\(Invoke-WebRequest -Uri \"https://api43.unipile.com:17352/api/v1/users/me?account_id=rE-gi0QPTNCdZ5dFr1bp6A\" -Headers $headers\\).Content)",
+      "Bash(python *)",
+      "WebFetch(domain:docs.unipile.com)",
+      "WebFetch(domain:www.unipile.com)",
+      "WebFetch(domain:internshala.com)",
+      "Bash(Out-String)",
+      "Bash(grep -nA 25 -E \"^\\\\s*worker:\" docker-compose.yml)",
+      "Bash(Get-Content \"C:\\\\staging\\\\jobos\\\\.env\")",
+      "Bash(Select-Object -Last 5)",
+      "Bash(pip show *)"
     ]
   }
 }

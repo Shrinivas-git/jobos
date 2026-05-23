@@ -19,6 +19,9 @@ celery = Celery(
         'tasks.invoice_tasks',
         'tasks.video_analysis_tasks',
         'tasks.reminder_tasks',
+        'tasks.linkedin_tasks',
+        'tasks.browser_tasks',
+        'tasks.internshala_tasks',
     ]
 )
 
@@ -55,5 +58,17 @@ celery.conf.beat_schedule = {
     "send-pending-reminders-evening": {
         "task": "tasks.reminder_tasks.process_pending_responses",
         "schedule": crontab(hour=17, minute=0),  # Daily at 5pm UTC
+    },
+    "poll-linkedin-applicants": {
+        "task": "tasks.linkedin_tasks.poll_linkedin_applicants",
+        "schedule": crontab(minute=0, hour="*/4"),  # Every 4 hours
+    },
+    "poll-linkedin-connections": {
+        "task": "tasks.linkedin_tasks.poll_linkedin_connections",
+        "schedule": crontab(minute=30, hour="*/4"),  # Every 4 hours, offset by 30min
+    },
+    "poll-internshala-applicants": {
+        "task": "tasks.internshala_tasks.poll_internshala_applicants",
+        "schedule": crontab(minute=15, hour="*/4"),  # Every 4 hours, offset by 15min
     },
 }

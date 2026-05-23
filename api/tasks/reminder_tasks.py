@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from celery_app import celery
 from utils.client_utils import get_db
 from utils.email_utils import send_email
-from utils.telegram_utils import send_telegram_message, format_reminder_message, TELEGRAM_ENABLED
+from utils.telegram_utils import send_telegram_message, format_reminder_message, notify_recruiter, TELEGRAM_ENABLED
 
 logger = logging.getLogger(__name__)
 
@@ -200,16 +200,28 @@ def _process_pending_stage(db, pipeline_doc: dict, stage_key: str, stage_name: s
         # Send email
         email_sent = send_email(recipient_email, subject, html_body)
 
-        # Send Telegram if enabled and ID exists
+        # Send Telegram to candidate (if they have a handle) and always to recruiter
         telegram_sent = False
-        if TELEGRAM_ENABLED and recipient_id_field == "candidate_id" and recipient_telegram_id:
-            telegram_message = format_reminder_message(
+        if TELEGRAM_ENABLED:
+            reminder_msg = format_reminder_message(
                 next_reminder_number,
                 stage_name,
                 recipient_name,
                 {"due_date": "ASAP"}
             )
-            telegram_sent = send_telegram_message(recipient_telegram_id, telegram_message)
+            # Candidate Telegram (if available)
+            if recipient_id_field == "candidate_id" and recipient_telegram_id:
+                telegram_sent = send_telegram_message(recipient_telegram_id, reminder_msg)
+
+            # Always notify recruiter
+            jd_id = pipeline_doc.get("jd_id", "")
+            recruiter_msg = (
+                f"🔔 <b>Reminder #{next_reminder_number} sent</b>\n"
+                f"<b>Candidate:</b> {recipient_name}\n"
+                f"<b>Stage:</b> {stage_name}\n"
+                f"<b>JD:</b> {jd_id}"
+            )
+            notify_recruiter(recruiter_msg)
 
         # Update tracking
         db.pipeline_stages.update_one(
