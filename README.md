@@ -53,12 +53,13 @@ JobOS manages the full hiring lifecycle:
 └─────────────────────┘  └──────────────────┘
 ```
 
-**AI Models (via Groq)**
+**AI Models**
 
-| Role | Model |
-|------|-------|
-| Fast (extraction, parsing) | `llama-3.1-8b-instant` |
-| Reasoning (matching, scoring) | `llama-3.3-70b-versatile` |
+| Role | Provider | Model |
+|------|----------|-------|
+| Fast extraction & parsing | Groq | `llama-3.1-8b-instant` |
+| Reasoning (assessments, CRM, notifications) | Groq | `llama-3.3-70b-versatile` |
+| Deep fitment scoring & matching (Pass 2) | Claude API (Anthropic) | `claude-sonnet-4-6` |
 
 ---
 
@@ -100,6 +101,7 @@ cp .env.example .env   # fill in your keys (see below)
 ```env
 # AI
 GROQ_API_KEY=gsk_...
+ANTHROPIC_API_KEY=sk-ant-...
 
 # MongoDB
 MONGO_URI=mongodb://root:example@mongodb:27017
