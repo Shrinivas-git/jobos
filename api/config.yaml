@@ -1,0 +1,43 @@
+matching:
+  internal_pool_first: true
+  k_threshold: 10
+  p_threshold: 0.15
+  batch_size: 3
+  max_batches: 10
+  rerank_on_rejection: true
+
+sourcing:
+  fallback_order:
+    - naukri
+    - unipile_linkedin
+  email_intake_address: "jd-intake@jobos.internal"
+  resume_intake_address: "resumes@jobos.internal"
+  poll_interval_minutes: 5
+
+notifications:
+  manager_notify_on_pool_ready: true
+  hod_notify_on_pool_ready: true
+  rank_change_threshold: 3
+  smtp_from: "JobOS <noreply@jobos.internal>"
+  channels:
+    - in_app
+    - email
+
+pipeline:
+  stage_order:
+    - shortlist
+    - interview_1
+    - interview_final
+    - offer
+    - joined
+  sla_hours:
+    shortlist: 72
+    interview_1: 120
+    interview_final: 168
+    offer: 72
+    joined: 360
+  warning_threshold: 0.75
+  monitor_interval_minutes: 30
+  escalation_roles:
+    - manager
+    - admin
