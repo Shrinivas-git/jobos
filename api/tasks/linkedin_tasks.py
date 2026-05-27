@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 UNIPILE_DSN = os.getenv("UNIPILE_DSN", "api43.unipile.com:17352")
 UNIPILE_BASE = f"https://{UNIPILE_DSN}/api/v1"
 RECRUITER_EMAIL = os.getenv("RECRUITER_EMAIL", "radhika@refiningskills.org")
-COMPANY_NAME = os.getenv("COMPANY_NAME", "Refining Skills")
 
 
 def _fetch_job_applicants(linkedin_job_id: str) -> tuple[list, str | None]:
@@ -74,6 +73,7 @@ def source_linkedin_outbound(jd_id: str, max_results: int = 10):
         return
 
     job_title = jd.get("title", "a role")
+    company = jd.get("company") or jd.get("structured_data", {}).get("company", "")
 
     # TEST MODE guard — only send to Shrinivas until fully validated
     TEST_MODE = os.getenv("LINKEDIN_OUTBOUND_TEST_MODE", "true").lower() == "true"
@@ -127,6 +127,7 @@ def source_linkedin_outbound(jd_id: str, max_results: int = 10):
             "provider_id": provider_id,
             "name": name,
             "job_title": job_title,
+            "company": company,
             "linkedin_outbound_status": "connection_sent",
             "connection_sent_at": datetime.now(timezone.utc),
             "dm_sent_at": None,
@@ -174,6 +175,7 @@ def poll_linkedin_connections():
         candidate_id = record["candidate_id"]
         name = record.get("name", "there")
         job_title = record.get("job_title", "a role")
+        company = record.get("company", "")
         sent_at = record.get("connection_sent_at")
 
         # Expire requests older than 7 days
@@ -210,12 +212,11 @@ def poll_linkedin_connections():
         # Connection accepted — send DM with form link
         form_url = f"{frontend_url}/apply/{jd_id}/{candidate_id}"
         first_name = name.split()[0] if name and name != "there" else "there"
+        at_company = f" at {company}" if company else ""
         message = (
-            f"Hi {first_name}, thanks for connecting! Quick note — we are currently testing our automated "
-            f"recruitment system, so please don't take this too seriously. 😊 That said, we do have an opening "
-            f"for a {job_title} role at {COMPANY_NAME} that looks like a strong match for your background. "
-            f"If you're interested, here's a short 2-minute form:\n{form_url}\n\n"
-            f"(This is a test run — no pressure at all!)"
+            f"Hi {first_name}, thanks for connecting! We have an opening for a {job_title} role{at_company} "
+            f"that looks like a strong match for your background. "
+            f"If you're interested, here's a short 2-minute form:\n{form_url}"
         )
 
         result = send_linkedin_message(provider_id, message)
@@ -261,6 +262,7 @@ def poll_linkedin_applicants():
         jd_id = jd["jd_id"]
         linkedin_job_id = jd["linkedin_job_id"]
         job_title = jd.get("title", "a role")
+        company = jd.get("company") or jd.get("structured_data", {}).get("company", "")
 
         applicants, error = _fetch_job_applicants(linkedin_job_id)
         if error:
@@ -332,8 +334,9 @@ def poll_linkedin_applicants():
 
                 form_url = f"{frontend_url}/apply/{jd_id}/{candidate_id}"
                 first_name = name.split()[0] if name and name != "there" else "there"
+                at_company = f" at {company}" if company else ""
                 message = (
-                    f"Hi {first_name}, thanks for applying for the {job_title} role at Refining Skills! "
+                    f"Hi {first_name}, thanks for applying for the {job_title} role{at_company}! "
                     f"To process your application, please fill out this short form (takes 2 mins):\n{form_url}"
                 )
                 result = send_linkedin_message(provider_id, message)
