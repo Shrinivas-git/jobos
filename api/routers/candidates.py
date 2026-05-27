@@ -450,7 +450,7 @@ async def upload_resume(
         if not text:
             raise Exception("Failed to extract text from file")
             
-        # 2. Metadata Extraction via Gemini
+        # 2. Metadata Extraction via Groq
         metadata = extract_resume_metadata(text)
         
         # Handle unique email generation

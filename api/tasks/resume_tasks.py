@@ -24,8 +24,8 @@ def process_resume_task(candidate_id: str, file_path: str, source: str = "web_up
         )
         return
     
-    # 2. Metadata Extraction via Gemini
-    logger.info("Extracting metadata via Gemini...")
+    # 2. Metadata Extraction via Groq
+    logger.info("Extracting metadata via Groq...")
     metadata = extract_resume_metadata(text)
     
     # FIX: Handle unique email generation and duplicate emails

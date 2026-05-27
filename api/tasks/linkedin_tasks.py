@@ -194,6 +194,19 @@ def poll_linkedin_connections():
             logger.debug(f"[LinkedIn Connections Poll] {name}: still {relation_type}")
             continue
 
+        # Skip if a DM was already sent to this person for any JD
+        already_dmed = db.linkedin_outbound.find_one({
+            "provider_id": provider_id,
+            "linkedin_outbound_status": "dm_sent",
+        })
+        if already_dmed:
+            db.linkedin_outbound.update_one(
+                {"_id": record["_id"]},
+                {"$set": {"linkedin_outbound_status": "dm_skipped_already_sent"}}
+            )
+            logger.info(f"[LinkedIn Connections Poll] Skipping DM to {name} — already sent for JD {already_dmed['jd_id']}")
+            continue
+
         # Connection accepted — send DM with form link
         form_url = f"{frontend_url}/apply/{jd_id}/{candidate_id}"
         first_name = name.split()[0] if name and name != "there" else "there"

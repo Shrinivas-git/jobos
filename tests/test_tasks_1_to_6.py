@@ -60,18 +60,15 @@ def test_task_004_jd_intake_logic():
 def test_task_005_jd_structuring_logic():
     clear_project_modules()
     logger.info("Verifying TASK-005: JD Structuring Logic...")
-    
-    with patch("google.generativeai.GenerativeModel") as mock_model_class:
-        mock_model = mock_model_class.return_value
-        mock_response = MagicMock()
-        mock_response.text = '{"title": "Software Engineer", "skills": ["Python", "Docker"]}'
-        mock_model.generate_content.return_value = mock_response
-        
+
+    with patch("utils.gemini_utils._call_groq") as mock_groq:
+        mock_groq.return_value = '{"title": "Software Engineer", "skills": ["Python", "Docker"]}'
+
         from utils.gemini_utils import extract_jd_data
         data = extract_jd_data("Need a Python dev with Docker.")
         assert data["title"] == "Software Engineer"
         assert "Python" in data["skills"]
-    logger.info(" - JD structuring Gemini extraction: PASSED")
+    logger.info(" - JD structuring Groq extraction: PASSED")
 
 # TASK-006: Resume Ingestion Pipeline
 def test_task_006_resume_ingestion_logic():
