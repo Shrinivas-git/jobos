@@ -42,7 +42,7 @@ def process_jd_task(jd_id: str):
             file_path = os.path.join(raw_path, raw_file)
             
             ext = raw_file.split('.')[-1].lower()
-            if ext in ('pdf', 'docx'):
+            if ext in ('pdf', 'docx', 'odt'):
                 raw_text = extract_text_from_file(file_path)
                 if not raw_text:
                     logger.error(f"Text extraction returned empty for {raw_file}")

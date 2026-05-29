@@ -23,6 +23,17 @@ def extract_text_from_file(file_path: str) -> str:
             doc = docx.Document(file_path)
             for para in doc.paragraphs:
                 text += para.text + "\n"
+        elif ext == 'odt':
+            import zipfile
+            from xml.etree import ElementTree as ET
+            with zipfile.ZipFile(file_path) as z:
+                with z.open('content.xml') as f:
+                    tree = ET.parse(f)
+                    root = tree.getroot()
+                    ns = {'text': 'urn:oasis:names:tc:opendocument:xmlns:text:1.0'}
+                    for elem in root.iter():
+                        if elem.text:
+                            text += elem.text + " "
         else:
             logger.warning(f"Unsupported file extension: {ext}")
     except Exception as e:
