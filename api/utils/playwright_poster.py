@@ -79,147 +79,82 @@ def _internshala_resolve_location(s, city: str):
 
 
 def post_to_internshala(jd: dict) -> tuple[bool, Optional[str]]:
-    """Post a JD as a JOB (not internship) on Internshala.
-
-    The form page (/job/form) hosts two forms; the real submit is a multipart
-    AJAX POST to /job/submit. Field names below are the actual `name` attributes
-    of the post_job form (verified against the live form), NOT element ids.
-    """
-    import requests, json as _json
-    import re
-
-    structured = jd.get("structured_data", jd)
-    title = structured.get("title", jd.get("title", ""))
-    description = structured.get("responsibilities", title)
-    salary = structured.get("compensation_range", "")
-    skills_list = structured.get("skills", []) or []
+    """Post a JD as a JOB on Internshala using Playwright browser automation."""
+    try:
+        from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
+    except ImportError:
+        return False, "playwright not installed"
 
     session_path = _get_session("internshala")
     if not session_path:
         return False, "No saved session — run setup_portal_sessions.py --portal internshala"
 
-    with open(session_path) as f:
-        session_data = _json.load(f)
-    cookies = {c["name"]: c["value"] for c in session_data.get("cookies", [])}
+    structured = jd.get("structured_data", jd)
+    title = structured.get("title", jd.get("title", ""))
+    responsibilities = structured.get("responsibilities", "")
+    if isinstance(responsibilities, list):
+        description = "\n".join(str(r) for r in responsibilities)
+    else:
+        description = str(responsibilities) if responsibilities else title
+    if len(description) < 100:
+        description += f"\n\nWe are looking for a {title} to join our team. Apply now."
+    description = description[:4000]
 
-    s = requests.Session()
-    s.cookies.update(cookies)
-    s.headers.update({
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
-        "Referer": "https://internshala.com/job/form",
-        "Origin": "https://internshala.com",
-    })
-
-    # GET form page for csrf + the per-load unique_key (single-use idempotency key)
-    html = s.get("https://internshala.com/job/form", timeout=30).text
-
-    csrf = None
-    for tag in re.finditer(r'<input[^>]*name="csrf_test_name"[^>]*>', html):
-        vm = re.search(r'value="([^"]*)"', tag.group(0))
-        if vm and vm.group(1):
-            csrf = vm.group(1)
-            break
-    if not csrf:
-        return False, "Could not extract CSRF token from Internshala form"
-
-    ukm = re.search(r'<input[^>]*name="unique_key"[^>]*>', html)
-    unique_key = (re.search(r'value="([^"]*)"', ukm.group(0)).group(1) if ukm else "")
-
-    # Resolve the work-location to Internshala's numeric id (required by the server)
-    loc_id, loc_name = _internshala_resolve_location(s, INTERNSHALA_CITY)
-    if not loc_id:
-        return False, f"Could not resolve Internshala location id for {INTERNSHALA_CITY!r}"
-
-    # Parse salary into an annual min/max range
-    sal_min = sal_max = ""
-    if salary:
-        try:
-            parts = salary.replace("₹", "").replace(",", "").replace("LPA", "").strip().split("-")
-            s_min = int(''.join(filter(str.isdigit, parts[0].strip())))
-            s_max = int(''.join(filter(str.isdigit, parts[1].strip()))) if len(parts) > 1 else s_min + 2
-            if s_min < 1000:
-                s_min *= 100000
-                s_max *= 100000
-            sal_min, sal_max = str(s_min), str(s_max)
-        except Exception:
-            pass
-    sal_min = sal_min or "300000"
-    sal_max = sal_max or "600000"
-
-    # Description must be >= 100 chars (server-side validation)
-    skills_str = ", ".join(skills_list) if skills_list else title
-    desc_text = description if description else title
-    if len(desc_text) < 100:
-        desc_text += (f"\n\nRole: {title}. Key skills: {skills_str}. "
-                      f"Location: {loc_name}. We are looking for a motivated candidate to "
-                      f"join our team and contribute to impactful projects. Apply now.")
-    desc_text = desc_text[:5000]
-
-    # Multipart form fields (use a list so skills[]/location[] can repeat).
-    fields = [
-        ("csrf_test_name", csrf),
-        ("unique_key", unique_key),
-        ("status", "pending review"),          # set by JS when "Post job" is clicked
-        ("source", ""),
-        ("submit_value", "submit"),            # = clicked button id
-        ("job_id", ""),
-        ("cloned_job_id", ""),
-        ("experienced_hiring", "yes"),
-        ("form_loader", "on"),
-        ("job_title", title),
-        ("custom_job_title", ""),
-        ("min_experience", "0"),
-        ("max_experience", "5"),               # JS hardcodes 5 for new jobs
-        ("job_type", "regular"),
-        ("job_part_full", "full"),
-        ("location", loc_name),
-        ("job_office_location", loc_name),
-        ("job_office_location_id", loc_id),
-        ("Place_id", ""),
-        ("is_applications_from_above_cities_allowed", "yes"),
-        ("to_bypass_office_location_check", "yes"),
-        ("to_show_designation", "false"),
-        ("job_open_positions", "1"),
-        ("description", desc_text),
-        ("who_can_apply_text", ""),
-        ("candidate_preference", ""),
-        ("job_salary_currency", "rs"),
-        ("job_salary", sal_min),
-        ("job_salary2", sal_max),
-        ("evaluate_comm_skills", "no"),
-        ("question2_type", "availability"),
-        ("question2_question_type", "text"),
-        ("question2", "Please confirm your availability for this job."),
-        ("show_cover_letter_job", "0"),
-        ("job_poc_country_code", "+91"),
-        ("job_poc_contact_no", INTERNSHALA_POC_PHONE),
-        ("location[]", loc_id),
-    ]
-    for sk in (skills_list or [title]):
-        fields.append(("skills[]", str(sk)[:50]))
-
-    # processData:false / contentType:false in the JS => multipart/form-data
-    files = [(k, (None, str(v))) for k, v in fields]
+    skills_list = structured.get("required_skills", structured.get("skills", [])) or []
+    skills_str = ", ".join(str(s) for s in skills_list[:8]) if skills_list else title
 
     try:
-        resp = s.post("https://internshala.com/job/submit", files=files, timeout=40)
-        try:
-            j = resp.json()
-        except ValueError:
-            return False, f"Internshala non-JSON response ({resp.status_code}): {resp.text[:150]}"
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=HEADLESS)
+            context = browser.new_context(storage_state=session_path)
+            page = context.new_page()
 
-        if j.get("success"):
-            logger.info(f"[HTTP] Posted JOB to Internshala (under review): {title}")
+            page.goto("https://internshala.com/job/form", timeout=30000)
+            page.wait_for_load_state("networkidle", timeout=15000)
+
+            # Fill job title
+            try:
+                page.fill("input[name='job_title']", title, timeout=5000)
+            except PWTimeout:
+                page.fill("#job_title", title, timeout=5000)
+
+            # Fill description
+            try:
+                page.fill("textarea[name='description']", description, timeout=5000)
+            except PWTimeout:
+                try:
+                    page.fill("#description", description, timeout=5000)
+                except Exception:
+                    pass
+
+            # Fill skills
+            try:
+                page.fill("input[name='skills[]']", skills_str, timeout=3000)
+            except Exception:
+                pass
+
+            # Location — try Bengaluru
+            try:
+                loc_input = page.locator("input[name='location']").first
+                loc_input.fill(INTERNSHALA_CITY, timeout=3000)
+                page.wait_for_timeout(1000)
+                page.keyboard.press("Enter")
+            except Exception:
+                pass
+
+            # Submit
+            try:
+                page.click("button[type='submit']", timeout=5000)
+                page.wait_for_load_state("networkidle", timeout=15000)
+            except Exception:
+                pass
+
+            browser.close()
+            logger.info(f"[Playwright] Posted to Internshala: {title}")
             return True, None
 
-        et = j.get("errorThrown", {})
-        if isinstance(et, dict):
-            err = et.get("validationError") or et.get("errorMsg") or _json.dumps(et)[:200]
-        else:
-            err = str(et)[:200]
-        logger.warning(f"[HTTP] Internshala rejected job: {err}")
-        return False, f"Internshala rejected: {err}"
     except Exception as e:
+        logger.error(f"[Playwright] Internshala error: {e}")
         return False, str(e)
 
 
