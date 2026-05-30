@@ -20,7 +20,8 @@ import CandidateForm from './pages/CandidateForm';
 const _isPublicPath =
   window.location.pathname.startsWith('/assessment/') ||
   window.location.pathname.startsWith('/offer-response/') ||
-  window.location.pathname.startsWith('/form/');
+  window.location.pathname.startsWith('/form/') ||
+  window.location.pathname.startsWith('/apply/');
 
 const App: React.FC = () => {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
