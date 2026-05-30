@@ -349,7 +349,8 @@ async def send_form_link(
             raise HTTPException(status_code=400, detail="Candidate email not found")
 
         # Use the real Google Form URL
-        form_link = os.getenv("GOOGLE_FORM_URL", f"http://localhost:3000/form/{jd_id}/{candidate_id}")
+        base = os.getenv("APP_BASE_URL", "https://34.135.116.1")
+        form_link = f"{base}/form/{jd_id}/{candidate_id}"
 
         # Send email to candidate
         subject = f"Video Resume Form - {jd_title}"
