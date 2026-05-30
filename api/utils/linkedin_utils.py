@@ -3,6 +3,13 @@ import os
 FRONTEND_URL = os.getenv("FRONTEND_URL", os.getenv("APP_BASE_URL", "http://localhost:5173"))
 
 
+def _as_text(value) -> str:
+    """Normalize a field that may be a string or a list of bullet points into text."""
+    if isinstance(value, list):
+        return ". ".join(str(v).strip().rstrip(".") for v in value if str(v).strip())
+    return str(value or "")
+
+
 def generate_linkedin_post_draft(jd: dict) -> str:
     title = jd.get("title", "")
     structured = jd.get("structured_data") or {}
@@ -12,7 +19,7 @@ def generate_linkedin_post_draft(jd: dict) -> str:
     work_structure = structured.get("work_structure", "")
     skills = structured.get("skills") or []
     relevant_exp = structured.get("relevant_experience", "")
-    responsibilities = structured.get("responsibilities", "")
+    responsibilities = _as_text(structured.get("responsibilities", ""))
     role_type = structured.get("role_type", "")
 
     apply_url = f"{FRONTEND_URL}/apply/{jd_id}?source=linkedin"
@@ -70,7 +77,7 @@ def generate_linkedin_job_listing(jd: dict) -> str:
     work_structure = (structured.get("work_structure", "") or "").lower()
     skills = structured.get("skills") or []
     relevant_exp = structured.get("relevant_experience", "")
-    responsibilities = structured.get("responsibilities", "")
+    responsibilities = _as_text(structured.get("responsibilities", ""))
 
     if "remote" in work_structure:
         workplace = "Remote"
