@@ -1484,9 +1484,24 @@ const RecruiterDashboard: React.FC = () => {
                           if (!candidateResp) {
                             // Offer sent, waiting for candidate
                             return (
-                              <span className="text-[10px] font-bold text-slate-400 italic px-2">
-                                Awaiting candidate response…
-                              </span>
+                              <>
+                                <span className="text-[10px] font-bold text-slate-400 italic px-2">
+                                  Awaiting candidate response…
+                                </span>
+                                <button
+                                  onClick={async () => {
+                                    const r = await fetch(`${API}/pipeline/resend-offer/${selectedJdId}/${record.candidate_id}`, {
+                                      method: 'POST', headers: getAuthHeaders(),
+                                    });
+                                    if (r.ok) setPipelineError('Offer email re-sent.');
+                                    else setPipelineError('Resend failed');
+                                  }}
+                                  className="flex items-center space-x-1.5 px-3 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg border border-slate-600/50 transition-colors"
+                                >
+                                  <CheckCircle size={12} />
+                                  <span>Send Again</span>
+                                </button>
+                              </>
                             );
                           }
 

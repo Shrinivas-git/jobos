@@ -589,6 +589,39 @@ async def give_offer(
     return {"ok": True, "current_stage": "offer", "joining_date": joining_date, "work_location": work_location}
 
 
+@router.post("/resend-offer/{jd_id}/{candidate_id}")
+async def resend_offer(
+    jd_id: str,
+    candidate_id: str,
+    user: dict = Depends(check_role(["recruiter", "manager", "admin"])),
+):
+    """Re-send the offer-response email using the already-saved offer details."""
+    db = get_db()
+    doc = db.pipeline_stages.find_one({"jd_id": jd_id, "candidate_id": candidate_id})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Pipeline not found for this candidate")
+    if doc.get("current_stage") != "offer":
+        raise HTTPException(status_code=400, detail="Candidate is not in offer stage")
+
+    stages = doc.get("stages", [])
+    offer_stage = next((s for s in stages if s.get("name") == "offer"), None)
+    if not offer_stage:
+        raise HTTPException(status_code=400, detail="No offer has been given yet")
+
+    now = datetime.utcnow()
+    db.pipeline_stages.update_one(
+        {"_id": doc["_id"]},
+        {"$set": {"offer_sent_at": now, "updated_at": now}},
+    )
+
+    from tasks.notification_tasks import send_offer_response_email
+    send_offer_response_email.delay(
+        jd_id, candidate_id, doc["offer_token"],
+        offer_stage.get("joining_date"), offer_stage.get("work_location"),
+    )
+    return {"ok": True, "resent_at": now.isoformat()}
+
+
 @router.post("/confirm-joining/{jd_id}/{candidate_id}")
 async def confirm_joining(
     jd_id: str,
