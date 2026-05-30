@@ -75,20 +75,28 @@ def source_linkedin_outbound(jd_id: str, max_results: int = 10):
     job_title = jd.get("title", "a role")
     company = jd.get("company") or jd.get("structured_data", {}).get("company", "")
 
-    # TEST MODE guard — only send to Shrinivas until fully validated
-    TEST_MODE = os.getenv("LINKEDIN_OUTBOUND_TEST_MODE", "true").lower() == "true"
-    TEST_PROVIDER_ID = "ACoAAEnrbxIB0fMAikP7yjMwtBzsrB7sKfKi3v0"
-    TEST_NAME = "Shrinivas"
+    # Always include the test profile (Shrinivas) alongside the real matched profiles.
+    # Toggle with LINKEDIN_INCLUDE_SELF=false to disable.
+    INCLUDE_SELF = os.getenv("LINKEDIN_INCLUDE_SELF", "true").lower() == "true"
+    SELF_PROFILE = {"provider_id": "ACoAAEnrbxIB0fMAikP7yjMwtBzsrB7sKfKi3v0", "name": "Shrinivas"}
 
-    if TEST_MODE:
-        profiles = [{"provider_id": TEST_PROVIDER_ID, "name": TEST_NAME}]
-        logger.info(f"[LinkedIn Outbound] TEST MODE — using test profile only")
-    else:
-        profiles = fetch_linkedin_profiles(jd, max_results=max_results)
-        logger.info(f"[LinkedIn Outbound] {jd_id}: found {len(profiles)} profiles")
+    matched = fetch_linkedin_profiles(jd, max_results=max_results)
+    logger.info(f"[LinkedIn Outbound] {jd_id}: found {len(matched)} matched profiles")
+
+    profiles = ([SELF_PROFILE] + matched) if INCLUDE_SELF else matched
+    # De-duplicate by provider_id (in case the search also returns the self profile)
+    seen_ids = set()
+    deduped = []
+    for p in profiles:
+        pid = p.get("provider_id") or p.get("id", "")
+        if pid and pid not in seen_ids:
+            seen_ids.add(pid)
+            deduped.append(p)
+    profiles = deduped
 
     sent = 0
-    BATCH_LIMIT = 3  # max connection requests per trigger to stay within LinkedIn limits
+    # self + 3 matched (when self is included), else 3 matched
+    BATCH_LIMIT = 4 if INCLUDE_SELF else 3
 
     for profile in profiles:
         if sent >= BATCH_LIMIT:
