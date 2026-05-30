@@ -666,6 +666,11 @@ async def confirm_joining(
         send_stage_notification.delay(candidate_id, jd_id, "joined")
     except Exception:
         pass
+    try:
+        from tasks.notification_tasks import notify_placement_complete
+        notify_placement_complete.delay(jd_id, candidate_id)
+    except Exception:
+        pass
 
     return {"ok": True, "current_stage": "joined"}
 

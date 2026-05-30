@@ -113,7 +113,7 @@ def generate_and_send_invoice(jd_id: str, candidate_id: str):
 
     structured = jd.get("structured_data") or {}
     jd_title = structured.get("title") or jd.get("title") or jd_id
-    client_email = structured.get("client_email") or ""
+    client_email = jd.get("client_email") or structured.get("client_email") or ""
     compensation_range = structured.get("compensation_range") or ""
 
     candidate_name = candidate.get("name") or candidate_id
@@ -156,7 +156,16 @@ def generate_and_send_invoice(jd_id: str, candidate_id: str):
             "paid_at": None,
         })
 
-        email_sent = _send_invoice_email(client_email, invoice_id, pdf_path)
+        # Recipients: client + all managers (deduped)
+        manager_emails = [
+            u["email"] for u in db.users.find({"roles": {"$in": ["manager"]}}, {"email": 1})
+            if u.get("email")
+        ]
+        recipients = list(dict.fromkeys([client_email] + manager_emails))
+        email_sent = False
+        for addr in recipients:
+            if _send_invoice_email(addr, invoice_id, pdf_path):
+                email_sent = True
 
         if email_sent:
             db.invoices.update_one(

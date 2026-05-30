@@ -1031,3 +1031,72 @@ def send_candidate_profile_to_client(jd_id: str, candidate_id: str, client_email
     subject = f"Candidate Profile — {name} · {jd_title}"
     send_email(client_email, subject, html)
     logger.info(f"Candidate profile sent to {client_email}: {candidate_id}")
+
+
+@celery.task(name="tasks.notification_tasks.notify_placement_complete")
+def notify_placement_complete(jd_id: str, candidate_id: str):
+    """When a candidate joins: notify recruiter + manager(s) + client that the
+    placement is complete (candidate accepted the offer and joining date)."""
+    logger.info(f"notify_placement_complete: {candidate_id} for JD {jd_id}")
+    db = get_db()
+
+    jd = db.job_descriptions.find_one({"jd_id": jd_id})
+    if not jd:
+        logger.error(f"JD {jd_id} not found — skipping placement notification")
+        return
+    structured = jd.get("structured_data") or {}
+    jd_title = structured.get("title") or jd.get("title", "the role")
+
+    candidate = db.candidates.find_one({"candidate_id": candidate_id}, {"name": 1})
+    name = candidate.get("name", candidate_id) if candidate else candidate_id
+
+    # Joining date + work location from the offer stage
+    pipeline = db.pipeline_stages.find_one({"jd_id": jd_id, "candidate_id": candidate_id})
+    offer_stage = next((s for s in (pipeline or {}).get("stages", []) if s.get("name") == "offer"), {})
+    joining_date = offer_stage.get("joining_date") or "—"
+    work_location = offer_stage.get("work_location") or "—"
+
+    # Recipients: recruiter + all managers + client (deduped, non-empty)
+    recipients = []
+    if jd.get("recruiter_email"):
+        recipients.append(jd["recruiter_email"])
+    recipients += [
+        u["email"] for u in db.users.find({"roles": {"$in": ["manager"]}}, {"email": 1})
+        if u.get("email")
+    ]
+    if jd.get("client_email"):
+        recipients.append(jd["client_email"])
+    recipients = list(dict.fromkeys(recipients))
+
+    subject = f"Placement Complete — {name} · {jd_title}"
+    html = f"""<!DOCTYPE html>
+<html>
+<body style="background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#f1f5f9;margin:0;padding:24px">
+  <div style="max-width:600px;margin:0 auto">
+    <div style="background:#1e293b;padding:24px;border-radius:12px;margin-bottom:16px">
+      <p style="color:#4ade80;margin:0 0 4px 0;font-size:20px;font-weight:700">Placement Complete 🎉</p>
+      <p style="color:#94a3b8;margin:0;font-size:12px;text-transform:uppercase;letter-spacing:2px">JobOS · Closure</p>
+    </div>
+    <div style="background:#1e293b;padding:24px;border-radius:12px">
+      <p style="color:#94a3b8;margin:0 0 16px 0;line-height:1.6">
+        <strong style="color:#f1f5f9">{name}</strong> has been successfully placed for
+        <strong style="color:#f1f5f9">{jd_title}</strong>. The candidate has accepted the offer and confirmed the joining date.
+      </p>
+      <div style="background:#0f172a;padding:16px;border-radius:8px">
+        <p style="color:#94a3b8;margin:4px 0;font-size:13px">Candidate: <strong style="color:#f1f5f9">{name}</strong></p>
+        <p style="color:#94a3b8;margin:4px 0;font-size:13px">Role: <strong style="color:#f1f5f9">{jd_title}</strong></p>
+        <p style="color:#94a3b8;margin:4px 0;font-size:13px">Joining Date: <strong style="color:#f1f5f9">{joining_date}</strong></p>
+        <p style="color:#94a3b8;margin:4px 0;font-size:13px">Work Location: <strong style="color:#f1f5f9">{work_location}</strong></p>
+      </div>
+      <p style="color:#64748b;font-size:12px;margin-top:16px">The placement invoice has been generated and sent separately.</p>
+    </div>
+    <p style="color:#334155;font-size:11px;text-align:center;margin-top:24px">
+      JobOS · Recruitment Operating System
+    </p>
+  </div>
+</body>
+</html>"""
+
+    for addr in recipients:
+        send_email(addr, subject, html)
+    logger.info(f"Placement complete notification sent to {len(recipients)} recipient(s) for {candidate_id}")
