@@ -11,11 +11,10 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 try:
     import cv2
     import numpy as np
-    import mediapipe as mp
     VISION_AVAILABLE = True
 except ImportError:
     VISION_AVAILABLE = False
-    logger.warning("cv2/mediapipe not installed")
+    logger.warning("cv2/numpy not installed")
 
 try:
     from groq import Groq
@@ -113,23 +112,31 @@ Score 7 = average, 9-10 = exceptional. speech_traits examples: fluent, articulat
 
 
 def _analyze_visuals(video_path: str) -> dict:
-    """Analyze posture and eye contact using OpenCV + MediaPipe."""
+    """Analyze face presence, centering (eye contact) and steadiness (confidence)
+    using OpenCV's built-in Haar cascade face detector. No mediapipe needed."""
     default = {"confidence_score": 6, "eye_contact_score": 6, "video_quality": "unknown", "duration": 0}
 
     if not VISION_AVAILABLE:
         return default
 
     try:
+        cascade_path = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+        face_cascade = cv2.CascadeClassifier(cascade_path)
+        if face_cascade.empty():
+            logger.error("Haar cascade failed to load")
+            return default
+
         cap = cv2.VideoCapture(video_path)
         fps = cap.get(cv2.CAP_PROP_FPS) or 30
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        duration = total_frames / fps
+        duration = total_frames / fps if fps else 0
 
-        mp_pose = mp.solutions.pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
-        mp_face = mp.solutions.face_detection.FaceDetection(min_detection_confidence=0.5)
-
-        posture_scores = []
-        eye_scores = []
+        eye_scores = []          # how centered the face is (looking at camera)
+        face_sizes = []          # relative face size (steady distance to camera)
+        centers_x = []           # horizontal positions (for steadiness)
+        centers_y = []
+        frames_with_face = 0
+        frames_checked = 0
         frame_idx = 0
 
         while True:
@@ -139,36 +146,39 @@ def _analyze_visuals(video_path: str) -> dict:
             frame_idx += 1
             if frame_idx % 15 != 0:  # sample every 15th frame
                 continue
+            frames_checked += 1
 
-            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            h, w = frame.shape[:2]
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(60, 60))
 
-            pose_result = mp_pose.process(rgb)
-            if pose_result.pose_landmarks:
-                lm = pose_result.pose_landmarks.landmark
-                # Shoulder alignment
-                shoulder_diff = abs(lm[11].x - lm[12].x)
-                hip_offset = abs((lm[11].x + lm[12].x) / 2 - (lm[23].x + lm[24].x) / 2)
-                posture = max(1, min(10, 9 - hip_offset * 15))
-                posture_scores.append(posture)
-
-            face_result = mp_face.process(rgb)
-            if face_result.detections:
-                detection = face_result.detections[0]
-                bbox = detection.location_data.relative_bounding_box
-                # Face centered = looking at camera
-                center_x = bbox.xmin + bbox.width / 2
-                offset = abs(center_x - 0.5)
-                eye_score = max(1, min(10, 9 - offset * 12))
-                eye_scores.append(eye_score)
+            if len(faces) > 0:
+                frames_with_face += 1
+                # largest detected face
+                fx, fy, fw, fh = max(faces, key=lambda b: b[2] * b[3])
+                cx = (fx + fw / 2) / w
+                cy = (fy + fh / 2) / h
+                centers_x.append(cx)
+                centers_y.append(cy)
+                face_sizes.append((fw * fh) / (w * h))
+                # centered horizontally + vertically => looking at camera
+                offset = abs(cx - 0.5) + abs(cy - 0.45)
+                eye_scores.append(max(1, min(10, 9 - offset * 14)))
 
         cap.release()
-        mp_pose.close()
-        mp_face.close()
 
-        confidence = round(float(np.mean(posture_scores))) if posture_scores else 6
+        if frames_checked == 0 or frames_with_face == 0:
+            return default
+
+        # Eye contact = how well-centered the face was on average
         eye_contact = round(float(np.mean(eye_scores))) if eye_scores else 6
 
-        # Video quality from frame count
+        # Confidence = face visible most of the time + steady position (low jitter)
+        presence_ratio = frames_with_face / frames_checked
+        jitter = (float(np.std(centers_x)) + float(np.std(centers_y))) if len(centers_x) > 1 else 0.3
+        steadiness = max(0.0, 1.0 - jitter * 4)        # 1.0 = rock steady
+        confidence = round(2 + presence_ratio * 5 + steadiness * 3)  # ~2..10
+
         quality = "good" if total_frames > 300 else "low"
 
         return {
