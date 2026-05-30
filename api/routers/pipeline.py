@@ -115,7 +115,7 @@ async def send_to_client(
     if not client_email:
         raise HTTPException(status_code=400, detail="No client_email set on this JD")
 
-    evaluated = list(db.candidate_pools.find({"jd_id": jd_id, "status": "shortlisted"}).sort("rank", 1))
+    evaluated = list(db.candidate_pools.find({"jd_id": jd_id, "status": {"$in": ["pass_2_complete", "shortlisted"]}}).sort("rank", 1))
     if not evaluated:
         raise HTTPException(status_code=400, detail="No evaluated candidates for this JD — run matching first")
 

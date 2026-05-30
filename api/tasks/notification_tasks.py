@@ -188,7 +188,7 @@ def send_client_package(jd_id: str, client_email: str):
     structured = jd.get("structured_data", {})
     jd_title = structured.get("title") or jd.get("title", "Job Role")
 
-    candidates = list(db.candidate_pools.find({"jd_id": jd_id, "status": {"$nin": ["rejected"]}}).sort("rank", 1))
+    candidates = list(db.candidate_pools.find({"jd_id": jd_id, "status": {"$in": ["pass_2_complete", "shortlisted"]}}).sort("rank", 1))
     for entry in candidates:
         cand = db.candidates.find_one({"candidate_id": entry["candidate_id"]}, {"name": 1})
         entry["_name"] = cand.get("name", entry["candidate_id"]) if cand else entry["candidate_id"]
