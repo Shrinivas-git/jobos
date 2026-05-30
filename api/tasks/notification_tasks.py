@@ -1,3 +1,4 @@
+import os
 import uuid
 import logging
 from datetime import datetime
@@ -499,7 +500,7 @@ def send_interview_email(jd_id: str, candidate_id: str, interview_details: dict)
         logger.warning(f"No client_email on JD {jd_id} — skipping client interview notification")
 
 
-_FRONTEND_BASE = "http://localhost:5173"
+_FRONTEND_BASE = os.getenv("FRONTEND_URL", os.getenv("APP_BASE_URL", "http://localhost:5173"))
 
 
 @celery.task(name="tasks.notification_tasks.send_offer_response_email")
