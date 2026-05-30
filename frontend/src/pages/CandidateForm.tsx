@@ -34,6 +34,7 @@ const CandidateForm: React.FC = () => {
   const [aadhar, setAadhar] = useState('');
   const [telegram, setTelegram] = useState('');
   const [candidateResumeFile, setCandidateResumeFile] = useState<File | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
 
   useEffect(() => {
     const fetchInfo = async () => {
@@ -120,6 +121,7 @@ const CandidateForm: React.FC = () => {
       if (linkedin.trim()) formData.append('linkedin_url', linkedin.trim());
       if (phone.trim()) formData.append('alternate_phone', phone.trim());
       if (telegram.trim()) formData.append('telegram_handle', telegram.trim());
+      if (videoFile) formData.append('video_file', videoFile);
 
       const res = await fetch(`${API}/forms/submit`, { method: 'POST', body: formData });
       if (!res.ok) {
@@ -393,6 +395,24 @@ const CandidateForm: React.FC = () => {
                     accept=".pdf,.doc,.docx,application/pdf,application/msword"
                     className="hidden"
                     onChange={e => setCandidateResumeFile(e.target.files?.[0] || null)}
+                  />
+                </label>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">
+                  Video Resume (MP4, max 5 min)
+                </label>
+                <label className="flex flex-col items-center justify-center gap-2 w-full h-32 bg-slate-900 border-2 border-dashed border-slate-700 rounded-xl cursor-pointer hover:border-blue-500 transition-colors">
+                  <Upload size={20} className="text-slate-500" />
+                  <span className="text-sm text-slate-400">
+                    {videoFile ? videoFile.name : 'Click to upload video'}
+                  </span>
+                  <input
+                    type="file"
+                    accept="video/mp4,video/*"
+                    className="hidden"
+                    onChange={e => setVideoFile(e.target.files?.[0] || null)}
                   />
                 </label>
               </div>
