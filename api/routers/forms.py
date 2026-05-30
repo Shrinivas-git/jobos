@@ -225,8 +225,7 @@ async def submit_form(
                 "response_tracking.form_submitted.reminder_count": 0,
                 "response_tracking.form_submitted.last_reminder_at": None,
                 "updated_at": datetime.utcnow()
-            }},
-            upsert=True
+            }}
         )
 
         # Trigger resume extraction/metadata pipeline if resume provided

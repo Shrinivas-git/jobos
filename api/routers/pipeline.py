@@ -50,7 +50,7 @@ def upsert_initial_stage(db, jd_id: str, candidate_id: str, stage_name: str = "s
     Idempotent — if a doc already exists for (jd_id, candidate_id), returns it untouched.
     """
     existing = db.pipeline_stages.find_one({"jd_id": jd_id, "candidate_id": candidate_id})
-    if existing:
+    if existing and existing.get("stages"):
         return existing
     cfg = get_pipeline_config()
     sla = int(cfg["sla_hours"].get(stage_name, 72))
@@ -97,7 +97,17 @@ def upsert_initial_stage(db, jd_id: str, candidate_id: str, stage_name: str = "s
         "created_at": now,
         "updated_at": now,
     }
-    db.pipeline_stages.insert_one(doc)
+    if existing:
+        # Repair a partial doc (e.g. created by an early form submission): keep its
+        # response_tracking/created_at, fill in the missing stage fields.
+        doc["response_tracking"] = {**doc["response_tracking"], **existing.get("response_tracking", {})}
+        doc["created_at"] = existing.get("created_at", now)
+        db.pipeline_stages.update_one(
+            {"jd_id": jd_id, "candidate_id": candidate_id},
+            {"$set": doc},
+        )
+    else:
+        db.pipeline_stages.insert_one(doc)
     return doc
 
 

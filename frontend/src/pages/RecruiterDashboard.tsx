@@ -1170,7 +1170,7 @@ const RecruiterDashboard: React.FC = () => {
 
         {/* Pipeline cards */}
         <div className="space-y-3">
-          {pipelineRecords.filter(r => r.current_stage !== 'rejected').map(record => {
+          {pipelineRecords.filter(r => r.current_stage !== 'rejected' && Array.isArray(r.stages)).map(record => {
             const currentStageEntry = record.stages.find(s => s.name === record.current_stage);
             if (!currentStageEntry) return null;
 
@@ -1839,64 +1839,6 @@ const RecruiterDashboard: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Client Selection — shown after email sent */}
-                  {clientSubmission?.sent && (
-                    <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-bold text-white">Client Selection</p>
-                          <p className="text-[11px] text-slate-400 mt-0.5">Mark the candidates the client approved to proceed</p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <button
-                            onClick={() => setClientApprovedIds(new Set(results.map(r => r.candidate_id)))}
-                            className="px-3 py-1.5 text-[10px] font-bold bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
-                          >
-                            All
-                          </button>
-                          <button
-                            onClick={() => setClientApprovedIds(new Set())}
-                            className="px-3 py-1.5 text-[10px] font-bold bg-slate-700/50 hover:bg-slate-700 text-slate-400 rounded-lg transition-colors"
-                          >
-                            None
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        {results.map(r => {
-                          const approved = clientApprovedIds.has(r.candidate_id);
-                          return (
-                            <label key={r.candidate_id} className="flex items-center space-x-3 p-3 rounded-xl bg-slate-900/50 border border-slate-700/30 cursor-pointer hover:border-slate-500 transition-colors">
-                              <input
-                                type="checkbox"
-                                checked={approved}
-                                onChange={() => {
-                                  const next = new Set(clientApprovedIds);
-                                  approved ? next.delete(r.candidate_id) : next.add(r.candidate_id);
-                                  setClientApprovedIds(next);
-                                }}
-                                className="w-4 h-4 rounded bg-slate-700 border-slate-600 text-emerald-500 focus:ring-0"
-                              />
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-white truncate">{candidateNames[r.candidate_id] || r.candidate_id}</p>
-                                <p className="text-[10px] text-slate-500">{r.fitment_score != null ? `${r.fitment_score.toFixed(0)}% fitment` : `${(r.composite_score ?? 0).toFixed(1)} score`}</p>
-                              </div>
-                              {approved && <CheckCircle size={14} className="text-emerald-400 shrink-0" />}
-                            </label>
-                          );
-                        })}
-                      </div>
-
-                      <button
-                        onClick={handleSaveClientSelection}
-                        disabled={savingClientSelection}
-                        className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white text-xs font-bold rounded-xl transition-colors"
-                      >
-                        {savingClientSelection ? 'Saving…' : `Confirm — ${clientApprovedIds.size} Candidate${clientApprovedIds.size !== 1 ? 's' : ''} Approved`}
-                      </button>
-                    </div>
-                  )}
                 </section>
               )}
 
