@@ -89,7 +89,7 @@ def generate_and_send_invoice(jd_id: str, candidate_id: str):
 
     jd = db.job_descriptions.find_one(
         {"jd_id": jd_id},
-        {"structured_data": 1, "title": 1}
+        {"structured_data": 1, "title": 1, "client_email": 1}
     )
     if not jd:
         logger.error(f"JD {jd_id} not found for invoice generation")
