@@ -1,6 +1,6 @@
 import keycloak from '../keycloak';
 
-export const API = 'http://localhost:8000';
+export const API = import.meta.env.VITE_API_URL || '/api';
 
 export function getAuthHeaders(): { Authorization: string } {
   return { Authorization: `Bearer ${keycloak.token}` };

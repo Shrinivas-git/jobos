@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { ShieldCheck, Upload, CheckCircle, Loader } from 'lucide-react';
 
-const API = 'http://localhost:8000';
+const API = import.meta.env.VITE_API_URL || '/api';
 
 const CandidateForm: React.FC = () => {
   const { jdId, candidateId } = useParams<{ jdId: string; candidateId?: string }>();
